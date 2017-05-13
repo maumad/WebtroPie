@@ -1,4 +1,4 @@
-# Webretro WIP 0.1
+# Webretro WIP 0.1.0
 
 WebRetro is a ROM Manager specifically for RetroPie
 
