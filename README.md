@@ -1,6 +1,6 @@
-# WebretroPie WIP 0.1.0
+# WebtroPie WIP 0.1.0
 
-WebRetroPie is a ROM Manager specifically for RetroPie
+WebtroPie is a ROM Manager specifically for RetroPie
 
 * [video](https://www.youtube.com/watch?v=d1ovSZqve44)
 * [forum link](https://retropie.org.uk/forum/topic/10164/web-app-wip-please-give-it-a-name/18)
