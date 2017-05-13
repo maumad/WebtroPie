@@ -1,0 +1,69 @@
+<div class=window_size>
+   <!-- all images for current theme + system's "system" view -->
+   <!-- theme-image ng-repeat="image in ThemeService.view.image" -->
+   <theme-image ng-repeat="image in ThemeService.system.view.system.image"
+           ng-hide="image.name=='logo'" obj="image"></theme-image>
+
+   <!-- system logos -->
+   <logo ng-repeat="sys in ThemeService.theme.systems"
+          id="logo{{$index-mid_index}}"
+          obj="ThemeService.getThemeSystemByOffset($index-mid_index)" class="click"
+          ng-class="'systemlogo'+(sys_index+$index-mid_index)+
+                    (sys_index!=0?' systemtransition':'')"
+          ng-style="systembar['logostyle'+($index-mid_index)]"
+          ng-keydown="keyPress($event)"
+          ng-mousedown="mouseDown($event,$index-mid_index)"
+          ng-mousemove="mouseMove($event)"
+          ng-mouseup="mouseUp($event)"
+          ng-touchstart="mouseDown($event,$index-mid_index)"
+          ng-touchmove="mouseMove($event)"
+          ng-touchcancel="mouseUp($event)"
+          ng-touchend="mouseUp($event)"> </logo>
+
+   <!-- systems selection bar -->
+   <div class="systemsbar"
+          ng-mousedown="mouseDown($event)"
+          ng-mousemove="mouseMove($event)"
+          ng-mouseup="mouseUp($event)"
+          ng-mouseout="mouseOut($event)"
+          ng-touchstart="mouseDown($event)"
+          ng-touchmove="mouseMove($event)"
+          ng-touchcancel="mouseUp($event)"
+          ng-touchend="mouseUp($event)">
+
+     <div class="logobar"> </div>
+     <div class="infobar">
+       <div class="systeminfo"
+         ng-repeat="sys in ThemeService.theme.systems"
+         ng-show="($index-mid_index)>=-1 && ($index-mid_index)<=1 &&
+                   GameService.systems[ThemeService.getThemeSystemByOffset($index-mid_index).name].total"
+         ng-style="systembar['infostyle'+($index-mid_index)]"
+         ng-class="'systeminfo'+(sys_index+$index-mid_index)+(sys_index!=0?' systemtransition':'')">
+         {{GameService.systems[ThemeService.getThemeSystemByOffset($index-mid_index).name].total}} GAMES AVAILABLE
+       </div>
+     </div>
+   </div>
+
+   <!-- help bar -->
+   <helpmenu list="helpmenu" obj="ThemeService.view.helpsystem.help" >
+
+      <span class="dropdown" 
+            ng-show="config.app.ShowThemeSelect"
+            ng-mouseover="config.themehover=true"
+            ng-mouseout="config.themehover=false" >
+         <div class="filters" help-inverter
+            ng-click="config.themehover=!config.themehover; util.defaultFocus()" > Theme </div>
+         <div ng-style="ThemeService.helpTextColorBorder"
+              ng-class="ThemeService.helpMenuOptionClasses+' '+(ThemeService.theme_count>19?'double':'')"
+              ng-show="config.themehover" >
+            <a help-inverter
+               ng-repeat="theme in ThemeService.themes | orderObjectBy:'name':false"
+               ng-click="themeChanged(theme.name)">
+               {{theme.name}}
+               <span ng-show="theme == ThemeService.theme">*</span>
+            </a>
+         </div>
+      </span>
+
+   </helpmenu>
+</div>

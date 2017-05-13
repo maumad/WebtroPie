@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="WebtroPie" class="no-js">
+<!-- html lang="en" -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>WebtroPie</title>
+  <meta name="description" content="A Rom Manager for RetroPie">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="roms">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <div ng-controller="AppCtrl">
+
+     <!-- Main view pages -->
+     <!-- div ng-view ng-class="{'slideleft': ThemeService.animate_left,
+                             'slideright': ThemeService.animate_right,
+                             'fade': ThemeService.animate_fade }"></div -->
+     <div ng-view ng-class="ThemeService.animate_view_class"></div>
+
+     <menu ng-if="config.show_menu"></menu>
+  </div>
+
+  <script src="lib/angular.min.js"></script>
+  <script src="lib/angular-route.min.js"></script>
+  <script src="app.js"></script>
+  <script src="util_service.js"></script>
+  <script src="config_service.js"></script>
+  <script src="theme_service.js"></script>
+  <script src="app_controller.js"></script>
+  <script src="theme_components.js"></script>
+  <script src="system_view.js"></script>
+  <script src="game_service.js"></script>
+  <script src="gamelist_view.js"></script>
+  <script src="gamelist.js"></script>
+  <script src="game_editor.js"></script>
+  <script src="lib/ngTouch.js"></script>
+  <div id="dynamic_media"></div>
+</body>
+</html>

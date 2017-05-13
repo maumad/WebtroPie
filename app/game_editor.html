@@ -1,0 +1,150 @@
+<div class="game_editor gui">
+  <div class=rom>{{GameService.game.path}}
+     <span ng-if="!GameService.game.isDir && !GameService.game.size" class=missing>
+     - missing
+     </span>
+  </div>
+  <table style="width: 100%" cellspacing=0 >
+  <tr> <th width="15%">{{config.lang.md_labels.name}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.name"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('name',false,null,GameService.editAll)">
+       </td>
+       <td class=snap rowspan=5
+                  ng-style="gameImageStyle(GameService.path, GameService.game.image)">
+           <md-media-upload md="image" accept="image/*"></md-media-upload>
+       </td>
+  </tr>
+  <tr> <th width="15%">{{config.lang.md_labels.image}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.image"
+                  ng-class="{found: GameService.game.image_found, missing: GameService.game.image_missing}"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('image',false,null,GameService.editAll)">
+       </td>
+  </tr>
+  <tr> <th>{{config.lang.md_labels.genre}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.genre"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('genre',false,null,GameService.editAll)">
+       </td>
+  </tr>
+  <tr> <th>{{config.lang.md_labels.developer}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.developer"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('developer',false,null,GameService.editAll)">
+       </td>
+  </tr>
+  <tr> <th>{{config.lang.md_labels.publisher}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.publisher"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('publisher',false,null,GameService.editAll)">
+       </td>
+  </tr>
+  <tr> <th>{{config.lang.md_labels.releasedate}}</th>
+       <td class=narrow>
+           <date-input
+                  ng-model="GameService.game.releasedate"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('releasedate',false,null,GameService.editAll)"></date-input>
+           <small style="float: right">
+              {{config.lang.md_labels.favorite}}
+              <md-image-toggle game="GameService.game" md="favorite" > </md-image-toggle>
+           </small>
+       </td>
+       <td class=snap rowspan=3
+                  ng-style="gameImageStyle(GameService.path, GameService.game.marquee)">
+           <md-media-upload md="marquee" accept="image/*"></md-media-upload>
+       </td>
+  </tr>
+  <tr> <th>{{config.lang.md_labels.players}}</th>
+       <td class=narrow>
+           <input type=number min=1 max=10
+                  placeholder="?"
+                  ng-model="GameService.game.players"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('players',false,null,GameService.editAll)"/>
+           <small style="float: right">
+              {{config.lang.md_labels.hidden}}
+              <md-image-toggle game="GameService.game" md="hidden" > </md-image-toggle>
+
+           </small>
+       </td>
+  </tr>
+  <tr> <th>{{config.lang.md_labels.rating}}</th>
+       <td class=narrow>
+           <input type=number min=0 max=100
+                  placeholder="?"
+                  ng-model="GameService.game.rating_pct"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.game.rating = GameService.game.rating_pct / 100; GameService.md_changed('rating',false,null,GameService.editAll)"
+                  />% &nbsp;
+          <theme-rating game="GameService.game" size="0.15" size-units="vmin"></theme-rating>
+<!--
+           {{GameService.game.playcount ? GameService.game.playcount : 0}}
+           &nbsp; Last:
+           <datetime text="GameService.game.lastplayed"
+                      style="display: inline"
+                      format="dd/mm/yyyy hh:mi:ss"
+                      blank="never"></datetime>
+-->
+           <small style="float: right">
+              {{config.lang.md_labels.kidgame}}
+              <md-image-toggle game="GameService.game" md="kidgame" > </md-image-toggle>
+           </small>
+       </td>
+  </tr>
+  <tr> <th width="15%">{{config.lang.md_labels.marquee}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.marquee"
+                  ng-class="{found: GameService.game.marquee_found, missing: GameService.game.marquee_missing}"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('marquee',false,null,GameService.editAll)">
+       </td>
+       <td class=snap rowspan=2>
+           <md-media-upload md="video" accept="video/mp4,video/x-m4v,video/*"></md-media-upload>
+       </td>
+  </tr>
+  <tr> <th width="15%">{{config.lang.md_labels.video}}</th>
+       <td class=narrow>
+           <input ng-model="GameService.game.video"
+                  ng-class="{found: GameService.game.video_found, missing: GameService.game.video_missing}"
+                  ng-keydown="editorKeyPress($event)"
+                  ng-change="GameService.md_changed('video',false,null,GameService.editAll)">
+       </td>
+  </tr>
+  <tr> <th width="15%">{{config.lang.md_labels.description}}</th>
+       <td colspan=2>
+          <textarea rows=4 ng-model="GameService.game.desc"></textarea>
+       </td>
+  </tr>
+  </table>
+  <div>
+     <button ng-show="GameService.game.size && config.env.has_launch"
+             ng-keydown="editorButtonKeyPress($event)"
+             ng-click="GameService.run(GameService.game)">{{config.lang.buttons.launch}}</button>
+     <!-- button class="todo">{{config.lang.buttons.scrape}}</button -->
+     <button ng-show="GameService.game.changes"
+             ng-keydown="editorButtonKeyPress($event)"
+             ng-click="GameService.save(GameService.game); GameService.hideEditor()">{{config.lang.buttons.save}}</button>
+     <button ng-keydown="editorButtonKeyPress($event)"
+             ng-click="GameService.hideEditor()">{{config.lang.buttons.cancel}}</button>
+     <button ng-show="GameService.game.changes && GameService.game.reset"
+             ng-keydown="editorButtonKeyPress($event)"
+             ng-click="GameService.resetGame()">{{config.lang.buttons.reset}}</button>
+     <!-- button class="todo">{{config.lang.buttons.delete}}</button>
+     <button class="todo">{{config.lang.buttons.move}}</button -->
+     <span ng-if="GameService.selected_list.length">
+      Change all selected
+      <image-toggle class="checkbox right"
+              ng-model="GameService.editAll"
+              on-svg="resources/checkbox_checked.svg"
+              off-svg="resources/checkbox_unchecked.svg">
+      </image-toggle>
+     </span>
+  </div>
+</div>
