@@ -747,6 +747,8 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
    self.applyFieldsShown = function()
    {
       var gl = ThemeService.gamelist;
+      var stretch = !ThemeService.dontstretch[config.app.ThemeSet];
+console.log('stretch = ' + stretch);
       if (!gl) return;
 
       // column widths 
@@ -761,7 +763,7 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
          {
             if (f.name == 'name')
             {
-               f.width     = gl.size.w;
+               f.width = gl.size.w;
                width += f.width;
             }
             else
@@ -772,7 +774,7 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       });
 
       // find the difference of sum of all fields widths > gamelist width
-      if (width <= gl.w)
+      if (width <= gl.size.w)
       {
          extra_width = 0;  // all fields are within gamelist width
       }
@@ -781,22 +783,25 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
          extra_width = width - gl.size.w;  // we need to stretch
       }
 
-      // as width increases scale down yo smaller font so text isn't truncated
-      var fontsize = gl.fontsize / ( 1 + extra_width);
+      // as width increases scale down to smaller font so text isn't truncated
+      var fontsize;
+      var gl_width;
+      if (stretch)
+      {
+         fontsize = gl.fontsize / ( 1 + extra_width);
+         gl_width = width / (1 + extra_width);
+      }
+      else {
+         fontsize = gl.fontsize * gl.size.w / ( gl.size.w + extra_width);
+         gl_width = width * gl.size.w / ( gl.size.w + extra_width);
+      }
+      delete gl.div['font-size'];
 
       // linespacing default 1.5, so 1.5 * font size = line size
       gl.linesize = fontsize * gl.linespacing;
-//console.log('font size = ' + fontsize + ' line spacing = ' + gl.linespacing);
       // more rows with smaller font ?
       gl.rows = gl.size.h / gl.linesize  - self.header;
 
-      //gl.div['font-size'] = util.pct(fontsize,'vh');
-      delete gl.div['font-size'];
-      //delete gl.div['font-family'];
-
-      // game list viewable container style :-
-
-      var gl_width = width / (1 + extra_width);
       self.liststyle['max-width']  = util.pct(gl_width,'vw');
       self.liststyle.width         = util.pct(gl_width,'vw');
       self.liststyle.top           = util.pct(gl.pos.y + self.header * gl.linesize,'vh');
@@ -808,7 +813,6 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       self.liststyle.outline       = 'none';
 
       self.liststyle['font-size']  = util.pct(fontsize,'vh');
-      //self.liststyle['font-family']  = gl.fontfamily;
 
       // column heading style
 
@@ -821,16 +825,17 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       self.headerstyle.color = '#' + gl.secondarycolor;
       self.headerstyle['background-color'] = 'rgba(0,0,0,0.2)';
 
-      // x position of first additional field
-      var x = gl.pos.x + gl.size.w;
-      // move everything to the right of x by width and scale everything (left and right)
-      // but only page components vertically beside gamelist, not above or below
-      ThemeService.insertIntoView(ThemeService.view, x, extra_width, gl.pos.y, gl.pos.y + gl.size.h);
+      if (stretch)
+      {
+         // move everything to the right of x by width and scale everything (left and right)
+         // but only page components vertically beside gamelist, not above or below
+         ThemeService.insertIntoView(ThemeService.view, gl.pos.x + gl.size.w, extra_width, gl.pos.y, gl.pos.y + gl.size.h);
+      }
       self.liststyle.left = gl.div.left;
       self.headerstyle.left = gl.div.left;
 
       // work out x + widths proportional to overall width
-      x = 0;
+      var x = 0;
       angular.forEach(self.list_fields, function(f)
       {
          if (!f.show)

@@ -118,13 +118,13 @@ if (!extension_loaded('gd') || !function_exists('gd_info')) {
 
 $im = false;
 
-if( $extension == 'png') {
+if ( $extension == 'png') {
    $im = imagecreatefrompng($file);
 }
-elseif( $extension == 'jpg') {
+elseif ( $extension == 'jpg') {
    $im = imagecreatefromjpeg($file);
 }
-elseif( $extension == 'gif') {
+elseif ( $extension == 'gif') {
    $im = imagecreatefromgif($file);
 }
 
@@ -146,9 +146,18 @@ if($im) {
    imagefilter($im, IMG_FILTER_COLORIZE, $inv->r, $inv->g, $inv->b, $inv->a);
    imagefilter($im, IMG_FILTER_NEGATE);
 
-   header('Content-Type: image/png');
-   imagepng($im);
-
+   if( $extension == 'png') {
+      header('Content-Type: image/png');
+      imagepng($im);
+   }
+   elseif( $extension == 'jpg') {
+      header('Content-Type: image/jpeg');
+      imagejpeg($im);
+   }
+   elseif( $extension == 'gif') {
+      header('Content-Type: image/gif');
+      imagegif($im);
+   }
    imagedestroy($im);
 }
 

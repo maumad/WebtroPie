@@ -25,10 +25,31 @@ angular.module('WebtroPie.theme_service', [])
    self.fontfamilies = {};
    self.audio = {};
 
+   self.dontstretch = {
+      'crt': 1,
+      'eudora': 1,
+      'eudora-bigshot': 1,
+      'flat': 1,
+      'flat-dark': 1,
+      'fundamental': 1,
+      'futura-10px': 1,
+      'futura-10px-dark': 1,
+      'io': 1,
+      'luminous': 1,
+      'metapixel': 1,
+      'new-mini': 1,
+      'oldroom 720p': 1,
+      'oldroom 1080p': 1,
+      'pixel': 1,
+      'simpler-turtlepi': 1,
+      'spare': 1,
+      'turtle-pi': 1,
+      'workbench': 1
+   }
+
    // load up (current) theme from memory otherwise from server
    self.themeInit = function(system_name, view_name)
    {
-//console.log('theme init ' + system_name + '  view ' + view_name);
       return self.getTheme(config.app.ThemeSet, system_name, view_name);
    }
 
@@ -1060,9 +1081,7 @@ angular.module('WebtroPie.theme_service', [])
       var style = {}
       style['position'] = 'absolute';
 
-//console.log('image ' + image.name + ' index = ' + image.index + ' global = ' + image.index_global);
       // flag if image fills screen
-      //if ( (image.pos=='0 0' && image.size.substring(0,2)=='1 ') ||
       if ( (image.pos=='0 0' && image.size=='1 1') ||
           (!image.pos && !image.size) )
       {
@@ -1099,7 +1118,6 @@ angular.module('WebtroPie.theme_service', [])
             style.width = util.pct(image.size.w,'vw');
             if (!image.fullscreen && image.size.w >=1)
             {
-               //image.index = image.pos.x == 0 && image.pos.y==0 ? 2 : 3;
                if (image.name == 'background')
                {
                   image.index = 0;
@@ -1115,7 +1133,6 @@ angular.module('WebtroPie.theme_service', [])
             style.height = util.pct(image.size.h,'vh');
             if (!image.fullscreen && image.size.h >=1)
             {
-               //image.index = image.pos.x == 0 && image.pos.y==0 ? 2 : 3;
                image.index = image.pos.x == 0 && image.pos.y==0 ? 1 : 2;
             }
          }
