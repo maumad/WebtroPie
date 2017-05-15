@@ -1503,7 +1503,7 @@ angular.module('WebtroPie.theme_service', [])
          // expand each include file preserving paths
          angular.forEach(self.theme.includes, function(inc, filename)
          {
-            if (inc.feature)
+            if (inc.feature && inc.feature.view)
             {
                if (!inc.view.video)
                   inc.view.video = inc.feature.view.video;

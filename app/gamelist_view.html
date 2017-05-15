@@ -51,10 +51,10 @@
               ng-class="ThemeService.helpMenuOptionClasses"
               ng-show="colhover">
             <a help-inverter
+               ng-click="GameService.toggleField(column); colhover=false; util.defaultFocus()"
                ng-repeat="column in GameService.list_fields">
                 <image-toggle class="checkbox"
-                   ng-model="column.show"
-                   changed="GameService.toggleField(column); colhover=false; util.defaultFocus()"
+                   ng-model="column.show" noclick=1
                    on-svg="resources/checkbox_checked.svg" on-color="help"
                    off-svg="resources/checkbox_unchecked.svg" off-color="help" >
                 </image-toggle>

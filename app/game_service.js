@@ -748,7 +748,7 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
    {
       var gl = ThemeService.gamelist;
       var stretch = !ThemeService.dontstretch[config.app.ThemeSet];
-console.log('stretch = ' + stretch);
+
       if (!gl) return;
 
       // column widths 

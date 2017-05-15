@@ -4,7 +4,7 @@ angular.module('WebtroPie.theme_components', [])
 .directive('icon', function() {
    return {
       restrict: 'E', replace: true, scope: { svg:'=', color:'=' },
-      template: '<img class="icon" ng-style="img"></img>',
+      template: '<img class="icon" ng-style="img">',
       controller: function($scope, util, ThemeService)
       {
          $scope.img = {};
@@ -260,7 +260,7 @@ angular.module('WebtroPie.theme_components', [])
       replace: true,
       scope: { ngModel: '=', ngChange: '=',
                onSvg:'@', offSvg:'@', onColor: '@', offColor: '@' },
-      template: '<img class="icon click" ng-click="click($event)" ng-style="img"></img>',
+      template: '<img class="icon click" ng-click="click($event)" ng-style="img">',
       controller: function($scope, ThemeService)
       {
          $scope.img = {};
@@ -287,6 +287,7 @@ angular.module('WebtroPie.theme_components', [])
       },
       link: function (scope, element, attrs)
       {
+         if (!attrs.noclick)
          scope.click = function($event)
          {
             $event.preventDefault();
@@ -313,7 +314,7 @@ angular.module('WebtroPie.theme_components', [])
       replace: true,
       scope: { game: '=', md:'@', autosave:'@', 
                size: '=', sizeUnits: '@' },
-      template: '<img class="icon" ng-click="click($event)" ng-style="img" title={{title}}></img>',
+      template: '<img class="icon" ng-click="click($event)" ng-style="img" title={{title}}>',
       controller: function($scope, GameService, util, config)
       {
          if ($scope.md == "hidden")
@@ -441,7 +442,7 @@ angular.module('WebtroPie.theme_components', [])
                         ' title={{title}} ng-if="'+
                         'obj.div[\'background-image\'] || '+
                         'obj.div[\'background-color\']"></div>'+
-                  '<img ng-style="obj.img" ng-if="obj.img.content"></img>'+
+                  '<img ng-style="obj.img" ng-if="obj.img.content">'+
                 '</div>',
       controller: function($scope, GameService, util, config)
       {
