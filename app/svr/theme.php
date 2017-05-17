@@ -33,10 +33,8 @@ $response['has_gd'] = extension_loaded('gd') ? 1 : 0;
 $response['includes'] = array();
 function load_and_include($file) {
    global $response, $path;
-
    // the files that will be returned as an array
    $arr = load_file_xml_as_array($file);
-
 
    // add includes to the array of includes recursively
    if(isset($arr['include']))

@@ -147,6 +147,8 @@ angular.module('WebtroPie.theme_components', [])
                if ($scope.md != 'rating')
                {
                   var obj;
+                  delete $scope.text_obj;
+                  delete $scope.date_obj;
                   if (ThemeService.view.datetime)
                   {
                      obj = ThemeService.view.datetime['md_'+$scope.md];

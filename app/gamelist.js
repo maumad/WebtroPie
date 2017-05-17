@@ -564,8 +564,8 @@ function($scope, $window, GameService, ThemeService, util)
       if ($index == self.game_index )
       {
          // colour the current selected game bar
-         style.color = '#' + gl.selectedcolor;
-         style['background-color'] = '#' + gl.selectorcolor;
+         style.color = util.hex2rgba(gl.selectedcolor);
+         style['background-color'] = util.hex2rgba(gl.selectorcolor);
          if(game != self.game)
             self.setGame();
       }

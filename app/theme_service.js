@@ -34,6 +34,7 @@ angular.module('WebtroPie.theme_service', [])
       'fundamental': 1,
       'futura-10px': 1,
       'futura-10px-dark': 1,
+      'indent': 1,
       'io': 1,
       'luminous': 1,
       'metapixel': 1,
@@ -702,9 +703,6 @@ angular.module('WebtroPie.theme_service', [])
       }
       else if (!text.pos)
       {
-//if(text.name=='md_genre') {
-   //console.log(text);
-//}
          // anchored to label so position inside label (see theme_components)
          if (text.name.substring(0,3)=='md_')
          {
@@ -811,14 +809,11 @@ angular.module('WebtroPie.theme_service', [])
          }
       }
 
-      if (text.linespacing)
+      if (!text.linespacing)
       {
-         text.linespacing = util.round(text.linespacing * 1.1 ,4);
+        text.linespacing = 1;
       }
-      else
-      {
-         text.linespacing = 1.5;
-      }
+      text.linespacing = util.round(text.linespacing * 1.1 ,4);
 
       if (text.fontsize)
       {
@@ -827,7 +822,6 @@ angular.module('WebtroPie.theme_service', [])
          {
             text.rows = Math.floor(100 * text.size.h /
                                   (100 * text.fontsize * text.linespacing));
-                                  //(100 * text.fontsize + text.linespacing));
          }
          else
          {
@@ -835,6 +829,13 @@ angular.module('WebtroPie.theme_service', [])
          }
          if (text.rows>1 && text.linespacing)
          {
+            // minimum linespace for multiline
+            if (text.linespacing <= 1.3)
+            {
+               text.linespacing = 1.3;
+               text.rows = Math.floor(100 * text.size.h /
+                                     (100 * text.fontsize * text.linespacing));
+            }
             text.div['line-height'] = (100 * text.linespacing ) + '%';
          }
          else if (text.size && text.size.h)
@@ -973,6 +974,69 @@ angular.module('WebtroPie.theme_service', [])
          obj.bottom -= size.h * obj.origin.y;
          obj.right -= size.w * obj.origin.x;
       }
+   }
+
+
+   self.createCarouselStyle = function(carousel, logo)
+   {
+      if (!carousel || (typeof carousel) != 'object')
+      {
+         return;
+      }
+
+      var style = {};
+
+      if (carousel.pos)
+      {
+         carousel.pos = self.denormalize('pos',carousel.pos);
+         style.left = util.pct(carousel.pos.x,'vw');
+         style.top = util.pct(carousel.pos.y,'vh');
+         logo.div.top = util.pct(carousel.pos.y+16,'vh');
+      }
+      if (carousel.size)
+      {
+         carousel.size = self.denormalize('size',carousel.size);
+         if (carousel.size.w)
+         {
+            style.width = util.pct(carousel.size.w,'vw');
+         }
+         if (carousel.size.h)
+         {
+            style.height = util.pct(carousel.size.h,'vh');
+         }
+      }
+      if (carousel.logosize)
+      {
+         carousel.logosize = self.denormalize('size',carousel.logosize);
+      }
+      if (carousel.color)
+      {
+         //style['background-color'] = util.hex2rgba(carousel.color);
+            var hsl = util.rgbToHSL(carousel.color);
+
+            if(//hsl.h == 0 && hsl.s == 0 &&
+               hsl.l > 0.5)  // light
+            {
+               style.filter = 'brightness('+util.pct(hsl.l,'%')+')';
+               if (hsl.a || hsl.a === 0)
+               {
+                  style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+               }
+            }
+            else //if(hsl.h == 0 && hsl.s == 0)  // dark
+            {
+               style.filter = 'invert(100%) saturate(0%)'; // contrast(100%)';
+               style.filter += ' contrast('+util.pct(1-hsl.l,'%')+')';
+               if (hsl.a || hsl.a === 0)
+               {
+                  style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+               }
+            }
+      }
+      style['position'] = 'absolute';
+      style['z-index'] = 10;
+
+      carousel.div = style;
    }
 
    self.createVideoStyle = function(video)
@@ -1159,27 +1223,54 @@ angular.module('WebtroPie.theme_service', [])
       // image file - not just a color
       if (image.fullpath || (image.name == 'md_image' || image.name == 'md_marquee'))
       {
-         // color image server side if it's svg or if php has gd2 library enabled
-         if (image.fullpath && image.color &&
-              (image.type=='svg' || ( self.php_has_gd &&
-                (image.type=='png' || image.type=='jpg' || image.type=='gif')
-              )))
-         {
-            image.fullpath = 'svr/color_img.php?file='+
-                                  image.fullpath.substring(4)+ // remove svr/
-                                  '&color='+image.color; //+'&mult=1';
-         }
-         // and if we don't have php_gd loaded ...
-         // try to taint image to color specified using filters client side (poor)
-         else if (image.color)
+         if ( image.color )
+            image.color = image.color.toLowerCase();
+
+         if ( image.color &&
+              image.color != 'ffffff' &&
+              image.color != 'ffffffff' )
          {
             var hsl = util.rgbToHSL(image.color);
-            // speia is yellow (+60 degrees) so rotate -60 degrees
-            style.filter =
-                  'sepia(100%) saturate(5000%) hue-rotate('+((hsl.h-60)%360)+'deg)';
-            if (hsl.a)
+
+            // if greyscale color image client side
+            if(hsl.h == 0 && hsl.s == 0 && hsl.l > 0.5)  // light
             {
-               style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+               style.filter = 'brightness('+util.pct(hsl.l,'%')+')';
+               if (hsl.a || hsl.a === 0)
+               {
+                  style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+               }
+            }
+            else if(hsl.h == 0 && hsl.s == 0)  // dark
+            {
+               style.filter = 'invert(100%) saturate(0%)'; // contrast(100%)';
+               style.filter += ' contrast('+util.pct(1-hsl.l,'%')+')';
+               if (hsl.a || hsl.a === 0)
+               {
+                  style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+               }
+            }
+            // color image server side if it's svg or if php has gd2 library enabled
+            else
+            if (image.fullpath && (image.type=='svg' || ( self.php_has_gd &&
+                   (image.type=='png' || image.type=='jpg' || image.type=='gif')
+                 )))
+            {
+               image.fullpath = 'svr/color_img.php?file='+
+                                     image.fullpath.substring(4)+ // remove svr/
+                                     '&color='+image.color; //+'&mult=1';
+            }
+            // and if we don't have php_gd loaded ...
+            // try to taint image to color specified using filters client side (poor)
+            else
+            {
+               // speia is yellow (+60 degrees) so rotate -60 degrees
+               style.filter =
+                     'sepia(100%) saturate(5000%) hue-rotate('+((hsl.h-60)%360)+'deg)';
+               if (hsl.a)
+               {
+                  style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+               }
             }
          }
 
@@ -1290,17 +1381,43 @@ angular.module('WebtroPie.theme_service', [])
 
 
    // convert theme object images attributes to style
-   self.createStyles = function(themefile, path)
+   self.createStyles = function(systheme, path)
    {
       // empty theme, shouldn't happen now as default is generated
-      if (!themefile || !themefile.view)
+      if (!systheme || !systheme.view)
       {
          return;
       }
 
       // each view - system, basic, detailed
-      angular.forEach(themefile.view, function(view)
+      angular.forEach(systheme.view, function(view)
       {
+         // fix wrong text tags in themes
+         // releasedate should be datetime
+         if (view.text && view.text.md_releasedate)
+         {
+            if (!view.datetime) view.datetime = {};
+            if (!view.datetime.md_releasedate) view.datetime.md_releasedate = {};
+            self.mergeObjects(view.datetime.md_releasedate, view.text.md_releasedate);
+            delete view.text.md_releasedate;
+         }
+         // lastplayed should be datetime
+         if (view.text && view.text.md_lastplayed)
+         {
+            if (!view.datetime) view.datetime = {};
+            if (!view.datetime.md_lastplayed) view.datetime.md_lastplayed = {};
+            self.mergeObjects(view.datetime.md_lastplayed, view.text.md_lastplayed);
+            delete view.text.md_lastplayed;
+         }
+         // rating should be rating
+         if (view.text && view.text.md_rating)
+         {
+            if (!view.rating) view.rating = {};
+            if (!view.rating.md_rating) view.rating.md_rating = {};
+            self.mergeObjects(view.rating.md_rating, view.text.md_rating);
+            delete view.text.md_rating;
+         }
+
          angular.forEach(view.text,     self.createTextStyleML); // allow multi line
          angular.forEach(view.textlist, self.createTextStyle);
          angular.forEach(view.datetime, self.createTextStyle);
@@ -1309,6 +1426,15 @@ angular.module('WebtroPie.theme_service', [])
          angular.forEach(view.helpsystem, self.createTextStyle);
          angular.forEach(view.video,    self.createVideoStyle);
       });
+      if (systheme.view.system.carousel)
+      {
+         self.createCarouselStyle(systheme.view.system.carousel.systemcarousel,
+                                  systheme.view.system.image.logo);
+         if (!self.theme.systemcarousel)
+         {
+            self.theme.systemcarousel = systheme.view.system.carousel.systemcarousel;
+         }
+      }
    }
 
    // copy if target has missing value, or child value, or granchild value ...
@@ -1503,14 +1629,26 @@ angular.module('WebtroPie.theme_service', [])
          // expand each include file preserving paths
          angular.forEach(self.theme.includes, function(inc, filename)
          {
+            angular.forEach(inc.feature, function(value, key)
+            {
+               if (key == 'supported')
+                  return;
+               if(!inc[key])
+                  inc[key] = value;
+               else
+                  self.mergeObjects(inc[key], value);
+               delete inc.feature[key];
+            });
+/*
             if (inc.feature && inc.feature.view)
             {
                if (!inc.view.video)
                   inc.view.video = inc.feature.view.video;
                else
-                  self.mergeObjects(inc.view, self.feature.view)
+                  self.mergeObjects(inc.view, inc.feature.view)
                delete inc.feature.video;
             }
+*/
             var subdir = '';
             var i = filename.lastIndexOf('/');
             if(i>0)
@@ -1570,6 +1708,31 @@ angular.module('WebtroPie.theme_service', [])
                   self.mergeObjects(sys.theme.view, sys.theme.feature.view)
                delete sys.theme.feature;
             }
+*/
+/*
+            angular.forEach(self.theme.systems, function(sys)
+            {
+               if (sys.view)
+               {
+                  angular.forEach(sys.view, function(view, v)
+                  {
+                     if (view.text && view.text.md_releasedate)
+                     {
+console.log('wrong md_releasedate tag');
+                        self.mergeObjects(view.datetime.md_releasedate,
+                                          view.text.md_releasedate);
+                        delete view.text.md_releasedate;
+                     }
+                     if (view.text && view.text.md_lastplayed)
+                     {
+console.log('wrong md_lastplayed tag');
+                        self.mergeObjects(view.datetime.md_lastplayed,
+                                          view.text.md_lastplayed);
+                        delete view.text.md_lastplayed;
+                     }
+                  });
+               }
+            });
 */
             // convert images to css styles
             self.createStyles(sys.theme, sys.path);

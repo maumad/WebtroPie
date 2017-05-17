@@ -136,13 +136,9 @@ if($im) {
    $inv = (object) array('r' => 255 - $rgba->r,
                          'g' => 255 - $rgba->g,
                          'b' => 255 - $rgba->b,
-                         'a' => 255 - $rgba->a);
+                         'a' => (255 - $rgba->a)/2);
 
    imagefilter($im, IMG_FILTER_NEGATE);
-   //if(!$mult) {
-      //imagefilter($im, IMG_FILTER_GRAYSCALE);
-      //imagefilter($im, IMG_FILTER_CONTRAST, -100);
-   //}
    imagefilter($im, IMG_FILTER_COLORIZE, $inv->r, $inv->g, $inv->b, $inv->a);
    imagefilter($im, IMG_FILTER_NEGATE);
 

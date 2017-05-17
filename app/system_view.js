@@ -17,6 +17,7 @@ angular.module('WebtroPie.system_view', ['ngRoute','ngTouch'])
 function($scope, $rootScope, $window, $timeout,
          config, ThemeService, GameService, util )
 {
+/*
    $scope.systembar = {x: 0, speed: 0,
                        'logostyle-2': {},
                        'logostyle-1': {},
@@ -29,10 +30,26 @@ function($scope, $rootScope, $window, $timeout,
                        'infostyle1': {},
                        'infostyle2': {},
                       };
+*/
+   $scope.systembar = {};
+   $scope.initSystembar = function(y)
+   {
+      var logotop = util.pct((y||0.38)+0.16,'vh');
+      for (var i=-2; i<=2; i++)
+      {
+         $scope.systembar['logostyle'+i] = {top: logotop};
+         $scope.systembar['infostyle'+i] = {top: logotop};
+      }
+      $scope.systembar.x = 0;
+      $scope.systembar.change_ix = 0;
+   }
+
+   $scope.initSystembar();
+
    $scope.sys_index = 0;  // just used for animation -1, 0 or +1
    $scope.mid_index = 0;  // floor( systems.length / 2 ), offset of center
 
-   //$scope.ThemeService = ThemeService;
+   $scope.ThemeService = ThemeService;
    $scope.GameService = GameService;
 
    delete GameService.filtered;
@@ -73,6 +90,13 @@ function($scope, $rootScope, $window, $timeout,
 
       $scope.keyPress = function($event)
       {
+         // Ctrl - M - Main Menu
+         if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
+         {
+            config.toggleMenu();
+            return true;
+         }
+
             if ($event.keyCode == 13) // enter
             {
                return $scope.keyEnter();
@@ -196,23 +220,8 @@ function($scope, $rootScope, $window, $timeout,
    $scope.stopDragging = function($event)
    {
       $scope.systembar.dragging = false;
-
-      $scope.systembar['logostyle-2'] = {};
-      $scope.systembar['logostyle-1'] = {};
-      $scope.systembar['logostyle0'] = {};
-      $scope.systembar['logostyle1'] = {};
-      $scope.systembar['logostyle2'] = {};
-
-      $scope.systembar['infostyle-2'] = {};
-      $scope.systembar['infostyle-1'] = {};
-      $scope.systembar['infostyle0'] = {};
-      $scope.systembar['infostyle1'] = {};
-      $scope.systembar['infostyle2'] = {};
-
-      $scope.systembar.x = 0;
-      $scope.systembar.change_ix = 0;
+      $scope.initSystembar();
    }
-
    $scope.mouseOut = function($event)
    {
       var y_pct = 100 * $event.pageY / $scope.window_height;
@@ -353,6 +362,7 @@ function($scope, $rootScope, $window, $timeout,
       function (value) { $scope.window_height = value; },
       true
    );
+   $scope.$watch('ThemeService.view.carousel.systemcarousel.pos.y', $scope.initSystembar);
 
    $scope.window.bind('resize', function()
    {
