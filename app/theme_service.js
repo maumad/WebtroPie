@@ -1697,43 +1697,6 @@ angular.module('WebtroPie.theme_service', [])
                   self.mergeThemes(sys.theme, filename, self.theme);
                });
             }
-/*
-            // promote feature.view.video
-            if (sys.theme && sys.theme.feature &&
-               sys.theme.feature.view && sys.theme.feature.view.video)
-            {
-               //if (!sys.theme.view.video)
-                  //sys.theme.view.video = sys.theme.feature.view.video;
-               //else
-                  self.mergeObjects(sys.theme.view, sys.theme.feature.view)
-               delete sys.theme.feature;
-            }
-*/
-/*
-            angular.forEach(self.theme.systems, function(sys)
-            {
-               if (sys.view)
-               {
-                  angular.forEach(sys.view, function(view, v)
-                  {
-                     if (view.text && view.text.md_releasedate)
-                     {
-console.log('wrong md_releasedate tag');
-                        self.mergeObjects(view.datetime.md_releasedate,
-                                          view.text.md_releasedate);
-                        delete view.text.md_releasedate;
-                     }
-                     if (view.text && view.text.md_lastplayed)
-                     {
-console.log('wrong md_lastplayed tag');
-                        self.mergeObjects(view.datetime.md_lastplayed,
-                                          view.text.md_lastplayed);
-                        delete view.text.md_lastplayed;
-                     }
-                  });
-               }
-            });
-*/
             // convert images to css styles
             self.createStyles(sys.theme, sys.path);
 

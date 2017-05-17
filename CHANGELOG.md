@@ -1,4 +1,5 @@
 
+- themes: partial system carousel theme support (2017-05-16)
 - gui: Ctrl-M on system view for main menu (2017-05-16)
 - themes: fix wrong alpha on some theme png images (2017-05-16)
 - themes: fix double dates after theme switching and date positioning (2017-05-16)
