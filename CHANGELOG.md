@@ -1,4 +1,6 @@
 
+- themes: workaround invalid chars outside tags at start of theme files (Comic-Book) (2017-05-18)
+- themes: fix wrong alpha on some theme png images (2017-05-16)
 - themes: partial system carousel theme support (2017-05-16)
 - gui: Ctrl-M on system view for main menu (2017-05-16)
 - themes: fix wrong alpha on some theme png images (2017-05-16)
@@ -6,7 +8,7 @@
 - themes: color greyscale images client side (2017-05-16)
 - themes: don't stretch indent theme (2017-05-16)
 - themes: show correct selectedcolor background color if has alpha (indent) (2017-05-16)
-- themes: fix wrong theme tags for lastplayed, releasedate, rating (indent) (2017-05-16)
+- themes: workaround wrong theme tags for lastplayed, releasedate, rating (indent) (2017-05-16)
 - themes: don't color image if FFFFFFFF (indent) (2017-05-16)
 - show fields: allow click on column name (2017-05-15)
 - small bug fix 'feature' video (2017-05-15)

@@ -112,7 +112,7 @@ function wrap_xml($xml, $tag='wrapped')
 // ( simpleXML doesn't like multiple hyphens like <!--- this ---> )
 function strip_comments($xml)
 {
-   return preg_replace('/^\s*/','',preg_replace('/<!--(.*)-->/Uis', '', $xml));
+   return preg_replace('/^[^<]*/','',preg_replace('/<!--(.*)-->/Uis', '', $xml));
 }
 
 function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
