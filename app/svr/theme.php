@@ -21,29 +21,42 @@ if(!isset($_GET['theme']) || $_GET['theme']=='null' || !file_exists('themes/'.$_
 else
    $theme = $_GET['theme'];
 
-$path = "themes/".$theme;
+$themepath = "themes/".$theme;
 
 $response = array();
-
 $response['name'] = $theme;
-$response['path'] = 'svr/'.$path;
+$response['path'] = 'svr/'.$themepath;
 $response['has_gd'] = extension_loaded('gd') ? 1 : 0;
 
 // load file and recursively includes within included files
 $response['includes'] = array();
-function load_and_include($file) {
-   global $response, $path;
-   // the files that will be returned as an array
-   $arr = load_file_xml_as_array($file);
 
+function load_and_include($file)
+{
+   global $response, $themepath;
+
+   $pi = pathinfo($file);
+   $path = $pi['dirname'];
+   $file = $pi['basename'];
+   // simplify path remove ./
+   $path = preg_replace('|/\./|','/',$path);
+   $path = preg_replace('|/\.$|','',$path);
+   // simplify path remove dir/..
+   $path = preg_replace('|([^/]*)/\.\.|','',$path);
+
+   // the files that will be returned as an array
+   $arr = load_file_xml_as_array($themepath.'/'.$path.'/'.$file);
    // add includes to the array of includes recursively
    if(isset($arr['include']))
-   foreach ($arr['include'] as $index => $incfile) {
-      $incfile = ltrim($incfile,"./../"); // we dont need this
+   foreach ($arr['include'] as $index => $incfile)
+   {
+      //$incfile = ltrim($incfile,"./../"); // we dont need this
       $arr['include'][$index] = $incfile;
       // if it hasn't already been included then include it
       if(!isset($response['includes'][$incfile]))
+      {
          $response['includes'][$incfile] = load_and_include($path.'/'.$incfile);
+      }
    }
 
    return $arr;
@@ -57,25 +70,25 @@ if ($dh = opendir(ROMSPATH))
    while (($system = readdir($dh)) !== false)
    {
       if ($system != '.' && $system != '..' &&
-          is_dir(ROMSPATH."/".$system) &&
+          is_dir(ROMSPATH.'/'.$system) &&
          ($_GET['all']  ||
-          filesize(ROMSPATH."/".$system."/gamelist.xml") > 40 ||
+          filesize(ROMSPATH.'/'.$system."/gamelist.xml") > 40 ||
           filesize(HOME_ES."/gamelists/".$system."/gamelist.xml") > 40 ||
           filesize(ES_PATH."/gamelists/".$system."/gamelist.xml") > 40))
       {
-         // system them file
-         $syspath = $path."/".$system;
-         $systhemefile = $syspath."/theme.xml";
+         $platform = $system;
          // if E.g "mame-libretro" doesn't exist use "mame"
-         if(!file_exists($systhemefile) && strpos($system,'-')!==false) {
-            $syspath = $path."/".preg_replace('/-.*/','',$system);
-            $systhemefile = $syspath."/theme.xml";
+         if (substr($system, 0, 5) == 'mame-' &&
+            !file_exists($themepath.'/'.$system.'/theme.xml') &&
+             file_exists($themepath.'/mame/theme.xml'))
+         {
+            $platform = 'mame';
          }
          $system_array =
            array(
              'name' => $system,
-             'path' => 'svr/'.$syspath,
-             'theme' => load_and_include($systhemefile)
+             'path' => 'svr/'.$themepath.'/'.$system,
+             'theme' => load_and_include($platform.'/theme.xml')
            );
 
          array_push($response['systems'], $system_array);

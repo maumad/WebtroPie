@@ -56,7 +56,7 @@ function xmlobj_to_array($xmlobj)
 
          if (isset($index_types[$type])) {
             $child['index'] = $arr[$type]['count']++;
-            $child['index_global'] = $index_types[$type]++;
+            //$child['index_global'] = $index_types[$type]++;
          }
 
          foreach ($xmlchild->attributes() as $key => $val)

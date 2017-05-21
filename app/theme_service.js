@@ -26,6 +26,7 @@ angular.module('WebtroPie.theme_service', [])
    self.audio = {};
 
    self.dontstretch = {
+      'Comic-Book': 1,
       'crt': 1,
       'eudora': 1,
       'eudora-bigshot': 1,
@@ -107,7 +108,23 @@ angular.module('WebtroPie.theme_service', [])
       {
          if (help.textcolor) self.helpTextColor = help.textcolor;
          if (help.iconcolor) self.helpIconColor = help.iconcolor;
-         if (help.pos)       pos = help.pos;
+         if (help.pos)
+         {
+            // If theme hides the helpbar, show at bottom middle
+            if (help.pos.x>=1 || help.pos.y>=1 ||
+                help.pos.x<0 || help.pos.y<0)
+            {
+               help.pos = pos;
+               help.pos.x = 0.4;
+               help.div.left = util.pct(help.pos.x,'vw');
+               help.div.top = util.pct(help.pos.y,'vh');
+               delete help.div.display;
+            }
+            else
+            {
+               pos = help.pos;
+            }
+         }
       }
       self.helpInverseBackground['background-color'] = '#'+self.helpTextColor.substring(0,6);
 
@@ -126,6 +143,7 @@ angular.module('WebtroPie.theme_service', [])
 
       self.helpTextColorBorder.color = '#'+self.helpTextColor.substring(0,6);
       self.helpTextColorBorder.border = '1px solid #'+self.helpTextColor.substring(0,6);
+//console.log(help);
    }
 
    self.setHelpStyle();
@@ -1448,12 +1466,13 @@ angular.module('WebtroPie.theme_service', [])
          if ((typeof value) == 'object')
          {
             target_obj[prop] = angular.copy(value);
-            target_obj[prop].name = prop;
+            //target_obj[prop].name = prop;
          }
          else
          {
             target_obj[prop] = value;
          }
+         return;
       }
       else if ((typeof target_obj[prop]=='object') && (typeof value)=='object')
       {
@@ -1462,7 +1481,34 @@ angular.module('WebtroPie.theme_service', [])
          {
             self.mergeValue(target_obj[prop], k, v);
          });
+         return;
       }
+      else if ((typeof target_obj[prop]=='string') && (typeof value)=='string')
+      {
+         if (prop == 'index')
+         {
+            return;
+         }
+         else if (target_obj[prop] == value)
+         {
+            return;
+         }
+         else if (target_obj[prop].indexOf(value) >= 0)
+         {
+            return;
+         }
+         else if (value.indexOf(target_obj[prop]) >= 0)
+         {
+            target_obj[prop] = value;
+            return;
+         }
+      }
+/*
+console.log(prop+' target ' + (typeof target_obj[prop])); 
+console.log(target_obj[prop]); 
+console.log(prop+' value ' + (typeof value)); 
+console.log(value); 
+*/
    }
 
    // recurse whole target object and merge every value
@@ -1522,6 +1568,7 @@ angular.module('WebtroPie.theme_service', [])
          angular.forEach(keys, function(k)
          {
            self.mergeValue(target_obj, k, value);  // E.g. k = "basic"
+           target_obj[k].name = k;
          });
       });
    }
@@ -1534,7 +1581,9 @@ angular.module('WebtroPie.theme_service', [])
          // dont just merge the name property - include the whole file
          if (key == 'include')
          {
-            self.mergeThemes(target, value, theme);
+            angular.forEach(value, function(incfile) {
+               self.mergeThemes(target, incfile, theme);
+            });
          }
          else
          {
@@ -1626,9 +1675,11 @@ angular.module('WebtroPie.theme_service', [])
 
          var file_count = 0;
 
-         // expand each include file preserving paths
+         // expand (E.g split "basic, detailed" views) for each include file
+         // preserving paths relative to include file
          angular.forEach(self.theme.includes, function(inc, filename)
          {
+            // but first, promote contents of feature node up heirarchy
             angular.forEach(inc.feature, function(value, key)
             {
                if (key == 'supported')
@@ -1639,16 +1690,7 @@ angular.module('WebtroPie.theme_service', [])
                   self.mergeObjects(inc[key], value);
                delete inc.feature[key];
             });
-/*
-            if (inc.feature && inc.feature.view)
-            {
-               if (!inc.view.video)
-                  inc.view.video = inc.feature.view.video;
-               else
-                  self.mergeObjects(inc.view, inc.feature.view)
-               delete inc.feature.video;
-            }
-*/
+
             var subdir = '';
             var i = filename.lastIndexOf('/');
             if(i>0)
@@ -1661,6 +1703,8 @@ angular.module('WebtroPie.theme_service', [])
             self.loadFonts(inc, self.theme.path+subdir, 'datetime');
             self.loadFonts(inc, self.theme.path+subdir, 'helpsystem');
             self.loadSounds(inc, self.theme.path+subdir);
+
+            // split combined objects (where key contains a comma)
             self.expandMerged(inc);
          });
 
@@ -1690,6 +1734,7 @@ angular.module('WebtroPie.theme_service', [])
             self.expandMerged(sys);
 
             // include includes
+            // - recursively merge each node of heirarchy
             if (sys.theme && sys.theme.include)
             {
                angular.forEach(sys.theme.include, function(filename)
@@ -1697,6 +1742,7 @@ angular.module('WebtroPie.theme_service', [])
                   self.mergeThemes(sys.theme, filename, self.theme);
                });
             }
+
             // convert images to css styles
             self.createStyles(sys.theme, sys.path);
 
@@ -1812,7 +1858,6 @@ angular.module('WebtroPie.theme_service', [])
 
          deferred.resolve();
          self.getting = false;
-
          delete self.theme_promise;
       });
 
