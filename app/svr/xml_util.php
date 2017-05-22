@@ -38,11 +38,13 @@ function xmlobj_to_array($xmlobj)
       if (!isset($arr[$type]))
       {
          $arr[$type] = array();
+
          // keep count for index values (within this parent)
          if (isset($index_types[$type]))
          {
             $arr[$type]['count']=0;
          }
+
       }
 
       // convert child to either another object or a string if it has no children

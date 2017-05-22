@@ -722,7 +722,7 @@ angular.module('WebtroPie.theme_service', [])
       else if (!text.pos)
       {
          // anchored to label so position inside label (see theme_components)
-         if (text.name.substring(0,3)=='md_')
+         if (text.name && text.name.substring(0,3)=='md_')
          {
             text.div.display = 'inline';
             text.div.position = 'relative';
@@ -1170,15 +1170,63 @@ angular.module('WebtroPie.theme_service', [])
          image.fullscreen = true;
          image.pos = '0 0';
          image.size = '1 1';
-         //image.index = image.name == 'background' ? 0 : 1;
-         image.index = 0;
       }
 
       if (image.pos)
       {
          image.pos = self.denormalize('pos',image.pos);
+         if (image.pos.x>1 || image.pos.y>1 ||
+             image.pos.x<0 || image.pos.y<0)
+         {
+            style.display = 'none';
+            return;
+         }
          style.left = util.pct(image.pos.x,'vw');
          style.top = util.pct(image.pos.y,'vh');
+      }
+
+      if (image.size)
+      {
+         image.size = self.denormalize('size',image.size);
+         if(image.size.w)
+            style.width = util.pct(image.size.w,'vw');
+         if(image.size.h)
+            style.height = util.pct(image.size.h,'vh');
+
+         if (image.fullscreen ||
+             image.name == 'background' ||
+             (image.size.w >=1 && image.size.h >=1))
+         {
+            if (image.fullpath)
+            {
+               image.index = 1;
+            }
+            else
+            {
+               image.index = 0;
+            }
+         }
+         else if (image.size.w >=1 || image.size.h >=1)
+         {
+            image.index = 2;
+         }
+         else
+         {
+            image.index = 3;
+         }
+
+      }
+
+      // give background image z-index of 0
+      // otherwise use order image appears in file (or included file?)
+      if (image.name == 'md_image' || image.name == 'md_marquee')
+      {
+         image.index = 50;
+
+         if (!image.origin)
+         {
+            image.origin = '0.5 0.5';
+         }
       }
 
       if (image.origin)
@@ -1192,33 +1240,6 @@ angular.module('WebtroPie.theme_service', [])
          }
       }
 
-      if (image.size)
-      {
-         image.size = self.denormalize('size',image.size);
-         if (image.size.w)
-         {
-            style.width = util.pct(image.size.w,'vw');
-            if (!image.fullscreen && image.size.w >=1)
-            {
-               if (image.name == 'background')
-               {
-                  image.index = 0;
-               }
-               else
-               {
-                  image.index = image.pos.x == 0 && image.pos.y==0 ? 1 : 2;
-               }
-            }
-         }
-         if (image.size.h)
-         {
-            style.height = util.pct(image.size.h,'vh');
-            if (!image.fullscreen && image.size.h >=1)
-            {
-               image.index = image.pos.x == 0 && image.pos.y==0 ? 1 : 2;
-            }
-         }
-      }
       if (image.maxsize)
       {
          image.maxsize = self.denormalize('size',image.maxsize);
@@ -1366,22 +1387,13 @@ angular.module('WebtroPie.theme_service', [])
          style['background-color'] = util.hex2rgba(image.color);
       }
 
-      // give background image z-index of 0
-      // otherwise use order image appears in file (or included file?)
-      //style['z-index'] = image.fullscreen || image.name == 'background'
-      if (image.name == 'md_image' || image.name == 'md_marquee')
-      {
-         image.index = 50;
-      }
-
       // not sure if this works for everything
       style['z-index'] = image.index; // + (image.extra ? 0 : 10); // non extra over extra
-//console.log('image ' + image.name + ' z-index = ' + image.index);
 
       // no longer needed
       delete image.path;
       delete image.color;
-      delete image.index;
+      //delete image.index;
 
       // depending on the sizing method or tiling etc
       // we either style just a div or an image within a div
@@ -1461,7 +1473,11 @@ angular.module('WebtroPie.theme_service', [])
    // into two seperate objects that may already exist
    self.mergeValue = function(target_obj, prop, value)
    {
-      if (!target_obj[prop])   // empty / first time
+      if (prop == 'index' || prop == 'name')
+      {
+         return;
+      }
+      else if (!target_obj[prop])   // empty / first time
       {
          if ((typeof value) == 'object')
          {
@@ -1485,11 +1501,7 @@ angular.module('WebtroPie.theme_service', [])
       }
       else if ((typeof target_obj[prop]=='string') && (typeof value)=='string')
       {
-         if (prop == 'index')
-         {
-            return;
-         }
-         else if (target_obj[prop] == value)
+         if (target_obj[prop] == value)
          {
             return;
          }
@@ -1503,12 +1515,7 @@ angular.module('WebtroPie.theme_service', [])
             return;
          }
       }
-/*
-console.log(prop+' target ' + (typeof target_obj[prop])); 
-console.log(target_obj[prop]); 
-console.log(prop+' value ' + (typeof value)); 
-console.log(value); 
-*/
+      //target_obj[prop] = value;
    }
 
    // recurse whole target object and merge every value
@@ -1542,6 +1549,7 @@ console.log(value);
             tmp2.push(key);
          }
       });
+
       // sort so that elements in duplicate combined sets
       // have presedence if in a smaller set
       // E.g Flat theme gamelist in 'detailed, video' and also
@@ -1568,7 +1576,10 @@ console.log(value);
          angular.forEach(keys, function(k)
          {
            self.mergeValue(target_obj, k, value);  // E.g. k = "basic"
-           target_obj[k].name = k;
+           if (typeof value == 'object')
+           {
+              target_obj[k].name = k;
+           }
          });
       });
    }
@@ -1697,6 +1708,7 @@ console.log(value);
             {
                subdir = '/'+filename.substring(0,i);
             }
+
             self.fullImagePaths(inc, self.theme.path+subdir, file_count++);
             self.loadFonts(inc, self.theme.path+subdir, 'text');
             self.loadFonts(inc, self.theme.path+subdir, 'textlist');

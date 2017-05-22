@@ -1,4 +1,5 @@
 
+- themes: minor fixes, give md_image default origin 0.5 0.5  (famicom-mini) (2017-05-22)
 - themes: fix include path handling (famicom-mini) (2017-05-21)
 - themes: don't stretch indent Comic-Book (2017-05-21)
 - themes: workaround invalid chars outside tags at start of theme files (Comic-Book) (2017-05-18)

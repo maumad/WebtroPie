@@ -31,32 +31,45 @@ $response['has_gd'] = extension_loaded('gd') ? 1 : 0;
 // load file and recursively includes within included files
 $response['includes'] = array();
 
-function load_and_include($file)
+function load_and_include($file, &$parent, $index)
 {
    global $response, $themepath;
 
-   $pi = pathinfo($file);
-   $path = $pi['dirname'];
-   $file = $pi['basename'];
+   $path = pathinfo($file, PATHINFO_DIRNAME );
+   $file = pathinfo($file, PATHINFO_BASENAME );
+
    // simplify path remove ./
    $path = preg_replace('|/\./|','/',$path);
    $path = preg_replace('|/\.$|','',$path);
    // simplify path remove dir/..
    $path = preg_replace('|([^/]*)/\.\.|','',$path);
+   $path = preg_replace('|^\/|','',$path);
+
+   if($path)
+      $incfile = $path.'/'.$file;
+   else
+      $incfile = $file;
+
+   if(isset($index)) {
+      // copy modified reference back to parent
+      $parent['include'][$index] = $incfile;
+      // if already included return
+      if ($response['includes'][$incfile])
+         return;
+   }
 
    // the files that will be returned as an array
-   $arr = load_file_xml_as_array($themepath.'/'.$path.'/'.$file);
-   // add includes to the array of includes recursively
-   if(isset($arr['include']))
+   $arr = load_file_xml_as_array($themepath.'/'.$incfile);
+
+   // store include file in response
+   if(isset($index))
+      $response['includes'][$incfile] = &$arr;
+
+   // include includes recursively
+   if (isset($arr['include']))
    foreach ($arr['include'] as $index => $incfile)
    {
-      //$incfile = ltrim($incfile,"./../"); // we dont need this
-      $arr['include'][$index] = $incfile;
-      // if it hasn't already been included then include it
-      if(!isset($response['includes'][$incfile]))
-      {
-         $response['includes'][$incfile] = load_and_include($path.'/'.$incfile);
-      }
+      load_and_include($path.'/'.$incfile, $arr, $index);
    }
 
    return $arr;
@@ -87,7 +100,7 @@ if ($dh = opendir(ROMSPATH))
          $system_array =
            array(
              'name' => $system,
-             'path' => 'svr/'.$themepath.'/'.$system,
+             'path' => 'svr/'.$themepath.'/'.$platform,
              'theme' => load_and_include($platform.'/theme.xml')
            );
 

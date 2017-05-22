@@ -26,7 +26,11 @@ function($scope, config, ThemeService, util, GameService) {
       ThemeService.getTheme(config.app.ThemeSet,
                             ThemeService.system.name,
                             ThemeService.view.name)
-      .then(util.defaultFocus);
+      .then(function() {
+         // choose best view
+         GameService.checkSystemTheme(ThemeService.system.name, true);
+         util.defaultFocus();
+      });
    }
 
    $scope.languageChanged = function()
