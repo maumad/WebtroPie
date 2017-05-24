@@ -135,6 +135,10 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
          //var text = game[self.attrs[name]];
          if (!text)
          {
+            if (name == 'genre')
+               return 'Unknown';
+            else if (name == 'playcount')
+               return '0';
             return;
          }
 
@@ -798,7 +802,8 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       delete gl.div['font-size'];
 
       // linespacing default 1.5, so 1.5 * font size = line size
-      gl.linesize = fontsize * gl.linespacing;
+      gl.linesize = fontsize + gl.linespacing/100;
+
       // more rows with smaller font ?
       gl.rows = gl.size.h / gl.linesize  - self.header;
 

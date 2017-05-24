@@ -783,6 +783,7 @@ angular.module('WebtroPie.theme_service', [])
 
       if (text.size)
       {
+/* TODO: fix for famicom-mini */
          if (text.fontsize)
          {
             if (text.size.h < text.fontsize)
@@ -790,11 +791,17 @@ angular.module('WebtroPie.theme_service', [])
                text.size.h = text.fontsize;
             }
          }
+/*
          else
          {
             //text.fontsize = text.size.h;
             text.fontsize = 0.035;
          }
+         if (!text.fontsize)
+         {
+            text.fontsize = 0.035;
+         }
+*/
 
          if (text.size.w && !text.size.h)  // wrap, expand h dynamically
          {
@@ -829,17 +836,20 @@ angular.module('WebtroPie.theme_service', [])
 
       if (!text.linespacing)
       {
-        text.linespacing = 1;
+         text.linespacing = 1.3;
       }
       text.linespacing = util.round(text.linespacing * 1.1 ,4);
+      //text.linespacing = util.round(text.linespacing ,4);
 
       if (text.fontsize)
       {
          text.div['font-size'] = util.pct(text.fontsize,'vh');
          if (text.size)
          {
-            text.rows = Math.floor(100 * text.size.h /
-                                  (100 * text.fontsize * text.linespacing));
+            text.rows = Math.floor(text.size.h /
+                                  (text.fontsize + text.linespacing/100));
+            if (!text.rows)
+               text.rows=1;
          }
          else
          {
@@ -847,31 +857,47 @@ angular.module('WebtroPie.theme_service', [])
          }
          if (text.rows>1 && text.linespacing)
          {
+/*
             // minimum linespace for multiline
             if (text.linespacing <= 1.3)
             {
                text.linespacing = 1.3;
-               text.rows = Math.floor(100 * text.size.h /
-                                     (100 * text.fontsize * text.linespacing));
+               text.rows = Math.floor(text.size.h /
+                                     (text.fontsize * text.linespacing));
             }
-            text.div['line-height'] = (100 * text.linespacing ) + '%';
+*/
+            if (text.name != 'gamelist')
+            {
+               text.div['line-height'] = text.linespacing;
+            }
          }
+         //else if (text.size && text.size.h && text.rows==1)
          else if (text.size && text.size.h)
          {
-            text.div['line-height'] = (100 * text.size.h / text.fontsize ) + '%';
+            //text.div['line-height'] = text.size.h / (text.fontsize + text.linespacing/100);
+            text.div['line-height'] = text.size.h / ( text.rows * text.fontsize);
          }
          else
          {
-            text.div['line-height'] = '100%';
+            text.div['line-height'] = 'normal';
+         }
+
+         if (text.size && text.size.h)
+         {
+            if (text.size.h < text.fontsize)
+            {
+               text.size.h = text.fontsize;
+               text.div.height = util.pct(text.size.h,'vh');
+            }
          }
       }
       else if (text.multiline)
       {
-         text.div['line-height'] = (100 * text.linespacing ) + '%';
+         text.div['line-height'] = text.linespacing;
       }
       else
       {
-         text.div['line-height'] = '100%';
+         text.div['line-height'] = 'normal';
       }
 
       if (text.color)

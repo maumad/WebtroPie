@@ -9,7 +9,7 @@ angular.module('WebtroPie.gamelist', ['ngTouch'])
       templateUrl: "gamelist.html",
       link: function (scope, element, attrs)
       {
-         element.bind('contextmenu', scope.rightClick);
+         //element.bind('contextmenu', scope.rightClick);
          scope.scroller =
             GameService.scroller =
                element[0].querySelector('#scroller')
@@ -536,7 +536,7 @@ function($scope, $window, GameService, ThemeService, util)
 
       var gl = ThemeService.gamelist;
       var style = {  top: util.pct($index * gl.linesize, 'vh'),
-                  height: util.pct(gl.linesize,'vh') };
+                  height: util.pct((gl.fontsize + gl.linesize*2)/3,'vh') };
 
       // game rom file does not exists
       if (game && !game.size && !game.isDir)

@@ -4,6 +4,7 @@ html, body {
    height: 100%;
    padding: 0;
    margin: 0;
+   box-sizing: border-box;
 }
 
 .invert {
@@ -131,8 +132,8 @@ input, select, textarea {
    text-overflow: ellipsis;
    overflow: hidden;
    white-space: nowrap;
-   /* padding-top: 0.1%; */
-   line-height: 100%;
+   line-height: 110%;
+   /* margin-top: -0.5vh; */
 }
 
 .text_multiline {
@@ -140,7 +141,7 @@ input, select, textarea {
    z-index: 60;
    overflow: hidden;
    white-space: pre-wrap;
-   line-height: 100%;
+   line-height: 110%;
 }
 
 .gamerow {
