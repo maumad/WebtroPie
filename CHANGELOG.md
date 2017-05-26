@@ -1,4 +1,9 @@
 
+- themes: use zIndex if present (2017-05-25)
+- themes: use rgba in places where only rgb was being used (2017-05-25)
+- code: don't strtolower xml tags, expects exact case in xml but more readable code (2017-05-25)
+- app: default to video view if showSnapshotNoVideo even if gamelist has no videos (2017-05-24)
+- themes: config/themes.cfg file for themes tweaks (2017-05-24)
 - themes: minor fixes, give md_image default origin 0.5 0.5  (famicom-mini) (2017-05-22)
 - themes: fix include path handling (famicom-mini) (2017-05-21)
 - themes: don't stretch indent Comic-Book (2017-05-21)

@@ -42,6 +42,7 @@ $index_types = array();
 
 $response = array();
 
+
 if ($_GET['get'] & APP)
 {
    $response['app'] = load_file_xml_as_array('../config/settings.cfg','y');
@@ -71,6 +72,11 @@ if ($_GET['get'] & LANG)
 if ($_GET['get'] & ES)
 {
    $response['es'] = load_file_xml_as_array(ES_CONFIG_PATH."/es_settings.cfg",'y');
+}
+
+if ($_GET['get'] & THEMES)
+{
+   $response['themes'] = load_file_xml_as_array('../config/themes.cfg','y');
 }
 
 echo json_encode($response);

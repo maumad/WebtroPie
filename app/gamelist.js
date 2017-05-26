@@ -169,7 +169,7 @@ function($scope, $window, GameService, ThemeService, util)
          return;
       }
 
-      ThemeService.playSound('scrollsound');
+      ThemeService.playSound('scrollSound');
 
       var was_bottom = self.game_index == self.filtered.length -1;
 
@@ -202,7 +202,7 @@ function($scope, $window, GameService, ThemeService, util)
          return;
       }
 
-      ThemeService.playSound('scrollsound');
+      ThemeService.playSound('scrollSound');
 
       self.scrollToTop();
    }
@@ -215,7 +215,7 @@ function($scope, $window, GameService, ThemeService, util)
          return;
       }
 
-      ThemeService.playSound('scrollsound');
+      ThemeService.playSound('scrollSound');
 
       var was_top = self.game_index == 0;
 
@@ -245,7 +245,7 @@ function($scope, $window, GameService, ThemeService, util)
          return;
       }
 
-      ThemeService.playSound('scrollsound');
+      ThemeService.playSound('scrollSound');
 
       self.scrollToBottom();
    }
@@ -536,7 +536,7 @@ function($scope, $window, GameService, ThemeService, util)
 
       var gl = ThemeService.gamelist;
       var style = {  top: util.pct($index * gl.linesize, 'vh'),
-                  height: util.pct((gl.fontsize + gl.linesize*2)/3,'vh') };
+                  height: util.pct((gl.fontSize + gl.linesize)/2,'vh') };
 
       // game rom file does not exists
       if (game && !game.size && !game.isDir)
@@ -544,11 +544,11 @@ function($scope, $window, GameService, ThemeService, util)
          style['text-decoration'] = 'line-through';
       }
 
-      if (gl.horizontalmargin &&
-          gl.horizontalmargin > 0)
+      if (gl.horizontalMargin &&
+          gl.horizontalMargin > 0)
       {
          style['box-sizing'] = 'border-box';
-         //style['padding'] = '0 ' + (100 * gl.horizontalmargin) + '%';
+         //style['padding'] = '0 ' + (100 * gl.horizontalMargin) + '%';
       }
 
       if (game && game.selected)
@@ -564,15 +564,15 @@ function($scope, $window, GameService, ThemeService, util)
       if ($index == self.game_index )
       {
          // colour the current selected game bar
-         style.color = util.hex2rgba(gl.selectedcolor);
-         style['background-color'] = util.hex2rgba(gl.selectorcolor);
+         style.color = util.hex2rgba(gl.selectedColor);
+         style['background-color'] = util.hex2rgba(gl.selectorColor);
          if(game != self.game)
             self.setGame();
       }
       // Directory - theme secondary gamelist colour
       else if (game.isDir)
       {
-         style.color = '#' + gl.secondarycolor;
+         style.color = util.hex2rgba(gl.secondaryColor);
       }
       // selected game
       else if (game.selected)
@@ -583,8 +583,8 @@ function($scope, $window, GameService, ThemeService, util)
       // normal unselected non current game
       else
       {
-         style.color = '#' + gl.primarycolor;
-         style['background-color'] = '';
+         style.color = util.hex2rgba(gl.primaryColor);
+         delete style['background-color'];
       }
 
       return style;

@@ -213,10 +213,13 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       {
          if (self.systems[system_name].has_image)
          {
-//console.log(ThemeService.system);
+            // has video view and either gamelist has video or
+            // show snapshot when no video is true
             if (ThemeService.system.view &&
-                ThemeService.system.view.video &&
-                 self.systems[system_name].has_video)
+                ThemeService.system.view.video
+                && (self.systems[system_name].has_video ||
+            ThemeService.system.view.video.showSnapshotNoVideo == 'true')
+               )
             {
                view_name = 'video';
             }
@@ -751,7 +754,8 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
    self.applyFieldsShown = function()
    {
       var gl = ThemeService.gamelist;
-      var stretch = !ThemeService.dontstretch[config.app.ThemeSet];
+      var stretch = !(config.themes[config.app.ThemeSet] &&
+                      config.themes[config.app.ThemeSet].gamelistFixedWidth);
 
       if (!gl) return;
 
@@ -792,17 +796,17 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       var gl_width;
       if (stretch)
       {
-         fontsize = gl.fontsize / ( 1 + extra_width);
+         fontsize = gl.fontSize / ( 1 + extra_width);
          gl_width = width / (1 + extra_width);
       }
       else {
-         fontsize = gl.fontsize * gl.size.w / ( gl.size.w + extra_width);
+         fontsize = gl.fontSize * gl.size.w / ( gl.size.w + extra_width);
          gl_width = width * gl.size.w / ( gl.size.w + extra_width);
       }
       delete gl.div['font-size'];
 
-      // linespacing default 1.5, so 1.5 * font size = line size
-      gl.linesize = fontsize + gl.linespacing/100;
+      // lineSpacing default 1.5, so 1.5 * font size = line size
+      gl.linesize = fontsize + gl.lineSpacing/100;
 
       // more rows with smaller font ?
       gl.rows = gl.size.h / gl.linesize  - self.header;
@@ -827,7 +831,7 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
       self.headerstyle['line-height'] = '135%';
       delete self.headerstyle['height'];
       delete self.headerstyle['max-height'];
-      self.headerstyle.color = '#' + gl.secondarycolor;
+      self.headerstyle.color = util.hex2rgba(gl.secondaryColor);
       self.headerstyle['background-color'] = 'rgba(0,0,0,0.2)';
 
       if (stretch)
@@ -848,9 +852,9 @@ function($http, $httpParamSerializer, $q, ThemeService, util, config, $timeout, 
          var lmargin = parseFloat(0.005);
          var rmargin = parseFloat(0.005);
 
-         if (f.name == 'name' && gl.horizontalmargin>0)
+         if (f.name == 'name' && gl.horizontalMargin>0)
          {
-            lmargin = parseFloat(gl.horizontalmargin);
+            lmargin = parseFloat(gl.horizontalMargin);
          }
          //lmargin = rmargin = 0;
          x += lmargin;

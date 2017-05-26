@@ -13,4 +13,5 @@
   define("ENV", 2);
   define("LANG", 4);
   define("ES", 8);
+  define("THEMES", 16);
 ?>

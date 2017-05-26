@@ -11,7 +11,8 @@ angular.module('WebtroPie.config_service', [])
    self.ENV = 2;   // environmental info
    self.LANG = 4;  // current language
    self.ES = 8;    // emulationstation settings
-   self.ALL = 15;
+   self.THEMES = 16;    // theme tweaks
+   self.ALL = 255;
 
    self.menu = {};
    self.menu.main = [
@@ -95,6 +96,7 @@ angular.module('WebtroPie.config_service', [])
          if (get & self.ENV) self.env = response.data.env;
          if (get & self.LANG) self.lang = response.data.lang;
          if (get & self.ES) self.es = response.data.es;
+         if (get & self.THEMES) self.themes = response.data.themes.theme;
          deferred.resolve();
       });
 
@@ -134,10 +136,5 @@ angular.module('WebtroPie.config_service', [])
                  .replace(/mi/i,   text.substring(11,13)) 
                  .replace(/ss/i,   text.substring(13,15));
    }
-/*
-   self.hasAdvancedUpload = function() {
-        var div = document.createElement('div');
-          return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-   }
-*/
+
 });

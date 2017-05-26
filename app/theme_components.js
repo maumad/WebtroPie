@@ -20,26 +20,6 @@ angular.module('WebtroPie.theme_components', [])
       }
    };
 })
-// makes a silhouette of all foreground including icons, background is helpbar foreground color
-// mouseover inverts colors
-/*
-                  // invert foreground - background svg filter
-                  '<svg class="ng-hide" xmlns="http://www.w3.org/2000/svg" version="1.1">'+
-                    '<defs>'+
-                       '<filter id="helpinv">'+
-                          // alpha is reversed
-                          // foreground (multicolor) becomes transparent
-                          // background (transparent) becomes textcolor
-                          '<feColorMatrix in="SourceGraphic" mode="matrix" values="'+
-                            '0 0 0 -1 {{textcolor_r}} '+
-                            '0 0 0 -1 {{textcolor_g}} '+
-                            '0 0 0 -1 {{textcolor_b}} '+
-                            '0 0 0 -1 1" />'+
-                       '</filter>'+
-                     '</defs>'+
-                  '</svg>'+
- //'<div class="filters click" ng-style="hover?{filter: url("../#helpinv")}:{}">'+
-*/
 .directive('helpInverter', function() {
    return {
       restrict: 'EA', replace: true, transclude: true, scope: {},
@@ -401,7 +381,7 @@ angular.module('WebtroPie.theme_components', [])
                {
                   $scope.video_url = $scope.obj.fulldefault;
                }
-               else if ($scope.obj.showsnapshotnovideo == 'true' && $scope.game.image)
+               else if ($scope.obj.showSnapshotNoVideo == 'true' && $scope.game.image)
                {
                   $scope.video_url = '';
                   if (!$scope.game.image_url)

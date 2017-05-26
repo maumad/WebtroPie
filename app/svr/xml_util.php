@@ -23,13 +23,13 @@ function xmlobj_to_array($xmlobj)
 
    foreach ($xmlobj->children() as $xmlchild)
    {
-      $type = strtolower($xmlchild->getName());
+      $type = $xmlchild->getName();
       if ($type=='bool')
       {
          $arr[$xmlchild['name']->__toString()] = ($xmlchild['value']->__toString() == 'true');
          continue;
       }
-      elseif ($type=='int' || $type=='string')
+      elseif ($type=='int' || $type=='float' || $type=='string')
       {
          $arr[$xmlchild['name']->__toString()] = $xmlchild['value']->__toString();
          continue;

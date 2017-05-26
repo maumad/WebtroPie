@@ -25,30 +25,6 @@ angular.module('WebtroPie.theme_service', [])
    self.fontfamilies = {};
    self.audio = {};
 
-   self.dontstretch = {
-      'Comic-Book': 1,
-      'crt': 1,
-      'eudora': 1,
-      'eudora-bigshot': 1,
-      'flat': 1,
-      'flat-dark': 1,
-      'fundamental': 1,
-      'futura-10px': 1,
-      'futura-10px-dark': 1,
-      'indent': 1,
-      'io': 1,
-      'luminous': 1,
-      'metapixel': 1,
-      'new-mini': 1,
-      'oldroom 720p': 1,
-      'oldroom 1080p': 1,
-      'pixel': 1,
-      'simpler-turtlepi': 1,
-      'spare': 1,
-      'turtle-pi': 1,
-      'workbench': 1
-   }
-
    // load up (current) theme from memory otherwise from server
    self.themeInit = function(system_name, view_name)
    {
@@ -106,8 +82,8 @@ angular.module('WebtroPie.theme_service', [])
 
       if (help)
       {
-         if (help.textcolor) self.helpTextColor = help.textcolor;
-         if (help.iconcolor) self.helpIconColor = help.iconcolor;
+         if (help.textColor) self.helpTextColor = help.textColor;
+         if (help.iconColor) self.helpIconColor = help.iconColor;
          if (help.pos)
          {
             // If theme hides the helpbar, show at bottom middle
@@ -131,6 +107,7 @@ angular.module('WebtroPie.theme_service', [])
       self.helpMenuOptionClasses = 'dropdown-options';
       self.helpMenuOptionClasses += ' ' + (util.isLight(self.helpTextColor) ? 'dark':'light');
       self.helpMenuOptionClasses += ' ' + (pos.y < 0.5 ? 'down':'up');
+      self.helpMenuOptionClasses += ' ' + (pos.x < 0.3 ? '':'right');
 
       if (util.isLight(self.helpTextColor))
       {
@@ -143,7 +120,6 @@ angular.module('WebtroPie.theme_service', [])
 
       self.helpTextColorBorder.color = '#'+self.helpTextColor.substring(0,6);
       self.helpTextColorBorder.border = '1px solid #'+self.helpTextColor.substring(0,6);
-//console.log(help);
    }
 
    self.setHelpStyle();
@@ -338,13 +314,13 @@ angular.module('WebtroPie.theme_service', [])
       {
         angular.forEach(view[type], function(text)
         {
-           if (text.name && text.fontpath)
+           if (text.name && text.fontPath)
            {
-              if (text.fontpath.substr(0,2) == './')
+              if (text.fontPath.substr(0,2) == './')
               {
-                 text.fontpath = text.fontpath.slice(2);
+                 text.fontPath = text.fontPath.slice(2);
               }
-              text.fullpath = path+'/'+text.fontpath;
+              text.fullpath = path+'/'+text.fontPath;
               text.fullpath = text.fullpath
                                   .replace(/[^\/]*\/\.\.\//g, '');  // replace parent/../ with ''
               text.fontfamily = text.fullpath
@@ -353,7 +329,7 @@ angular.module('WebtroPie.theme_service', [])
                                   .substring(11);
               self.loadFontFamily(text);
               delete text.fullpath;
-              delete text.fontpath;
+              delete text.fontPath;
            }
         });
       });
@@ -387,9 +363,9 @@ angular.module('WebtroPie.theme_service', [])
          if (view.textlist)
          {
             angular.forEach(view.textlist, function(textlist) {
-               if (textlist.scrollsound)
+               if (textlist.scrollSound)
                   textlist.scrollsoundaudio_id =
-                      self.getAudioId(textlist.scrollsound, path);
+                      self.getAudioId(textlist.scrollSound, path);
             });
          }
          if (view.sound)
@@ -478,7 +454,7 @@ angular.module('WebtroPie.theme_service', [])
          object[field] = object[field].slice(2);
       }
 
-      object.type = object[field].slice(-3).toLowerCase(); // extension
+      object.type = object[field].slice(-3); // extension
       object['full'+field] = path+'/'+object[field]; // create full path
 
       // simplify parent/../ to ''  (twice) (.. doesn't play nice in url!)
@@ -517,13 +493,13 @@ angular.module('WebtroPie.theme_service', [])
          // expand paths of rating star images if themed
          if (view.rating && view.rating.md_rating)
          {
-            if (view.rating.md_rating.unfilledpath)
+            if (view.rating.md_rating.unfilledPath)
             {
-               self.fullpath(view.rating.md_rating, 'unfilledpath', path);
+               self.fullpath(view.rating.md_rating, 'unfilledPath', path);
             }
-            if (view.rating.md_rating.filledpath)
+            if (view.rating.md_rating.filledPath)
             {
-               self.fullpath(view.rating.md_rating, 'filledpath', path);
+               self.fullpath(view.rating.md_rating, 'filledPath', path);
             }
          }
       });
@@ -560,7 +536,7 @@ angular.module('WebtroPie.theme_service', [])
          return;
       }
 /*
-      var size = obj.size || obj.maxsize;
+      var size = obj.size || obj.maxSize;
       if(!size || size.w==1 || !size.h)
       {
          return;
@@ -596,11 +572,11 @@ angular.module('WebtroPie.theme_service', [])
               ? self.xReposition(obj.pos.x + obj.size.w, insert_x, width) - x  // move/scale
               : obj.size.w;  // reset back to normal
       }
-      else if (obj.maxsize)
+      else if (obj.maxSize)
       {
          w = width
-              ? self.xReposition(obj.pos.x + obj.maxsize.w, insert_x, width) - x  // move/scale
-              : obj.maxsize.w;  // reset back to normal
+              ? self.xReposition(obj.pos.x + obj.maxSize.w, insert_x, width) - x  // move/scale
+              : obj.maxSize.w;  // reset back to normal
       }
 
       // apply size change to style
@@ -707,17 +683,23 @@ angular.module('WebtroPie.theme_service', [])
 
       text.div = {};
 
+      if ( config.themes[config.app.ThemeSet] &&
+           config.themes[config.app.ThemeSet].textMarginTop)
+      {
+         text.div['margin-top'] = config.themes[config.app.ThemeSet].textMarginTop+'vh';
+      }
+
       if (text.name == "help")
       {
-         if (!text.textcolor)
+         if (!text.textColor)
          {
-            text.textcolor = '777777';
+            text.textColor = '777777';
          }
-         if (!text.iconcolor)
+         if (!text.iconColor)
          {
-            text.iconcolor = '777777';
+            text.iconColor = '777777';
          }
-         text.div.color = '#'+text.textcolor.substring(0,6);
+         text.div.color = '#'+text.textColor.substring(0,6);
       }
       else if (!text.pos)
       {
@@ -754,9 +736,9 @@ angular.module('WebtroPie.theme_service', [])
          text.div.top = util.pct(text.pos.y,'vh');
       }
 
-      if (text.fontsize)
+      if (text.fontSize)
       {
-         text.fontsize = util.round(text.fontsize,6);
+         text.fontSize = util.round(text.fontSize,6);
       }
 
       // default size for helpsystembar
@@ -765,8 +747,8 @@ angular.module('WebtroPie.theme_service', [])
          text.size = {w: text.pos
                          ? 1 - text.pos.x  // to right edge
                          : 1,              // full width
-                      h: text.fontsize
-                         ? text.fontsize + 0.01  // padding 
+                      h: text.fontSize
+                         ? text.fontSize + 0.01  // padding 
                          : 0.045};
       }
       else if (text.size)
@@ -783,25 +765,17 @@ angular.module('WebtroPie.theme_service', [])
 
       if (text.size)
       {
-/* TODO: fix for famicom-mini */
-         if (text.fontsize)
+         if (text.fontSize)
          {
-            if (text.size.h < text.fontsize)
+            if (text.size.h < text.fontSize)
             {
-               text.size.h = text.fontsize;
+               text.size.h = text.fontSize;
             }
          }
-/*
-         else
+         if (!text.fontSize)
          {
-            //text.fontsize = text.size.h;
-            text.fontsize = 0.035;
+            text.fontSize = 0.035;
          }
-         if (!text.fontsize)
-         {
-            text.fontsize = 0.035;
-         }
-*/
 
          if (text.size.w && !text.size.h)  // wrap, expand h dynamically
          {
@@ -827,27 +801,27 @@ angular.module('WebtroPie.theme_service', [])
          {
             text.div.width = util.pct(text.size.w,'vw');
             text.div.height = util.pct(text.size.h,'vh');
-            if (text.size.h >= text.fontsize * 2)  // h can fit two lines
+            if (text.size.h >= text.fontSize * 2)  // h can fit two lines
             {
                text.multiline = true;
             }
          }
       }
 
-      if (!text.linespacing)
+      if (!text.lineSpacing)
       {
-         text.linespacing = 1.3;
+         text.lineSpacing = 1.3;
       }
-      text.linespacing = util.round(text.linespacing * 1.1 ,4);
-      //text.linespacing = util.round(text.linespacing ,4);
+      text.lineSpacing = util.round(text.lineSpacing * 1.1 ,4);
+      //text.lineSpacing = util.round(text.lineSpacing ,4);
 
-      if (text.fontsize)
+      if (text.fontSize)
       {
-         text.div['font-size'] = util.pct(text.fontsize,'vh');
+         text.div['font-size'] = util.pct(text.fontSize,'vh');
          if (text.size)
          {
             text.rows = Math.floor(text.size.h /
-                                  (text.fontsize + text.linespacing/100));
+                                  (text.fontSize + text.lineSpacing/100));
             if (!text.rows)
                text.rows=1;
          }
@@ -855,27 +829,16 @@ angular.module('WebtroPie.theme_service', [])
          {
             text.rows = 1;
          }
-         if (text.rows>1 && text.linespacing)
+         if (text.rows>1 && text.lineSpacing)
          {
-/*
-            // minimum linespace for multiline
-            if (text.linespacing <= 1.3)
-            {
-               text.linespacing = 1.3;
-               text.rows = Math.floor(text.size.h /
-                                     (text.fontsize * text.linespacing));
-            }
-*/
             if (text.name != 'gamelist')
             {
-               text.div['line-height'] = text.linespacing;
+               text.div['line-height'] = text.lineSpacing;
             }
          }
-         //else if (text.size && text.size.h && text.rows==1)
          else if (text.size && text.size.h)
          {
-            //text.div['line-height'] = text.size.h / (text.fontsize + text.linespacing/100);
-            text.div['line-height'] = text.size.h / ( text.rows * text.fontsize);
+            text.div['line-height'] = text.size.h / ( text.rows * text.fontSize);
          }
          else
          {
@@ -884,16 +847,16 @@ angular.module('WebtroPie.theme_service', [])
 
          if (text.size && text.size.h)
          {
-            if (text.size.h < text.fontsize)
+            if (text.size.h < text.fontSize)
             {
-               text.size.h = text.fontsize;
+               text.size.h = text.fontSize;
                text.div.height = util.pct(text.size.h,'vh');
             }
          }
       }
       else if (text.multiline)
       {
-         text.div['line-height'] = text.linespacing;
+         text.div['line-height'] = text.lineSpacing;
       }
       else
       {
@@ -902,7 +865,12 @@ angular.module('WebtroPie.theme_service', [])
 
       if (text.color)
       {
-         text.div.color = '#'+text.color;
+         text.div['color'] = util.hex2rgba(text.color);
+      }
+
+      if (text.backgroundColor)
+      {
+         text.div['background-color'] = util.hex2rgba(text.backgroundColor);
       }
 
       if (text.fontfamily)
@@ -910,13 +878,10 @@ angular.module('WebtroPie.theme_service', [])
          text.div['font-family'] = text.fontfamily;
       }
 
-      if (parseInt(text.forceuppercase))
+      if (parseInt(text.forceUppercase))
       {
          text.div['text-transform'] = 'uppercase';
       }
-
-      //if(text.horizontalmargin)
-         //text.div['padding-left'] = util.pct(text.horizontalmargin,'%');
 
       if (text.alignment)
       {
@@ -977,18 +942,19 @@ angular.module('WebtroPie.theme_service', [])
                style.width = (100*rating.size.w)+'vh';
             }
          }
-         if (rating.fullunfilledpath)
+         if (rating.fullunfilledPath)
          {
-            style['background-image'] = 'url("' + rating.fullunfilledpath + '")';
+            style['background-image'] = 'url("' + rating.fullunfilledPath + '")';
          }
-         if (rating.fullfilledpath)
+         if (rating.fullfilledPath)
          {
             // make the stars gold, hopefully not annoy theme designers
             stars['background-image'] = 'url("svr/color_img.php?file='+ // make it gold
-                    rating.fullfilledpath.substring(4) + '&color=FFD400")';
+                    rating.fullfilledPath.substring(4) + '&color=FFD400")';
             // original colour would be :-
-            //stars['background-image'] = 'url("' + rating.fullfilledpath + '")';
+            //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
          }
+         style['z-index'] = rating.zIndex || 10;
       }
       self.calcObjBounds(rating);
       rating.div = style;
@@ -1002,7 +968,7 @@ angular.module('WebtroPie.theme_service', [])
       {
          return;
       }
-      var size = obj.size || obj.maxsize;
+      var size = obj.size || obj.maxSize;
       if(!size || size.w==1 || !size.h)
       {
          return;
@@ -1035,7 +1001,10 @@ angular.module('WebtroPie.theme_service', [])
          carousel.pos = self.denormalize('pos',carousel.pos);
          style.left = util.pct(carousel.pos.x,'vw');
          style.top = util.pct(carousel.pos.y,'vh');
-         logo.div.top = util.pct(carousel.pos.y+16,'vh');
+         if (logo.div)
+         {
+            logo.div.top = util.pct(carousel.pos.y+16,'vh');
+         }
       }
       if (carousel.size)
       {
@@ -1049,13 +1018,12 @@ angular.module('WebtroPie.theme_service', [])
             style.height = util.pct(carousel.size.h,'vh');
          }
       }
-      if (carousel.logosize)
+      if (carousel.logoSize)
       {
-         carousel.logosize = self.denormalize('size',carousel.logosize);
+         carousel.logoSize = self.denormalize('size',carousel.logoSize);
       }
       if (carousel.color)
       {
-         //style['background-color'] = util.hex2rgba(carousel.color);
             var hsl = util.rgbToHSL(carousel.color);
 
             if(//hsl.h == 0 && hsl.s == 0 &&
@@ -1092,7 +1060,7 @@ angular.module('WebtroPie.theme_service', [])
 
       var style = {};
 
-      if (video.showsnapshotnovideo == 'true') {
+      if (video.showSnapshotNoVideo == 'true') {
          style['background-size'] = 'contain';
          style['background-repeat'] = 'no-repeat';
       }
@@ -1127,16 +1095,16 @@ angular.module('WebtroPie.theme_service', [])
             style.height = util.pct(video.size.h,'vh');
          }
       }
-      if (video.maxsize)
+      if (video.maxSize)
       {
-         video.maxsize = self.denormalize('size',video.maxsize);
-         if (video.maxsize.w)
+         video.maxSize = self.denormalize('size',video.maxSize);
+         if (video.maxSize.w)
          {
-            style['max-width'] = util.pct(video.maxsize.w,'vw');
+            style['max-width'] = util.pct(video.maxSize.w,'vw');
          }
-         if (video.maxsize.h)
+         if (video.maxSize.h)
          {
-            style['max-height'] = util.pct(video.maxsize.h,'vh');
+            style['max-height'] = util.pct(video.maxSize.h,'vh');
          }
       }
       var bp_h = 'center';
@@ -1160,19 +1128,13 @@ angular.module('WebtroPie.theme_service', [])
             bp_v = 'bottom';
          }
       }
-/*
-      style.width = style['max-width'];
-      style.height = style['max-height'];
-      delete style['max-width'];
-      delete style['max-height'];
-*/
+
       style['background-position'] = bp_h + ' ' + bp_v;
 
       self.calcObjBounds(video);
 
       style['position'] = 'absolute';
-      //style['z-index'] = 7;
-      style['z-index'] = 10;
+      style['z-index'] = video.zIndex || 10;
 
       video.div = style;
    }
@@ -1190,8 +1152,9 @@ angular.module('WebtroPie.theme_service', [])
       style['position'] = 'absolute';
 
       // flag if image fills screen
-      if ( (image.pos=='0 0' && image.size=='1 1') ||
-          (!image.pos && !image.size) )
+      if ( (image.pos=='0 0' && image.size=='1 1')
+         //|| (!image.pos && !image.size && !image.maxSize)
+         )
       {
          image.fullscreen = true;
          image.pos = '0 0';
@@ -1229,6 +1192,7 @@ angular.module('WebtroPie.theme_service', [])
             }
             else
             {
+console.log('2 full '+image.name+'['+image.pos+']['+image.size+']['+image.maxSize+']');
                image.index = 0;
             }
          }
@@ -1266,16 +1230,16 @@ angular.module('WebtroPie.theme_service', [])
          }
       }
 
-      if (image.maxsize)
+      if (image.maxSize)
       {
-         image.maxsize = self.denormalize('size',image.maxsize);
-         if (image.maxsize.w)
+         image.maxSize = self.denormalize('size',image.maxSize);
+         if (image.maxSize.w)
          {
-            style['max-width'] = util.pct(image.maxsize.w,'vw');
+            style['max-width'] = util.pct(image.maxSize.w,'vw');
          }
-         if (image.maxsize.h)
+         if (image.maxSize.h)
          {
-            style['max-height'] = util.pct(image.maxsize.h,'vh');
+            style['max-height'] = util.pct(image.maxSize.h,'vh');
          }
          //if (!image.size && image.name=='md_image')
          //{
@@ -1350,8 +1314,8 @@ angular.module('WebtroPie.theme_service', [])
          {
             style['background-image'] = 'url("'+image.fullpath+'")';
             style['background-size'] = '100% 100%';
-            style.width = '100%';
-            style.height = '100%';
+            style.width = '100vw';
+            style.height = '100vh';
          }
          // stretch/shrink FIT keeping aspect ratio (uses background-size: contain)
          else if (style['max-width'] && style['max-height'] && image.right <= 1)
@@ -1413,8 +1377,9 @@ angular.module('WebtroPie.theme_service', [])
          style['background-color'] = util.hex2rgba(image.color);
       }
 
-      // not sure if this works for everything
-      style['z-index'] = image.index; // + (image.extra ? 0 : 10); // non extra over extra
+      // Either use new zIndex property or calculated
+      style['z-index'] = image.zIndex || image.index+5;
+//console.log('2 full '+image.name+']['+image.zIndex+']');
 
       // no longer needed
       delete image.path;
