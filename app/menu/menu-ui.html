@@ -1,0 +1,69 @@
+<div class="menu gui">
+
+  <div class="header"> UI SETTINGS </div>
+  <div class="line"></div>
+
+  <div class="option"
+       ng-class="{hover: app.config.hover == 1}"
+       ng-mouseover="app.config.hover = 1"
+       ng-mouseout="app.config.hover = null">
+    THEME SET
+     <select class="right"
+             ng-model="app.config.app.ThemeSet"
+             ng-change="app.themeChanged()"
+             ng-keydown="app.menuKeyPress($event)"
+             ng-options="theme.name as theme.name for theme in app.ThemeService.themes | orderObjectBy:'name':false">
+     </select>
+  </div>
+  <div class="line"></div>
+
+  <div class="option"
+       ng-class="{hover: app.config.hover == 4}"
+       ng-mouseover="app.config.hover = 4"
+       ng-mouseout="app.config.hover = null">
+    VIEW TRANSITIONS
+     <select class="right"
+             ng-init="transitions = ['Fade','Slide']"
+             ng-change="app.viewTransitionChanged()"
+             ng-model="app.config.app.ViewTransitions"
+             ng-keydown="app.menuKeyPress($event)"
+             ng-options="transition for transition in transitions">
+        <option value="">None</option>
+     </select>
+  </div>
+
+  <div class="line"></div>
+ <span ng-if="!app.config.env.read_only">
+  <div class="option"
+       ng-class="{hover: app.config.hover == 2}"
+       ng-mouseover="app.config.hover = 2"
+       ng-mouseout="app.config.hover = null">
+    LANGUAGE
+     <select class="right"
+             ng-model="app.config.app.Language"
+             ng-change="app.languageChanged()"
+             ng-keydown="app.menuKeyPress($event)"
+             ng-options="key as value for (key, value) in app.config.lang.languages">
+     </select>
+  </div>
+  <div class="line"></div>
+
+  <div class="option"
+       ng-class="{hover: app.config.hover == 3}"
+       ng-mouseover="app.config.hover = 3"
+       ng-mouseout="app.config.hover = null">
+    DATE FORMAT
+     <input class="right"
+            ng-model="app.config.app.DateFormat"
+            ng-keydown="app.menuKeyPress($event)"
+            ng-blur="app.dateFormatChanged()">
+  </div>
+  <div class="line"></div>
+
+ </span>
+
+  <div class="footer">
+     <button ng-click="app.exitMenu()">BACK</button>
+  </div>
+
+</div>

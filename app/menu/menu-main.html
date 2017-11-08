@@ -1,0 +1,26 @@
+<div class="menu gui">
+
+  <div class="header"> MAIN MENU </div>
+  <div class="line"></div>
+
+  <div class="option"
+       ng-class="{hover: app.config.hover == option}"
+       ng-repeat-start="option in app.menu.main"
+       ng-click="app.goMenu(option.action)"
+       ng-mouseover="app.config.hover = option"
+       ng-mouseout="app.config.hover = null">
+    {{option.text}}
+    <img class="icon right" 
+      ng-src="svr/{{
+           app.config.hover == option
+           ? 'color_img.php?file=resources/arrow.svg&color=DDDDDD'
+           : 'resources/arrow.svg'}}">
+  </div>
+  <div class="line"
+       ng-repeat-end></div>
+
+  <div class="footer">
+     <button ng-click="app.hideMenu()">CANCEL</button>
+  </div>
+
+</div>
