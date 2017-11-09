@@ -467,8 +467,7 @@
             self.getting = themename;
 
             // return previously fully fetched theme
-            if (self.themes &&
-                self.themes[themename] &&
+            if (self.themes[themename] &&
                 self.themes[themename].path)
             {
                 self.setThemeSystemView(self.themes[themename], system_name, view_name);
@@ -485,13 +484,51 @@
             })
             .then(function onSuccess(response)
             {
-                decodeTheme(response.data);
-
-                self.setThemeSystemView(self.theme, system_name, view_name);
-
-                deferred.resolve(self.theme);
                 self.getting = false;
-                delete self.theme_promise;
+
+                if (response.data.name)
+                {
+                    decodeTheme(response.data);
+
+                    self.setThemeSystemView(self.theme, system_name, view_name);
+
+                    deferred.resolve(self.theme);
+                    delete self.theme_promise;
+                }
+                else if(self.theme)     // stay with current theme if loaded
+                {
+                    console.log('Error: loading theme');
+                    console.log(response.data);
+                }
+                else                    // otherwise load carbon
+                {
+                    console.log('Error: loading theme');
+                    console.log(response.data);
+                    console.log('reverting to carbon');
+
+                    if (self.themes['carbon'] &&
+                        self.themes['carbon'].path)
+                    {
+                        self.setThemeSystemView(self.themes['carbon'], system_name, view_name);
+                        deferred.resolve(self.themes['carbon']);
+                    }
+                    else
+                    {
+                        $http.get('svr/theme.php', {
+                        cache: false,
+                        params: { theme: 'carbon', scan: scan }
+                        })
+                        .then(function onSuccess(response)
+                        {
+                            decodeTheme(response.data);
+
+                            self.setThemeSystemView(self.theme, system_name, view_name);
+
+                            deferred.resolve(self.theme);
+                            delete self.theme_promise;
+                        });
+                    }
+                }
             });
 
             return deferred.promise;
@@ -547,7 +584,6 @@
                     return;
                 }
             }
-            //target_obj[prop] = value;
         }
 
         // recurse whole target object and merge every value
@@ -681,23 +717,18 @@
         function setSystemByName(system_name, view_name, nocheck)
         {
             var system = self.getSystemTheme(system_name);
-//console.log('system name = ' + system_name);
-//console.log(system)
             //console.log('set system by name : sys = ' + system_name + ' : view = '+ view_name)
-            //if (!self.theme.systems || !self.theme.systems[system_name])
             if (!system)
             {
                 return;
             }
 
-            //if (!self.theme.systems[system_name].view[view_name] ||
             if (!system.view[view_name] ||
                 !view_name)
             {
-                //if (self.theme.systems[system_name].view.detailed)
+
                 if (system.view.detailed)
                     view_name = 'detailed';
-                //else if (self.theme.systems[system_name].view.video)
                 else if (system.view.video)
                     view_name = 'video';
                 else
@@ -705,7 +736,6 @@
             }
 
             if (!nocheck &&
-                //self.system && self.system.name == system_name &&
                 self.system && self.system == system &&
                 ((self.view && self.view.name == view_name) ||
                     (!self.view && !view_name)))
@@ -713,14 +743,12 @@
                 return; // already set
             }
 
-            //self.setSystem(system_name, view_name);
             self.setSystem(system.name, view_name);
         }
 
         // set the global current theme
         function setThemeSystemView(theme, system_name, view_name)
         {
-            //console.log('setThemeSystemView system = ' + system_name + ' view = ' + view_name)
             self.theme = theme;
 
             createCarouselSystems();
@@ -754,7 +782,6 @@
         // load up (current) theme from memory otherwise from server
         function themeInit(system_name, view_name, scan)
         {
-            //console.log('themeInit view = ' + view_name)
             return self.getTheme(config.app.ThemeSet, system_name, view_name, scan);
         }
 

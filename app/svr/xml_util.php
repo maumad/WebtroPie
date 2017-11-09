@@ -142,8 +142,8 @@ function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
 function simplexml_load_file_strip_comments($filename)
 {
 try {
-   //return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
-   return new SimpleXMLElement(strip_comments(file_get_contents($filename)));
+   return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
+   //return new SimpleXMLElement(strip_comments(file_get_contents($filename)));
 } catch (Exception $e) {
    echo $filename, "\nCaught exception: ",  $e->getMessage(), "\n";
    exit;

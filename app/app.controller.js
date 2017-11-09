@@ -179,11 +179,16 @@
             {
                 hideMenu();
             }
-            config.save('ThemeSet', config.app.ThemeSet, 'string', config.APP);
 
             ThemeService.getTheme(config.app.ThemeSet, ThemeService.system.name, ThemeService.view.name)
             .then(function()
             {
+                // only save if it actually worked
+                if (config.app.ThemeSet == ThemeService.theme.name)
+                {
+                    config.save('ThemeSet', config.app.ThemeSet, 'string', config.APP);
+                }
+
                 // choose best view
                 GameService.checkSystemTheme(ThemeService.system.name, true);
                 util.defaultFocus();
