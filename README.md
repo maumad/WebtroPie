@@ -2,7 +2,8 @@
 
 WebtroPie is a ROM Manager specifically for RetroPie
 
-* [video](https://www.youtube.com/watch?v=d1ovSZqve44)
+* [quick video, showing IE glitches](https://www.youtube.com/watch?v=LkteuV7x0R0&t=4s)
+* [early WIP very long video](https://www.youtube.com/watch?v=d1ovSZqve44)
 * [forum link](https://retropie.org.uk/forum/topic/10164/web-app-wip-please-give-it-a-name/18)
 
 
