@@ -1,4 +1,4 @@
-# WebtroPie WIP 0.1.0
+# WebtroPie WIP 0.2.2
 
 WebtroPie is a ROM Manager specifically for RetroPie
 

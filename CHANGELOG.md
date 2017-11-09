@@ -1,4 +1,7 @@
 <a name="0.2.2"></a>
+- handle themes containing unicode chars (2017-11-09)
+- better theme failure handling
+
 # 0.2.2 oxymoronic-fixed-variables (2017-11-03)
 - fix IE 11 images (not allowing content: url(...))
 - fix IE 11 font now allowing embed default font (many theme fonts may also fail to load in IE <=11)
