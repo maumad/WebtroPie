@@ -18,7 +18,7 @@ if ($_GET['get'] & ENV)
    $config['env'] = array();
    $config['env']['has_gd'] = extension_loaded('gd') ? 1 : 0;
    $config['env']['has_launch'] = file_exists("runcommand.sh") ? 1 : 0;
-   $config['env']['read_only'] = 0; //preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? 0 : 1;
+   $config['env']['read_only'] = preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? 0 : 1;
 }
 
 if ($_GET['get'] & LANG)

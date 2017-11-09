@@ -5,7 +5,7 @@ require_once("vars.php");
 
 $system='';
 
-$local_client = true; //preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? true : false;
+$local_client = preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? true : false;
 
 if (!$local_client)
    exit;
