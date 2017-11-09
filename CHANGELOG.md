@@ -1,4 +1,32 @@
+<a name="0.2.2"></a>
+# 0.2.2 oxymoronic-fixed-variables (2017-11-03)
+- fix IE 11 images (not allowing content: url(...))
+- fix IE 11 font now allowing embed default font (many theme fonts may also fail to load in IE <=11)
+- use default theme when available for systems with no theme
+- use value in es_systems.cfg for theme if different from system name
+- partial implementation of theme variables
 
+<a name="0.2.1"></a>
+# 0.2.1 collection-connections (2017-10-28)
+- **carousel** code restructure
+  - fix IE carousel flicker
+  - automatic collections: All Games, Favorites and Last Played
+
+<a name="0.2.0"></a>
+# 0.2.0 transition-revamp (2017-10-16)
+- gamelist selector/cursor icon (e.g. hand cursor in retrorama theme)
+- game description auto scroll
+- carousel: themed + vertical/horizontal scrolling transitions
+- carousel: background slide/fade transitions same as Windows build
+- app: **major Refactor/Restructure code** as per AngularJS style guide https://github.com/johnpapa/angular-styleguide/tree/master/a1 (2017-09)
+
+
+----
+
+<a name="0.1.1"></a>
+- gui: Menu/ui/View Transitions Setting: Fade and Scroll (2017-06-06)
+- themes: get font metrics for better text positioning (2017-05-28)
+- app: allow multiline text to scroll (2017-05-27)
 - themes: use zIndex if present (2017-05-25)
 - themes: use rgba in places where only rgb was being used (2017-05-25)
 - code: don't strtolower xml tags, expects exact case in xml but more readable code (2017-05-25)

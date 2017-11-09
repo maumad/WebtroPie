@@ -48,7 +48,7 @@ if( $extension == 'svg' ) {
       }
       else {
          $opacity=false;
-         if(preg_match('/(.*<(path|polygon|ellipse|circle|rect).*opacity=\")([^\"]*)(.*)/i', $line, $matches) && count($matches)==5) {
+         if(preg_match('/(.*<(path|polygon|ellipse|circle|rect).*opacity=[\"\'])([^\"\']*)(.*)/i', $line, $matches) && count($matches)==5) {
             if($mult) {
                $old_a = $matches[3];
                $a = $old_a*$rgba->a/255;
@@ -59,7 +59,7 @@ if( $extension == 'svg' ) {
             $line = $matches[1].$a.$matches[4]."\n";
             $opacity=true;
          }
-         elseif(preg_match('/(.*style=\".*;opacity:)([^;]*)(.*)/i', $line, $matches) && count($matches)==4) {
+         elseif(preg_match('/(.*style=[\"\'].*;opacity:)([^;]*)(.*)/i', $line, $matches) && count($matches)==4) {
             if($mult) {
                $old_a = $matches[2];
                $a = $old_a*$rgba->a/255;
@@ -71,7 +71,7 @@ if( $extension == 'svg' ) {
             $opacity=true;
          }
       }
-      if(preg_match('/(.*<(path|polygon|ellipse|circle|rect).*fill=\")([^\"]*)(.*)/i', $line, $matches) && count($matches)==5) {
+      if(preg_match('/(.*<(path|polygon|ellipse|circle|rect).*fill=[\"\'])([^\"\']*)(.*)/i', $line, $matches) && count($matches)==5) {
          if($mult) {
             $old_rgb = hex2rgba($matches[3]);
             $r = ($old_rgb->r/255)*($rgba->r/255); //*($rgba->a);
@@ -89,7 +89,7 @@ if( $extension == 'svg' ) {
          else
             echo $matches[1].$color."\" opacity=\"".($rgba->a/255).$matches[4]."\n";
       }
-      elseif(preg_match('/(.*style=\".*;fill:)([^;]*)(.*)/i', $line, $matches) && count($matches)==4) {
+      elseif(preg_match('/(.*style=[\"\'].*;fill:)([^;]*)(.*)/i', $line, $matches) && count($matches)==4) {
          if($mult) {
             $old_rgb = hex2rgba($matches[2]);
             $r = ($old_rgb->r/255)*($rgba->r/255); //*($rgba->a);

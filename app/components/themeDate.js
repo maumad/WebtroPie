@@ -10,68 +10,68 @@
  */
 (function() {
 
-   'use strict';
+    'use strict';
 
-   angular
-      .module('WebtroPie.components')
-      .directive('themeDate', themeDate);
+    angular
+        .module('WebtroPie.components')
+        .directive('themeDate', themeDate);
 
-   function themeDate() {
-      var directive = {
-         restrict: 'E',
-         replace: true,
-         scope: true,
-         template: '<div id="{{vm.obj.name}}" class="text"'+
-                      ' ng-style="vm.obj.div" '+
-                      ' ng-show="vm.obj.div || vm.blank"'+
-                      '<div ng-style="vm.obj.style">{{vm.date}}</div>'+
-                   '</div>',
-         controller: controller,
-         controllerAs: 'vm',
-         bindToController: { obj:'=', game:'=', format:'@', blank: '@' }
-      }
-      return directive;
-   }
+    function themeDate() {
+        var directive = {
+            restrict: 'E',
+            replace: true,
+            scope: true,
+            template: '<div id="{{vm.obj.name}}" class="text"'+
+                          ' ng-style="vm.obj.div" '+
+                          ' ng-show="vm.obj.div || vm.blank">'+
+                          '<div class="text_inner" ng-style="vm.obj.style">{{vm.date}}</div>'+
+                      '</div>',
+            controller: controller,
+            controllerAs: 'vm',
+            bindToController: { obj:'=', game:'=', format:'@', blank: '@' }
+        }
+        return directive;
+    }
 
-   controller.$inject = ['$scope','util','GameService'];
+    controller.$inject = ['$scope','util','GameService'];
 
-   function controller($scope, util, GameService)
-   {
-      var vm = this;
+    function controller($scope, util, GameService)
+    {
+        var vm = this;
 
-      vm.$onInit = onInit;
+        vm.$onInit = onInit;
 
-      function onInit()
-      {
-         //$scope.$watch(function() {return GameService.game}, gameChanged);
-         $scope.$watch('vm.game', gameChanged);
-      }
+        function onInit()
+        {
+            //$scope.$watch(function() {return GameService.game}, gameChanged);
+            $scope.$watch('vm.game', gameChanged);
+        }
 
-      function gameChanged()
-      {
-         var text = GameService.getGameMetadata(vm.game, vm.obj);
+        function gameChanged()
+        {
+            var text = GameService.getGameMetadata(vm.game, vm.obj);
 
-         if (!text)
-         {
-            vm.date = '';
-            if (vm.blank)
+            if (!text)
             {
-               vm.date = vm.blank;
+                vm.date = '';
+                if (vm.blank)
+                {
+                    vm.date = vm.blank;
+                }
+                else if (vm.obj.name == 'md_releasedate')
+                {
+                    vm.date = 'Unknown';
+                }
+                else if (vm.obj.name == 'md_lastplayed')
+                {
+                    vm.date = 'Never';
+                }
             }
-            else if (vm.obj.name == 'md_releasedate')
+            else
             {
-               vm.date = 'Unknown';
+                vm.date = util.formatDate(text, vm.format);
             }
-            else if (vm.obj.name == 'md_lastplayed')
-            {
-               vm.date = 'Never';
-            }
-         }
-         else
-         {
-            vm.date = util.formatDate(text, vm.format);
-         }
-      }
-   }
+        }
+    }
 
 })();

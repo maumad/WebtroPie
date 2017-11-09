@@ -1,70 +1,85 @@
-<div class=window_size>
-   <!-- all images for current theme + system's "system" view -->
-   <!-- theme-image ng-repeat="image in ThemeService.view.image" -->
-   <theme-image ng-repeat="image in ThemeService.system.view.system.image"
-           ng-hide="image.name=='logo'" obj="image"></theme-image>
+<div class=window_size >
+  <!-- all images for current theme + prev/current/next system's "system" view 
+  -->
+  <div ng-repeat="sysname in app.ThemeService.theme.carousel_systems_list"
+       id="sys-imgs-{{sysname}}"
+       ng-if="page.loaded || app.CarouselService.centerOffset($index) == 0"
+       ng-style="page.systembar.dragging?app.styler.carousel.backgrounds[app.CarouselService.centerOffset($index)+app.styler.carousel.hiIndex]:{}"
+       ng-class="'system_images'+app.CarouselService.centerOffset($index)+(page.loaded && page.animating?' systemtransition':'')"
+       >
+    <div class="system_images_inner">
+      <theme-image
+        ng-repeat="image in app.ThemeService.getSystemTheme(sysname).view.system.image"
+        ng-if="image.name!='logo'" obj="image">
+      </theme-image>
+    </div>
+  </div>
 
-   <!-- system logos -->
-   <logo ng-repeat="sys in ThemeService.theme.systems"
-          id="logo{{$index-mid_index}}"
-          obj="ThemeService.getThemeSystemByOffset($index-mid_index)" class="click"
-          ng-class="'systemlogo'+(sys_index+$index-mid_index)+
-                    (sys_index!=0?' systemtransition':'')"
-          ng-style="systembar['logostyle'+($index-mid_index)]"
-          ng-keydown="keyPress($event)"
-          ng-mousedown="mouseDown($event,$index-mid_index)"
-          ng-mousemove="mouseMove($event)"
-          ng-mouseup="mouseUp($event)"
-          ng-touchstart="mouseDown($event,$index-mid_index)"
-          ng-touchmove="mouseMove($event)"
-          ng-touchcancel="mouseUp($event)"
-          ng-touchend="mouseUp($event)"> </logo>
+<div ng-style="app.styler.carousel.div"
+     ng-mousedown="page.mouseDown($event)"
+     ng-mousemove="page.mouseMove($event)"
+     ng-mouseup="page.mouseUp($event)"
+     ng-mouseout="page.mouseOut($event)"
+     ng-touchstart="page.mouseDown($event)"
+     ng-touchmove="page.mouseMove($event)"
+     ng-touchcancel="page.mouseUp($event)"
+     ng-touchend="page.mouseUp($event)"
+     class="systemcarousel systemtransition">
+  <div ng-style="app.styler.carousel.div_inner">
+    <div ng-repeat="sysname in app.ThemeService.theme.carousel_systems_list"
+         id="sys-{{sysname}}"
+         ng-if="app.CarouselService.centerOffset($index) >= app.styler.carousel.loIndex &&
+                app.CarouselService.centerOffset($index) <= app.styler.carousel.hiIndex"
+         animation-end="page.carouselAnimationEnd"
+         ng-style="page.systembar.dragging?app.styler.carousel.logos[app.CarouselService.centerOffset($index)+app.styler.carousel.hiIndex]:{}"
+         ng-class="'logo'+app.CarouselService.centerOffset($index)+(!page.systembar.dragging?' systemtransition':'')"
+     ><logo id="logo{{app.CarouselService.centerOffset($index)}}"
+            class="click"
+            system-name="sysname"
+            fullname="app.config.systems[sysname].fullname"
+            ng-keydown="page.keyPress($event)"
+            ng-mousedown="page.mouseDown($event,sysname)"
+            ng-mousemove="page.mouseMove($event)"
+            ng-mouseup="page.mouseUp($event)"
+            ng-touchstart="page.mouseDown($event,sysname)"
+            ng-touchmove="page.mouseMove($event)"
+            ng-touchcancel="page.mouseUp($event)"
+            ng-touchend="page.mouseUp($event)"></logo
+   ></div>
+  </div>
+</div>
 
-   <!-- systems selection bar -->
-   <div class="systemsbar"
-          ng-style="ThemeService.view.carousel.systemcarousel.div"
-          ng-mousedown="mouseDown($event)"
-          ng-mousemove="mouseMove($event)"
-          ng-mouseup="mouseUp($event)"
-          ng-mouseout="mouseOut($event)"
-          ng-touchstart="mouseDown($event)"
-          ng-touchmove="mouseMove($event)"
-          ng-touchcancel="mouseUp($event)"
-          ng-touchend="mouseUp($event)">
-
-     <div class="logobar"> </div>
-     <div class="infobar">
-       <div class="systeminfo"
-         ng-repeat="sys in ThemeService.theme.systems"
-         ng-show="($index-mid_index)>=-1 && ($index-mid_index)<=1 &&
-                   GameService.systems[ThemeService.getThemeSystemByOffset($index-mid_index).name].total"
-         ng-style="systembar['infostyle'+($index-mid_index)]"
-         ng-class="'systeminfo'+(sys_index+$index-mid_index)+(sys_index!=0?' systemtransition':'')">
-         {{GameService.systems[ThemeService.getThemeSystemByOffset($index-mid_index).name].total}} GAMES AVAILABLE
-       </div>
-     </div>
-   </div>
+<div ng-if="app.styler.systemInfo.div"
+     ng-style="app.styler.systemInfo.div" class="text fade-in-out ng-hide"
+     ng-show="!page.animating && !page.systembar.dragging">
+  <div ng-style="app.styler.systemInfo.style" class="text_inner">
+    {{app.GameService.systems[app.CarouselService.getRelativeCarouselSystemTheme(0).name].total}}
+    GAMES AVAILABLE
+  </div>
+</div>
 
    <!-- help bar -->
-   <helpmenu list="helpmenu" obj="ThemeService.view.helpsystem.help" >
+   <help-menu ng-if="app.styler.help" list="page.helpmenu" obj="app.styler.help" >
 
       <span class="dropdown" 
-            ng-show="config.app.ShowThemeSelect"
-            ng-mouseover="config.themehover=true"
-            ng-mouseout="config.themehover=false" >
+            ng-show="app.config.app.ShowThemeSelect"
+            ng-mouseover="app.config.themehover=true"
+            ng-mouseout="app.config.themehover=false" >
          <div class="filters" help-inverter
-            ng-click="config.themehover=!config.themehover; util.defaultFocus()" > Theme </div>
-         <div ng-style="ThemeService.helpTextColorBorder"
-              ng-class="ThemeService.helpMenuOptionClasses+' '+(ThemeService.theme_count>19?'double':'')"
-              ng-show="config.themehover" >
+            ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" >
+            Theme
+         </div>
+         <div ng-style="app.styler.helpTextColorBorder"
+              ng-class="app.styler.helpMenuOptionClasses+' '+(app.config.themes_list.length>=40?'treble':(app.config.themes_list.length>=20?'double':''))"
+              ng-show="app.config.themehover" >
             <a help-inverter
-               ng-repeat="theme in ThemeService.themes | orderObjectBy:'name':false"
-               ng-click="themeChanged(theme.name)">
-               {{theme.name}}
-               <span ng-show="theme == ThemeService.theme">*</span>
+               ng-repeat="theme in app.config.themes_list | orderObjectBy:'name':false"
+               ng-click="app.themeChanged(theme.name)">
+               {{::theme.name}}
+               <span ng-show="theme.name == app.ThemeService.theme.name">*</span>
             </a>
          </div>
       </span>
 
-   </helpmenu>
+   </help-menu>
 </div>

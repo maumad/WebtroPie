@@ -1,10 +1,10 @@
 <?php
 error_reporting(E_ERROR);
 require_once("xml_util.php");
-require_once("config.php");
+require_once("vars.php");
 
 $system='';
-$local_client = preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? true : false;
+$local_client = true; //preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? true : false;
 
 // get a full list of games for a system
 if (isset($_GET['system']))
@@ -245,7 +245,7 @@ if ($getlist)
       print_r($response);
       exit;
    }
-   echo json_encode($response);
+   echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
 
 ?>

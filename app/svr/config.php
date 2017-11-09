@@ -1,17 +1,90 @@
 <?php
-  // server side config
-  define("HOME", "/home/pi"); // relative to this dir
-  //define("ROMSPATH", HOME."/RetroPie/roms/");
-  define("ROMSPATH", "roms/"); // relative to this dir
-  define("ES_PATH", "/etc/emulationstation");
-  // below are symlinked ..
-  define("HOME_ES", HOME."/.emulationstation"); // relative to this dir
-  define("ES_CONFIG_PATH", "/opt/retropie/configs/all/emulationstation");
-  // needed ?
-  define("DEFAULT_THEME", "carbon");
-  define("APP", 1);
-  define("ENV", 2);
-  define("LANG", 4);
-  define("ES", 8);
-  define("THEMES", 16);
+error_reporting(E_ERROR);
+require_once("xml_util.php");
+require_once("vars.php");
+
+$array_types = array();
+$index_types = array();
+
+$config = array();
+
+if ($_GET['get'] & APP)
+{
+   $config['app'] = load_file_xml_as_array('../config/settings.cfg','y');
+}
+
+if ($_GET['get'] & ENV)
+{
+   $config['env'] = array();
+   $config['env']['has_gd'] = extension_loaded('gd') ? 1 : 0;
+   $config['env']['has_launch'] = file_exists("runcommand.sh") ? 1 : 0;
+   $config['env']['read_only'] = 0; //preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? 0 : 1;
+}
+
+if ($_GET['get'] & LANG)
+{
+   if (isset($_GET['lang']))
+      $lang = $_GET['lang'];
+   else
+      $lang = $config['app']['Language'];
+
+   if (!$lang || !file_exists('../config/lang-'.$lang.'.cfg'))
+      $lang='en';
+
+   $config['lang'] = load_file_xml_as_array('../config/lang-'.$lang.'.cfg','y');
+}
+
+if ($_GET['get'] & ES)
+{
+   $config['es'] = load_file_xml_as_array(ES_CONFIG_PATH."/es_settings.cfg",'y');
+}
+
+if ($_GET['get'] & THEMES)
+{
+   $config['themes'] = load_file_xml_as_array('../config/themes.cfg','y');
+}
+
+if ($_GET['get'] & SYSTEMS)
+{
+    $array_types = array('system'=>true);
+    $systems = load_file_xml_as_array(ES_PATH."/es_systems.cfg");
+    $config['systems'] = array();
+    for($i=0; $i<count($systems['system']);$i++)
+    {
+        $system_name = $systems['system'][$i]['name'];
+        if ($systems['system'][$i]['path']."/gamelist.xml" ||
+            file_exists(ROMSPATH.'/'.$system_name."/gamelist.xml") //||
+            //file_exists(HOME_ES."/gamelists/".$system_name."/gamelist.xml") //||
+            //file_exists(ES_PATH."/gamelists/".$system_name."/gamelist.xml")
+            )
+        {
+            $systems['system'][$i]['has_gamelist'] = true;
+            if (filesize($systems['system'][$i]['path']."/gamelist.xml") > 40 ||
+                filesize(ROMSPATH.'/'.$system_name."/gamelist.xml") > 40 //||
+                //filesize(HOME_ES."/gamelists/".$system_name."/gamelist.xml") > 40 ||
+                //filesize(ES_PATH."/gamelists/".$system_name."/gamelist.xml") > 40
+                )
+                $systems['system'][$i]['has_games'] = true;
+        }
+       $config['systems'][$system_name] = $systems['system'][$i];
+    }
+}
+
+// also get a list of names of other available themes
+if ($_GET['get'] & THEMES_LIST)
+{
+    $config['themes_list'] = array();
+    if($dh = opendir("themes"))
+    {
+        while(($theme = readdir($dh)) !== false)
+            if($theme != '.' && $theme != '..' && is_dir("themes/".$theme))
+                array_push($config['themes_list'], array( 'name' => $theme));
+        closedir($dh);
+    }
+}
+
+if (!isset($inc))
+{
+    echo json_encode($config);
+}
 ?>

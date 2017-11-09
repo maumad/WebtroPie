@@ -4,33 +4,33 @@
  */
 (function() {
 
-   'use strict';
+    'use strict';
 
-   angular
-      .module('WebtroPie')
-      .filter('orderObjectBy', orderObjectBy);
+    angular
+        .module('WebtroPie')
+        .filter('orderObjectBy', orderObjectBy);
 
-   function orderObjectBy()
-   {
-      return function(items, field, reverse)
-      {
-         var filtered = [];
-         angular.forEach(items, function(item)
-         {
-            filtered.push(item);
-         });
+    function orderObjectBy()
+    {
+        return function(items, field, reverse)
+        {
+            var filtered = [];
+            angular.forEach(items, function(item)
+            {
+                filtered.push(item);
+            });
 
-         filtered.sort(function (a, b)
-         {
-            return (a[field] > b[field] ? 1 : -1);
-         });
+            filtered.sort(function (a, b)
+            {
+                return (a[field] > b[field] ? 1 : -1);
+            });
 
-         if(reverse)
-         {
-            filtered.reverse();
-         }
-         return filtered;
-      }
-   }
+            if(reverse)
+            {
+                filtered.reverse();
+            }
+            return filtered;
+        }
+    }
 
 })();

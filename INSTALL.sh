@@ -22,15 +22,17 @@ sudo ln -sf /etc/emulationstation/themes                   $SVR
 sudo ln -sf /home/pi/.emulationstation/downloaded_images   $SVR
 sudo ln -sf /home/pi/RetroPie/roms                         $SVR
 
-# quick and dirty way to serve from apache http://192.168.?.?/roms
-sudo ln -sf `pwd`/app /var/www/html/roms
+# quick and dirty way to serve from apache http://192.168.?.?/app
+sudo ln -sf `pwd`/app /var/www/html/app
 
 # download libs so that it can work offline in future
 cd $LIB
-wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js
-wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.min.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular-route.min.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular-animate.min.js
 
-IP=`ifconfig | sed '/inet addr:.*255.255/!d;s|.*addr:|http://|;s|\s.*|/roms|'`
+IP=`ifconfig | sed '/inet addr:.*255.255/!d;s|.*addr:|http://|;s|\s.*|/app|'`
 
 echo
 echo "WebtroPie serving from ${IP}"

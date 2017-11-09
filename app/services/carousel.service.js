@@ -33,6 +33,7 @@
         self.nextCarouselSystem = nextCarouselSystem;
         self.previousCarouselSystem = previousCarouselSystem;
         self.setCarouselSystemByIndex = setCarouselSystemByIndex;
+        self.setCarouselSystemIndexByName = setCarouselSystemIndexByName;
         self.wrapIndex = wrapIndex;
 
         function centerOffset(index)
@@ -47,7 +48,7 @@
 
         function getCarouselSystemTheme(system_index)
         {
-            return ThemeService.theme.systems[getCarouselSystemName(system_index)];
+            return ThemeService.getSystemTheme(getCarouselSystemName(system_index));
         }
 
         // return E.g previous or next system name
@@ -59,30 +60,31 @@
         // return E.g previous or next system theme
         function getRelativeCarouselSystemTheme(change_ix)
         {
-            return ThemeService.theme.systems[getRelativeCarouselSystemName(parseInt(change_ix))];
+            //return ThemeService.theme.systems[getRelativeCarouselSystemName(parseInt(change_ix))];
+            return ThemeService.getSystemTheme(getRelativeCarouselSystemName(parseInt(change_ix)));
         }
 
-        function goCurrentCarouselSystem()
+        function goCurrentCarouselSystem(replace)
         {
-            goSystemDetail(self.system_index)
+            goSystemDetail(self.system_index, replace)
         }
 
-        function goNextCarouselSystemGamelist()
+        function goNextCarouselSystemGamelist(replace)
         {
-           //GameService.goSystem(getRelativeCarouselSystemName(+1))
-           self.system_index++;
-           goCurrentCarouselSystem()
+            //GameService.goSystem(getRelativeCarouselSystemName(+1))
+            self.system_index++;
+            goCurrentCarouselSystem(replace)
         }
 
-        function goPreviousCarouselSystemGamelist()
+        function goPreviousCarouselSystemGamelist(replace)
         {
-           //GameService.goSystem(getRelativeCarouselSystemName(-1))
-           self.system_index--;
-           goCurrentCarouselSystem()
+            //GameService.goSystem(getRelativeCarouselSystemName(-1))
+            self.system_index--;
+            goCurrentCarouselSystem(replace)
         }
 
         // navigate to the rom lists view
-        function goSystemDetail(system_index)
+        function goSystemDetail(system_index, replace)
         {
             ThemeService.playSound('systemselect');
 
@@ -90,8 +92,14 @@
 
             //delete ThemeService.system;
             //delete ThemeService.view;
-
-            util.call('/'+system_name); // E.g navigate to 'n64'
+            if (replace)
+            {
+                util.go('/'+system_name);
+            }
+            else
+            {
+                util.call('/'+system_name);
+            }
         }
 
 
@@ -124,6 +132,10 @@
             self.system_index = system_index;
             ThemeService.setSystem(getCarouselSystemName(system_index), view_name, keep_style);
         }
+        function setCarouselSystemIndexByName(system_name)
+        {
+            self.system_index = ThemeService.theme.carousel_systems_list.indexOf(system_name);
+        }
 
         // ensure index is always between 0 and array.length
         function wrapIndex(index)
@@ -131,7 +143,6 @@
             return (index + ThemeService.theme.carousel_systems_list.length)
                 % ThemeService.theme.carousel_systems_list.length;
         }
-
     }
 
 })();

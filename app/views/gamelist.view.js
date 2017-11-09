@@ -1,282 +1,306 @@
-'use strict';
+/**
+ * gamelist.view.js
+ */
+(function() {
 
-angular.module('WebtroPie.gamelist_view', ['ngRoute'])
+    'use strict';
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/:system/:subdir*?', {
-    controller: 'GamelistViewCtrl', templateUrl: 'gamelist_view.html'
-  });
-}])
-.controller('GamelistViewCtrl', [
-     '$scope','$routeParams','$window','$document','$timeout',
-     'config', 'ThemeService', 'GameService', 'util',
-function($scope, $routeParams, $window, $document, $timeout,
-      config, ThemeService, GameService, util )
-{
-   //$scope.ThemeService = ThemeService;
-   $scope.GameService = GameService;
-   //$scope.config = config;
+    angular
+        .module('WebtroPie.gamelist_view', ['ngRoute'])
+        .controller('GamelistViewController', controller);
 
+    controller.$inject = ['$scope','config','util','styler',
+                          'ThemeService','GameService','CarouselService',
+                          '$routeParams','$window','$document','$timeout'];
 
-   $scope.go_back = function()
-   {
-      ThemeService.playSound('back');
+    function controller($scope, config, util, styler,
+                        ThemeService, GameService, CarouselService,
+                        $routeParams, $window, $document, $timeout)
+    {
+        var page = this;
 
-      config.hideMenu();
+        // member functions
+        page.filterChange     = filterChange;
+        page.goBack           = goBack;
+        page.goNextSystem     = goNextSystem;
+        page.goPreviousSystem = goPreviousSystem;
+        page.keyPress         = keyPress;
+        page.matchMedia       = matchMedia;
+        page.scan             = scan;
+        page.showFavoriteOn   = showFavoriteOn;
+        page.showFavoriteOff  = showFavoriteOff;
+        page.showNestedOn     = showNestedOn;
+        page.showNestedOff    = showNestedOff;
 
-      GameService.saveState();
+        // member variables
+        page.system = $routeParams.system;  // E.g amstradcpc
+        page.subdir = $routeParams.subdir;
 
-      var parent_path = '/';
-      if (GameService.subdir)
-      {
-         // stay within this system
-         parent_path += ThemeService.system.name;
+        page.helpmenu = 
+           [{langButton: 'options', svg: 'resources/button_select.svg',
+                   menu: [{text: 'Scan',          click: scan},
+                          {text: 'Match Media', click: matchMedia},
+                          {text: 'New Folder'},
+                          {text: 'Upload Roms'}]}
+           ,{langButton: 'menu',  click: $scope.app.toggleMenu,  svg: 'resources/button_start.svg'}
+           ,{langButton: 'back',  click: goBack,                      svg: 'resources/button_b.svg'}
 
-         // find parent directory
-         GameService.subdir = GameService.getParentDir(GameService.subdir);
-         // still under a subdirectory?
-         if (GameService.subdir)
-         {
-            parent_path += '/' + GameService.subdir;
-         }
-      }
-      util.back(parent_path);
-      // todo: just restore saved values
-      //GameService.checkGameStillVisible();
+           // X on the menu reflects the key enter / mouse click action
 
-      return true;
-   }
+           // for a Game, X = Edit, A = Launch (if enabled)
+           ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_a.svg',
+                                   show: '!app.GameService.game.isDir && !app.config.env.read_only'}
+           ,{langButton: 'launch',click: GameService.launch,      svg: 'resources/button_x.svg',
+                                   show: '!app.GameService.game.isDir && app.config.env.has_launch'},
 
-   $scope.keyPress = function($event)
-   {
-      // Ctrl - A - Select or Deselect All
-      if (($event.ctrlKey || util.commandDown) && $event.keyCode == 65)
-      {
-         if (GamelistService.selected_list.length == 0)
-         {
-            GamelistService.selectAll();
-         }
-         else
-         {
-            GamelistService.clearSelection();
-         }
-         return true;
-      }
+            // for a Directory, X = Open, A = Edit
+           ,{langButton: 'open',  click: GameService.openFolder, svg: 'resources/button_a.svg',
+                                   show: 'app.GameService.game.isDir'}
+           ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_x.svg',
+                                   show: 'app.GameService.game.isDir && !app.config.env.read_only'}
 
-      // Ctrl - M - Main Menu
-      if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
-      {
-         config.toggleMenu();
-         return true;
-      }
+           ,{                     click: showFavoriteOn,  svg: 'resources/favorite-o.svg',
+                                   show: '!app.GameService.show_favorite'}
+           ,{                     click: showFavoriteOff, svg: 'resources/favorite.svg',
+                                   show: 'app.GameService.show_favorite', color: "DD3000"}
 
-      // - it's best not to always have focus on filter to prevent
-      // onscreen keyboard being forever open on mobile devices
-      if (!ThemeService.filter || $document[0].activeElement.id != 'filter')
-      {
-         if ($event.keyCode == 39)       // right arrow: system right
-         {
+           ,{                     click: showNestedOn,  svg: 'resources/folder-o.svg',
+                                   show: "app.GameService.system_name.substring(0,5)!='auto-' && !app.GameService.show_nested"}
+           ,{                     click: showNestedOff, svg: 'resources/folder.svg',
+                                   show: "app.GameService.system_name.substring(0,5)!='auto-' && app.GameService.show_nested"}
+           ];
+
+        activate();
+
+        function activate()
+        {
+            // Delay loading gamelist 1 second for slide animations
+            // ... unknown currently why it interferes with this animation
+            page.loaded = false;
+            
+            if ($scope.app.animate_view_class &&
+                 $scope.app.animate_view_class.substring(0,5) == 'slide')
+            {
+                $timeout(function() {
+                    page.loaded = true;
+                }, 600)
+            }
+            else
+            {
+                page.loaded = true;
+            }
+
+            ThemeService.viewscope = page;
+
+            $scope.app.registerThemeChangedCallback(null);
+
+            // wait for config (which theme?)
+            config.init()
+            .then(function(response)
+            {
+                var default_view = GameService.getDefaultGamelistViewName(page.system);
+
+                return ThemeService.themeInit(page.system, default_view, !!config.app.ScanAtStartup);
+            })
+            .then(function(theme_output)
+            {
+                CarouselService.setCarouselSystemIndexByName(page.system);
+
+                util.register_keyPressCallback(keyPress);
+                //console.log('TODO: filtered from system screen?');
+
+                $scope.$watch('app.GameService.show_favorite', filterChange);
+                $scope.$watch('app.GameService.show_nested', filterChange);
+                $scope.$watch('app.GameService.filter', filterChange);
+            });
+        }
+
+        function filterChange()
+        {
+            if (GameService.checkGameStillVisible)
+            {
+                GameService.checkGameStillVisible();
+            }
+            $scope.$evalAsync();
+        }
+
+        function goBack()
+        {
+            ThemeService.playSound('back');
+            if ( config.app.ViewTransitions=='Fade' )
+            {
+                $scope.app.setViewAnimation('fade');
+            }
+            else if ( config.app.ViewTransitions=='Slide' )
+            {
+                $scope.app.setViewAnimation('slidedown');
+            }
+
+            $scope.app.hideMenu();
+
             GameService.saveState();
-            GameService.nextSystem();
+
+            var parent_path = '/';
+            if (GameService.subdir)
+            {
+                // stay within this system
+                parent_path += ThemeService.system.name;
+
+                // find parent directory
+                GameService.subdir = GameService.getParentDir(GameService.subdir);
+                // still under a subdirectory?
+                if (GameService.subdir)
+                {
+                    parent_path += '/' + GameService.subdir;
+                }
+            }
+            util.back(parent_path);
+            // TODO: just restore saved values
+            //GameService.checkGameStillVisible();
+
             return true;
-         }
-         else if ($event.keyCode == 37)  // left arrow: system left
-         {
+        }
+
+        function goNextSystem()
+        {
+            if ( config.app.ViewTransitions=='Fade' )
+            {
+                $scope.app.setViewAnimation('fade');
+            }
+            else if ( config.app.ViewTransitions=='Slide' )
+            {
+                $scope.app.setViewAnimation('slideleft');
+            }
             GameService.saveState();
-            GameService.prevSystem();
-            return true;
-         }
-         // type a character while focus is on the game list :-
-         // focus on 'filter' and enter key char in filter field
-         else if ( !ThemeService.filter &&
-                   !$event.shiftKey && !$event.ctrlKey && !$event.altKey &&
-                   ( ($event.keyCode >= 48 && $event.keyCode <= 57) ||  // 0-9
-                     ($event.keyCode >= 65 && $event.keyCode <= 90)) )  // a-z
-         {
-            ThemeService.filter = String.fromCharCode(event.keyCode);
-            util.focus('#filter');
-            $event.preventDefault();
-            return;
-         }
-      }
+            CarouselService.goNextCarouselSystemGamelist(true);
+        }
 
-      if ($event.keyCode == 13)        // enter
-      {
-         // if it's a directoy go to sub directory
-         // otherwise open game metadata editor
-         if (GameService.game.isDir)
-         {
-            return GameService.openFolder();
-         }
-         else
-         {
-            return GameService.showEditor();
-         }
-      }
-      else if ($event.keyCode == 27)    // Escape
-      {
-         // close editor if open
-         if (GameService.edit)
-         {
-            return GameService.hideEditor();
-         }
-         // clear filter
-         else if (ThemeService.filter)
-         {
-            ThemeService.filter = '';
-         }
-         // go systems view
-         else
-         {
-            return $scope.go_back();
-         }
-      }
-      else if ($event.keyCode == 36)        // Home key: top of list
-      {
-         return GameService.keyListTop();
-      }
-      else if ($event.keyCode == 35)        // End key: bottom of list
-      {
-         return GameService.keyListBottom();
-      }
-      else if ($event.keyCode == 38)        // up arrow: previous game
-      {
-         return GameService.keyPrevGame(1);
-      }
-      else if ($event.keyCode == 40)   // down arrow: next game
-      {
-         return GameService.keyNextGame(1);
-      }
-      else if ($event.keyCode == 33)   // page up: previous game * view rows
-      {
-         return GameService.keyPrevPage();
-      }
-      else if ($event.keyCode == 34)   // page down: next game * view rows
-      {
-         return GameService.keyNextPage();
-      }
+        function goPreviousSystem()
+        {
+            if ( config.app.ViewTransitions=='Fade' )
+            {
+                $scope.app.setViewAnimation('fade');
+            }
+            else if ( config.app.ViewTransitions=='Slide' )
+            {
+                $scope.app.setViewAnimation('slideright');
+            }
+            GameService.saveState();
+            CarouselService.goPreviousCarouselSystemGamelist(true);
+        }
 
-      return true; // default handling (dont prevent default)
-   }
+        function keyPress($event)
+        {
+            // Ctrl - M - Main Menu
+            if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
+            {
+                $scope.app.toggleMenu();
+                return true;
+            }
 
-   util.register_keyPressCallback($scope.keyPress);
+            if (!GameService.filter || $document[0].activeElement.id != 'filter')
+            {
+                if ($event.keyCode == 39)         // right arrow: system right
+                {
+                    goNextSystem();
+                    return true;
+                }
+                else if ($event.keyCode == 37)  // left arrow: system left
+                {
+                    goPreviousSystem();
+                    return true;
+                }
+                // type a character while focus is on the game list :-
+                // focus on 'filter' and enter key char in filter field
+                else if ( !GameService.filter &&
+                             !$event.shiftKey && !$event.ctrlKey && !$event.altKey &&
+                             ( ($event.keyCode >= 48 && $event.keyCode <= 57) ||  // 0-9
+                                ($event.keyCode >= 65 && $event.keyCode <= 90)) )  // a-z
+                {
+                    GameService.filter = String.fromCharCode(event.keyCode);
+                    util.focus('#filter');
+                    $event.preventDefault();
+                    return;
+                }
+            }
 
-   $scope.showFavoriteOn = function()
-   {
-      GameService.show_favorite = true;
-      util.defaultFocus();
-   }
+            if ($event.keyCode == 13)          // enter
+            {
+                // if it's a directoy go to sub directory
+                // otherwise open game metadata editor
+                if (GameService.game.isDir)
+                {
+                    return GameService.openFolder();
+                }
+                else
+                {
+                    return GameService.showEditor();
+                }
+            }
+            else if ($event.keyCode == 27)     // Escape
+            {
+                // close editor if open
+                if (GameService.edit)
+                {
+                    return GameService.hideEditor();
+                }
+                // clear filter
+                else if (GameService.filter)
+                {
+                    GameService.filter = '';
+                }
+                // go systems view
+                else
+                {
+                    return goBack();
+                }
+            }
 
-   $scope.showFavoriteOff = function()
-   {
-      GameService.show_favorite = false;
-      util.defaultFocus();
-   }
+            return GameService.keyPress($event);
+        }
 
-   $scope.showNestedOn = function()
-   {
-      GameService.show_nested = true;
-      util.defaultFocus();
-   }
-
-   $scope.showNestedOff = function()
-   {
-      GameService.show_nested = false;
-      util.defaultFocus();
-   }
-
-   $scope.scan = function()
-   {
-      var game = GameService.game;
-      GameService.getSystemGamelist($routeParams.system, true)
-      .then(function(gamelist) {
-         util.waitForRender($scope).then(function() {
-            GameService.game = game;
-            GameService.checkGameStillVisible();
+        function showFavoriteOn()
+        {
+            GameService.show_favorite = true;
             util.defaultFocus();
-         });
-      });
-   }
+        }
 
-   $scope.match_media = function()
-   {
-      GameService.getSystemGamelist($routeParams.system, false, true)
-      .then(function(gamelist) {
-         util.defaultFocus();
-      });
-   }
+        function showFavoriteOff()
+        {
+            GameService.show_favorite = false;
+            util.defaultFocus();
+        }
 
-   // wait for config (which theme?)
-   config.init()
-   .then(function()
-   {
-      $scope.helpmenu = 
-         [{langButton: 'options',click: $scope.click_option, svg: 'resources/button_select.svg',
-            menu: [{text: 'Scan',        click: $scope.scan},
-                   {text: 'Match Media', click: $scope.match_media},
-                   {text: 'New Folder'},
-                   {text: 'Upload Roms'}]}
-          ,{langButton: 'menu',  click: config.toggleMenu,   svg: 'resources/button_start.svg'}
-          ,{langButton: 'back',  click: $scope.go_back,      svg: 'resources/button_b.svg'}
+        function showNestedOn()
+        {
+            GameService.show_nested = true;
+            util.defaultFocus();
+        }
 
-          // X on the menu reflects the key enter / mouse click action
+        function showNestedOff()
+        {
+            GameService.show_nested = false;
+            util.defaultFocus();
+        }
 
-          // for a Game, X = Edit, A = Launch (if enabled)
-          ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_a.svg',
-                                  show: '!GameService.game.isDir && !config.env.read_only'}
-          ,{langButton: 'launch',click: GameService.launch,     svg: 'resources/button_x.svg',
-                                  show: '!GameService.game.isDir && config.env.has_launch'},
+        function scan()
+        {
+            var game = GameService.game;
+            GameService.getSystemGamelist(page.system, true)
+            .then(function(gamelist) {
+                util.waitForRender($scope).then(function() {
+                    GameService.game = game;
+                    GameService.checkGameStillVisible();
+                    util.defaultFocus();
+                });
+            });
+        }
 
-         // for a Directory, X = Open, A = Edit
-          ,{langButton: 'open',  click: GameService.openFolder, svg: 'resources/button_a.svg',
-                                  show: 'GameService.game.isDir'}
-          ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_x.svg',
-                                  show: 'GameService.game.isDir && !config.env.read_only'}
+        function matchMedia()
+        {
+            GameService.getSystemGamelist(page.system, false, true)
+            .then(util.defaultFocus);
+        }
+    }
 
-          ,{                     click: $scope.showFavoriteOn,  svg: 'resources/favorite-o.svg',
-                                  show: '!GameService.show_favorite'}
-          ,{                     click: $scope.showFavoriteOff, svg: 'resources/favorite.svg',
-                                  show: 'GameService.show_favorite', color: "DD3000"}
-
-          ,{                     click: $scope.showNestedOn,  svg: 'resources/folder-o.svg',
-                                  show: "GameService.system_name!='all' && !GameService.show_nested"}
-          ,{                     click: $scope.showNestedOff, svg: 'resources/folder.svg',
-                                  show: "GameService.system_name!='all' && GameService.show_nested"}
-      ];
-
-      // wait for themes to load
-      return ThemeService.themeInit($routeParams.system);
-   })
-   .then(function()
-   {
-      // get games (and count) for the current system
-      return GameService.getGamelist($routeParams.system, $scope);
-   })
-   .then(function(gamelist)
-   {
-      GameService.setSystem($routeParams.system, $routeParams.subdir, true);
-
-      util.register_defaultFocus('#scroller');
-
-      // drilled by entering filter on prev screen
-      if (ThemeService.filter)
-      {
-         //$scope.return_when_filter_empty = true;
-         util.focus('#filter');
-      }
-
-      $scope.filter_change = function()
-      {
-         if (GameService.checkGameStillVisible)
-         {
-            GameService.checkGameStillVisible();
-         }
-         $scope.$evalAsync();
-      }
-
-      $scope.$watch('GameService.show_favorite', $scope.filter_change);
-      $scope.$watch('GameService.show_nested', $scope.filter_change);
-      $scope.$watch('ThemeService.filter', $scope.filter_change);
-   });
-
-}]);
+})();

@@ -3,18 +3,18 @@
  */
 (function() {
 
-   'use strict';
+    'use strict';
 
-   angular
-      .module('WebtroPie')
-      .directive('menu', menu);
+    angular
+        .module('WebtroPie')
+        .directive('menu', menu);
 
-   function menu()
-   {
-      var directive = {
-         template: '<div ng-include="app.menu.template"></div>'
-      }
-      return directive;
-   }
+    function menu()
+    {
+        var directive = {
+            template: '<div ng-include="app.menu.template"></div>'
+        }
+        return directive;
+    }
 
 })();

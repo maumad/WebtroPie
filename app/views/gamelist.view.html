@@ -1,107 +1,118 @@
 <div class=window_size>
-
    <!-- all theme components including game centric components -->
-     <theme-text ng-repeat="obj in ThemeService.view.text"     obj="obj"
-                 ng-if="obj.div.display!='inline'" ></theme-text>
-    <theme-image ng-repeat="obj in ThemeService.view.image"    obj="obj"
-                 game="GameService.game"></theme-image>
-   <theme-rating ng-repeat="obj in ThemeService.view.rating"   obj="obj"
-                 ng-if="obj.div.display!='inline'"
-                 game="GameService.game"></theme-rating>
-     <theme-date ng-repeat="obj in ThemeService.view.datetime" obj="obj"
-                 ng-if="obj.div.display!='inline'" ></theme-date>
-    <theme-video ng-repeat="obj in ThemeService.view.video"    obj="obj"
-                 game="GameService.game"></theme-video>
+    <theme-image ng-repeat="obj in page.view.image track by obj.name" obj="obj" game="page.game" system="page.system"
+                                           ></theme-image>
+    <theme-video ng-repeat="obj in page.view.video track by obj.name" obj="obj" game="page.game" system="page.system"
+                                           ></theme-video>
+     <theme-text ng-repeat="obj in page.view.text track by obj.name" obj="obj" game="page.game" system="page.system"
+                 ng-if="!obj.anchor_label" ></theme-text>
+   <theme-rating ng-repeat="obj in page.view.rating track by obj.name" obj="obj" game="page.game"
+                 ng-if="!obj.anchor_label" ></theme-rating>
+     <theme-date ng-repeat="obj in page.view.datetime track by obj.name" obj="obj" game="page.game"
+                 ng-if="!obj.anchor_label" ></theme-date>
 
    <!-- the list -->
-   <gamelist-virtual-repeat></gamelist-virtual-repeat>
+   <gamelist-virtual-repeat
+      ng-if="page.view.styled && page.loaded"
+      page-vm="page"
+      system="{{::page.system}}"
+      subdir="{{::page.subdir}}">
+   </gamelist-virtual-repeat>
 
-   <div class="gamelist_context" ng-show="context" ng-style="context">
-       <b>{{ context.title }}</b><br/>
-       Move to subdir
-   </div>
-
-   <div ng-if="GameService.edit"
-        ng-controller="GameEditorCtrl">
-       <div game-editor></div>
-   </div>
+   <game-editor ng-if="app.GameService.edit"
+                game="page.game"
+                selected-list="page.selectedList"></game-editor>
 
    <!-- help bar -->
-   <helpmenu list="helpmenu" obj="ThemeService.help">
+   <help-menu list="page.helpmenu" obj="app.styler.help"
+              ng-if="page.view.styled">
 
       <input type=text class="filters"
              id="filter"
-             ng-model="ThemeService.filter"
-             ng-keydown="keyPress($event)"
-             ng-style="ThemeService.helpTextColorBorder">
+             ng-model="app.GameService.filter"
+             ng-keydown="page.keyPress($event)"
+             ng-style="app.styler.helpTextColorBorder">
       <span class="filters" 
-             ng-show="config.app.ShowGameCounts && GameService.gamelist.length">
-         {{GameService.filtered.length}}/{{GameService.gamelist.length}}
-         <span ng-if="GameService.selected_list.length">
-          {{GameService.selected_list.length}} GAMES SELECTED</span>
+             ng-if="app.config.app.ShowGameCounts && page.gamelist.length">
+         {{page.filtered.length}}/{{page.gamelist.length}}
+         <span ng-if="app.GameService.selectedList.length">
+          {{page.selectedList.length}} GAMES SELECTED</span>
       </span>
 
+      <!-- span class="filters" ng-bind="page.game.name"></span -->
+
       <span class="dropdown" 
-            ng-show="config.app.ShowAddFields"
+            ng-if="app.config.app.ShowAddFields"
             ng-mouseover="colhover=true"
-            ng-mouseout="colhover=false">
+            ng-mouseout="colhover=false"
+            ng-click="app.util.defaultFocus()">
          <div class="filters" help-inverter
-              ng-click="colhover=!colhover; util.defaultFocus()" > +/- </div>
-         <div ng-style="ThemeService.helpTextColorBorder"
-              ng-class="ThemeService.helpMenuOptionClasses"
+              ng-click="colhover=!colhover" > +/- </div>
+         <div ng-style="app.styler.helpTextColorBorder"
+              ng-class="app.styler.helpMenuOptionClasses"
               ng-show="colhover">
             <a help-inverter
-               ng-click="GameService.toggleField(column); colhover=false; util.defaultFocus()"
-               ng-repeat="column in GameService.list_fields">
+               ng-click="page.toggleField(column); colhover=false; "
+               ng-repeat="column in app.GameService.list_fields">
                 <image-toggle class="checkbox"
                    ng-model="column.show" noclick=1
                    on-svg="resources/checkbox_checked.svg" on-color="help"
                    off-svg="resources/checkbox_unchecked.svg" off-color="help" >
                 </image-toggle>
-                {{column.text}}
+                {{::column.text}}
             </a>
+            <div class="hr"></div>
             <a help-inverter
-               ng-click="GameService.resetFields()"> RESET </a>
+               ng-click="page.toggleStretch(); colhover=false">
+             <image-toggle class="checkbox"
+                ng-model="app.config.themes['stretch-'+app.config.app.ThemeSet]" noclick=1
+                on-svg="resources/checkbox_checked.svg" on-color="help"
+                off-svg="resources/checkbox_unchecked.svg" off-color="help">
+             </image-toggle>
+             STRETCH
+         </a>
+            <a help-inverter
+               ng-click="page.resetFields()"> RESET </a>
          </div>
       </span>
 
       <span class="dropdown" 
-            ng-show="config.app.ShowThemeSelect"
-            ng-mouseover="config.themehover=true"
-            ng-mouseout="config.themehover=false" >
+            ng-if="app.config.app.ShowThemeSelect"
+            ng-mouseover="app.config.themehover=true"
+            ng-mouseout="app.config.themehover=false" >
          <div class="filters" help-inverter
-            ng-click="config.themehover=!config.themehover; util.defaultFocus()" > Theme </div>
-         <div ng-style="ThemeService.helpTextColorBorder"
-              ng-class="ThemeService.helpMenuOptionClasses+' '+(ThemeService.theme_count>19?'double':'')"
-              ng-show="config.themehover" >
+            ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" > Theme </div>
+         <div ng-style="app.styler.helpTextColorBorder"
+              ng-class="app.styler.helpMenuOptionClasses+' '+(app.config.themes_list.length>=40?'treble':(app.config.themes_list.length>=20?'double':''))"
+              ng-show="app.config.themehover" >
             <a help-inverter
-               ng-repeat="theme in ThemeService.themes | orderObjectBy:'name':false"
-               ng-click="themeChanged(theme.name)">
-               {{theme.name}}
-               <span ng-show="theme == ThemeService.theme">*</span>
+               ng-repeat="theme in app.config.themes_list | orderObjectBy:'name':false"
+               ng-click="app.themeChanged(theme.name)">
+               {{::theme.name}}
+               <span ng-show="theme.name == app.ThemeService.theme.name">*</span>
             </a>
          </div>
       </span>
 
       <span class="dropdown" 
-            ng-show="config.app.ShowViewSelect"
+            ng-if="app.config.app.ShowViewSelect"
             ng-mouseover="viewhover=true"
             ng-mouseout="viewhover=false">
          <div class="filters" help-inverter
-             ng-click="viewhover=!viewhover; util.defaultFocus()" > View </div>
-         <div ng-class="ThemeService.helpMenuOptionClasses"
-              ng-style="ThemeService.helpTextColorBorder"
+             ng-click="viewhover=!viewhover; app.util.defaultFocus()" > View </div>
+         <div ng-class="app.styler.helpMenuOptionClasses"
+              ng-style="app.styler.helpTextColorBorder"
               ng-show="viewhover">
             <a help-inverter
-               ng-repeat="view in ThemeService.system.view | orderObjectBy:'name':false"
+               ng-repeat="view in app.ThemeService.system.view | orderObjectBy:'name':false"
                ng-hide="view.name == 'system'"
-               ng-click="ThemeService.switchView(view.name); viewhover=false; util.defaultFocus()" >
-               {{view.name}}
-               <span ng-show="view == ThemeService.view">*</span>
+               ng-click="app.ThemeService.switchView(view.name); viewhover=false; app.util.defaultFocus()" >
+               {{::view.name}}
+               <span ng-show="view == app.ThemeService.view">*</span>
             </a>
          </div>
       </span>
 
-   </helpmenu>
+   </help-menu>
 
 </div>

@@ -10,6 +10,25 @@
 // to obj + value to
 // ['path'] = './art/logo.csv'
 
+function merge_arrays(&$target, &$source)
+{
+   foreach ($source as $key => $value)
+   {
+      if(!isset($target[$key]))
+      {
+         $target[$key] = $value;
+      }
+      elseif(gettype($target[$key])=='array' &&
+                    gettype($value)=='array')
+      {
+         merge_arrays($target[$key], $value);
+      }
+      else  // overwrite
+      {
+         $target[$key] = $value;
+      }
+   }
+}
 
 function xmlobj_to_array($xmlobj)
 {
@@ -69,20 +88,15 @@ function xmlobj_to_array($xmlobj)
 
       if ($name)
       {
-         //if (!isset($arr[$type][$name])) // should be always
-         //{
+         if (!isset($arr[$type][$name])) // should be always
+         {
             $arr[$type][$name] = $child;
-         //}
-         //else  // add children same types with same name 'flat' has 2x view detailed
-         //{
-            //foreach ($child as $key => $value)
-            //{
-//print " $type $name $key \n";
-//print_r($value);
-               //$arr[$type][$name][$key] = $value;
-            //}
-            //exit;
-         //}
+         }
+         elseif(gettype($arr[$type][$name])=='array' &&
+                gettype($child)=='array')
+         {
+            merge_arrays($arr[$type][$name], $child);
+         }
       }
       elseif (isset($array_types[$type]))
          $arr[$type][] = $child;
@@ -114,7 +128,9 @@ function wrap_xml($xml, $tag='wrapped')
 // ( simpleXML doesn't like multiple hyphens like <!--- this ---> )
 function strip_comments($xml)
 {
-   return preg_replace('/^[^<]*/','',preg_replace('/<!--(.*)-->/Uis', '', $xml));
+   return preg_replace('/^[^<]*/','',
+          preg_replace('/<!--(.*)-->/Uis', '', $xml));
+          //preg_replace('|</*feature[^>]*>|','', $xml)));
 }
 
 function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
@@ -126,7 +142,8 @@ function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
 function simplexml_load_file_strip_comments($filename)
 {
 try {
-   return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
+   //return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
+   return new SimpleXMLElement(strip_comments(file_get_contents($filename)));
 } catch (Exception $e) {
    echo $filename, "\nCaught exception: ",  $e->getMessage(), "\n";
    exit;

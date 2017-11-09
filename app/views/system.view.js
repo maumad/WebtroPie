@@ -1,372 +1,465 @@
-'use strict';
+/**
+ * system.view.js
+ */
+(function() {
 
-angular.module('WebtroPie.system_view', ['ngRoute','ngTouch'])
+    'use strict';
 
-.config(['$routeProvider', function($routeProvider)
-{
-  $routeProvider.when('/',  // this page is the main index page
-  {
-    templateUrl: 'system_view.html',
-    controller: 'SystemViewCtrl'
-  });
-}])
+    angular
+        .module('WebtroPie.system_view', ['ngRoute','ngTouch'])
+        .controller('SystemViewController',controller);
 
-.controller('SystemViewCtrl',
-['$scope','$rootScope','$window','$timeout',
- 'config', 'ThemeService', 'GameService', 'util',
-function($scope, $rootScope, $window, $timeout,
-         config, ThemeService, GameService, util )
-{
+    controller.$inject = ['$scope','$window','$timeout',
+                          'config', 'styler', 'util',
+                          'ThemeService', 'GameService', 'CarouselService'];
+
+    function controller($scope, $window, $timeout,
+                        config, styler, util,
+                        ThemeService, GameService, CarouselService )
+    {
+        var page = this;
+
+        page.carouselAnimationEnd = carouselAnimationEnd;
+        page.createAllSystemStyles = createAllSystemStyles;
+        page.goFavorites = goFavorites;
+        page.goSystemDetail = goSystemDetail;
+        page.initSystembar = initSystembar;
+        page.keyArrowDown - keyArrowDown;
+        page.keyArrowLeft = keyArrowLeft;
+        page.keyArrowRight = keyArrowRight;
+        page.keyArrowUp = keyArrowUp;
+        page.keyEnter = keyEnter;
+        page.keyPress = keyPress;
+        page.mouseDown = mouseDown;
+        page.mouseMove = mouseMove;
+        page.mouseOut = mouseOut;
+        page.mouseUp = mouseUp;
+        page.nextSystem = nextSystem;
+        page.previousSystem = previousSystem;
+        page.stopDragging = stopDragging;
+
+        page.systembar = {};
+        page.helpmenu = [
+          {langButton: 'menu',
+                click: $scope.app.toggleMenu,
+                  svg: 'resources/button_start.svg'
+          },
+          {langButton: 'select',
+                click: keyEnter,
+                  svg: 'resources/button_a.svg'
+          },
+          {langButton: '',
+                click: goFavorites,
+                  svg: 'resources/favorite-o.svg',
+                color: '990000'
+          } // red
+        ];
+
+        activate();
+
+        function activate()
+        {
+            delete GameService.filtered;
+
+            page.loaded = false;
+
+            if ($scope.app.animate_view_class &&
+                 $scope.app.animate_view_class.substring(0,5)=='slide')
+            {
+                $timeout(function() {
+                    page.loaded = true;
+                }, 600)
+            }
+            else
+            {
+             page.loaded = true;
+            }
+
+            page.initSystembar(); // ???
+            
+            page.animating = false;  // just used for animation -1, 0 or +1
+
+            // focus on center logo (so that input events are listened to)
+            util.register_defaultFocus('#logo0');
+            util.register_keyPressCallback(keyPress);
+
+            // wait for config (need to know which theme?)
+            config.init()
+            .then(function(response)
+            {
+                // wait for themes to load
+                return ThemeService.themeInit(null, 'system', config.app.ScanAtStartup == 'true');
+            })
+            .then(function(data)
+            {
+                ThemeService.setSystem(ThemeService.system_name, 'system');
+                ThemeService.playSound('bgsound');
+
+                // get the current system gamelist
+                // (to show games total and get list ahead of navigation)
+                return GameService.getGamelist(ThemeService.system.name)
+            })
+            .then(function()
+            {
+                return util.waitForRender($scope)
+            })
+            .then(function()
+            {
+                util.defaultFocus();
+
+                // all done so get other stuff in advance
+
+                // for next/prev carousel image animations
+                createAllSystemStyles();
+
+                $scope.app.registerThemeChangedCallback(createAllSystemStyles);
 /*
-   $scope.systembar = {x: 0, speed: 0,
-                       'logostyle-2': {},
-                       'logostyle-1': {},
-                       'logostyle0': {},
-                       'logostyle1': {},
-                       'logostyle2': {},
-                       'infostyle-2': {},
-                       'infostyle-1': {},
-                       'infostyle0': {},
-                       'infostyle1': {},
-                       'infostyle2': {},
-                      };
+                if (config.app.LoadAllSystems)
+                {
+                    // get other systems game lists in the background
+                    GameService.getGamelist('auto-allgames');
+                }
 */
-   $scope.systembar = {};
-   $scope.initSystembar = function(y)
-   {
-      var logotop = util.pct((y||0.38)+0.16,'vh');
-      for (var i=-2; i<=2; i++)
-      {
-         $scope.systembar['logostyle'+i] = {top: logotop};
-         $scope.systembar['infostyle'+i] = {top: logotop};
-      }
-      $scope.systembar.x = 0;
-      $scope.systembar.change_ix = 0;
-   }
+            });
+        }
 
-   $scope.initSystembar();
+        function carouselAnimationEnd($event)
+        {
+            $event.preventDefault();
+            $event.stopPropagation();
+            if (!page.animating) // already done?
+            {
+                return;
+            }
 
-   $scope.sys_index = 0;  // just used for animation -1, 0 or +1
-   $scope.mid_index = 0;  // floor( systems.length / 2 ), offset of center
+            page.animating = false;
+            GameService.getGamelist(ThemeService.system.name)
+            .then(createDefaultGamelistView);
+            util.defaultFocus();
+        }
 
-   $scope.ThemeService = ThemeService;
-   $scope.GameService = GameService;
+        // do some of probably next screen work to smooth animations transitions
+        function createAllSystemStyles()
+        {
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(0).view.system, true);
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+1).view.system, true);
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-1).view.system, true);
+            angular.forEach(ThemeService.theme.systems, function(sys) {
+                styler.createViewStyles(sys.view.system, true);
+            })
 
-   delete GameService.filtered;
+            createDefaultGamelistView();
+        }
 
-   // wait for config (which theme?)
-   config.init()
-   .then(function()
-   {
-      $scope.helpmenu = [
-        {langButton: 'menu',   click: config.toggleMenu, svg: 'resources/button_start.svg'}
-       ,{langButton: 'select', click: $scope.keyEnter, svg: 'resources/button_a.svg'}
-     //,{langButton: 'search', click: null,            svg: 'resources/search.svg'} // TODO
-       ,{langButton: '',   click: $scope.go_favorites, svg: 'resources/favorite-o.svg',
-                                                       color: '990000'} // red
-      ];
+        function createDefaultGamelistView()
+        {
+            var system_name = CarouselService.getRelativeCarouselSystemName(0);
+            var default_view = GameService.getDefaultGamelistViewName(system_name);
+            styler.createViewStyles(ThemeService.system.view[default_view], true);
+        }
 
-      // wait for themes to load
-      return ThemeService.themeInit();
-   })
-   .then(function()
-   {
-      $scope.mid_index = Math.floor( ThemeService.theme.systems.length / 2 );
+        function setGoDetailAnimation()
+        {
+          page.loaded = false;
 
-      ThemeService.setSystemByIndex(ThemeService.system_index, 'system');
-      ThemeService.playSound('bgsound');
+            if ( config.app.ViewTransitions=='Fade' )
+            {
+                $scope.app.setViewAnimation('fade');
+            }
+            else if ( config.app.ViewTransitions=='Slide' )
+            {
+                $scope.app.setViewAnimation('slideup');
+            }
 
-      // get the current system gamelist (to show games total and get list ahead of navigation)
-      GameService.getGamelist(ThemeService.system.name)
-      .then(function() {
-         if (config.app.LoadAllSystems)
-         {
-            GameService.getGamelist('all');
-         }
-      });
+            delete ThemeService.system;
+            delete ThemeService.view;
+        }
 
-      // focus on center logo (so that input events are listened to)
-      util.register_defaultFocus('#logo0');
+        function goFavorites()
+        {
+            GameService.show_favorite = true;
+            setGoDetailAnimation();
+            util.call('/auto-favorites');
+        }
 
-      $scope.keyPress = function($event)
-      {
-         // Ctrl - M - Main Menu
-         if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
-         {
-            config.toggleMenu();
-            return true;
-         }
+
+        function goSystemDetail(system_name)
+        { 
+            GameService.show_favorite = false;
+            setGoDetailAnimation();
+            util.call('/'+system_name); // E.g navigate to '/n64'         
+        }
+
+        function initSystembar(y)
+        {
+            page.systembar.x = 0;
+            page.systembar.y = 0;
+            page.systembar.change_ix = 0;
+            if (styler.carousel)
+            angular.forEach(styler.carousel.logos, function(cell, index) {
+                delete cell.left;
+                delete cell.top;
+                delete cell.width;
+                delete cell.height;
+                delete cell.opacity;
+                delete cell['font-size'];
+            });
+        }
+
+        // roll systems Up
+        function keyArrowDown()
+        {
+            if (styler.carousel.type && styler.carousel.type == 'vertical')
+            {
+                nextSystem();
+            }
+        }
+
+        // roll systems left
+        function keyArrowLeft()
+        {
+            if (!styler.carousel.type || styler.carousel.type != 'vertical')
+            {
+                previousSystem();
+            }
+        }
+
+        // roll systems right
+        function keyArrowRight()
+        {
+            if (!styler.carousel.type || styler.carousel.type != 'vertical')
+            {
+                nextSystem();
+            }
+        }
+
+        // roll systems Down
+        function keyArrowUp()
+        {
+            if (styler.carousel.type && styler.carousel.type == 'vertical')
+            {
+                previousSystem();
+            }
+        }
+
+        // click whichever system is selected
+        function keyEnter()
+        {
+            GameService.show_favorite = false;
+            setGoDetailAnimation();
+            CarouselService.goCurrentCarouselSystem();
+        }
+
+        function keyPress($event)
+        {
+            // Ctrl - M - Main Menu
+            if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
+            {
+                config.toggleMenu();
+                return true;
+            }
 
             if ($event.keyCode == 13) // enter
             {
-               return $scope.keyEnter();
-            }
-            else if ($event.keyCode == 39) // right
-            {
-               return $scope.keyArrowRight();
+                return keyEnter();
             }
             else if ($event.keyCode == 37) // left
             {
-               return $scope.keyArrowLeft();
+                return keyArrowLeft();
             }
-            // type a character - goto 'all' page
+            else if ($event.keyCode == 38) // up
+            {
+                return keyArrowUp();
+            }
+            else if ($event.keyCode == 39) // right
+            {
+                return keyArrowRight();
+            }
+            else if ($event.keyCode == 40) // down
+            {
+                return keyArrowDown();
+            }
+            // type a character - goto 'auto-allgames' page
             else if ( !$event.shiftKey &&
                       !$event.ctrlKey &&
                       !$event.altKey &&
                       ( ($event.keyCode >= 48 && $event.keyCode <= 57) ||  // 0-9
                         ($event.keyCode >= 65 && $event.keyCode <= 90)) )  // a-z
             {
-               if (!ThemeService.filter)
-               {
-                  ThemeService.filter = String.fromCharCode(event.keyCode);
-                  ThemeService.goSystemDetail(-1); // all
-                  return false;
-               }
+                if (!GameService.filter)
+                {
+                    GameService.filter = String.fromCharCode(event.keyCode);
+                    util.call('/auto-allgames');
+                    return false;
+                }
             }
 
             return true;
-      }
+        }
 
-      util.register_keyPressCallback($scope.keyPress);
+        // remember the start dragging point offset
+        // and which system clicked
+        function mouseDown($event, system_name)
+        {
+            //$event.preventDefault();
+            var pageX, pageY;
+            if ($event.which==3)
+            {
+              return;
+            }
+            if ($event.touches)
+            {
+                if(!$event.touches.length)
+                {
+                    return;
+                }
+                pageX = $event.touches[0].pageX;
+                pageY = $event.touches[0].pageY;
+            }
+            else
+            {
+                pageX = $event.pageX;
+                pageY = $event.pageY;
+            }
+            if (!page.systembar.dragging)
+            {
+                page.systembar.clicked_pageX = pageX;
+                page.systembar.clicked_pageY = pageY;
+                page.systembar.clicked_offsetX = pageX - page.systembar.x;
+                page.systembar.clicked_offsetY = pageY - page.systembar.y;
+                page.systembar.clicked_system_name = system_name;
+                page.systembar.dragging = true;
+                page.systembar.dragged = false;
+            }
+        }
 
-   });
+        // change systembar x by difference in mouse x
+        function mouseMove($event)
+        {
+            $event.preventDefault();
+            $event.stopPropagation();
+            var pageX, pageY;
+            if($event.touches)
+            {
+                if(!$event.touches.length)
+                {
+                    return;
+                }
+                pageX = $event.touches[0].pageX;
+                pageY = $event.touches[0].pageY;
+            }
+            else
+            {
+                pageX = $event.pageX;
+                pageY = $event.pageY;
+            }
 
-   $scope.cancel_timeout = function() {
-      if ($scope.timeout_promise)
-      {
-         $timeout.cancel($scope.timeout_promise);
-      }
-   }
+            var x_pct = 100 * pageX / $window.innerWidth;
+            if ( x_pct >= 98 && x_pct <= 2)
+            {
+                return stopDragging();
+            }
+            var y_pct = 100 * pageY / $window.innerHeight;
+            if ( y_pct >= 98 && y_pct <= 2)
+            {
+                return stopDragging();
+            }
+            if (page.systembar.dragging)
+            {
+                // vertical
+                if (styler.carousel.type && styler.carousel.type == 'vertical')
+                {
+                  var new_y = pageY - page.systembar.clicked_offsetY;
+                  if (page.systembar.y != new_y)
+                  {
+                      page.systembar.y = new_y;
+                      var change_pct = new_y / $window.innerHeight;
+                      styler.changeCarousel(change_pct);
+                      page.systembar.change_ix = util.round(-change_pct / styler.carousel.logo_vh, 0);
+                      page.systembar.dragged = true;
+                  }
+                }
+                // horizontal
+                else
+                {
+                  var new_x = pageX - page.systembar.clicked_offsetX;
+                  if (page.systembar.x != new_x)
+                  {
+                      page.systembar.x = new_x;
+                      var change_pct = new_x / $window.innerWidth;
+                      styler.changeCarousel(change_pct);
+                      page.systembar.change_ix = util.round(-change_pct / styler.carousel.logo_vw, 0);
+                      page.systembar.dragged = true;
+                  }
+                }
+            }
+        }
 
-   $scope.$on("$destroy", $scope.cancel_timeout);
+        function mouseOut($event)
+        {
+            $event.preventDefault();
+            $event.stopPropagation();
 
-   // click whichever system is selected
-   $scope.keyEnter = function()
-   {
-      GameService.show_favorite = false;
-      ThemeService.goSystemDetail(ThemeService.system_index-$scope.sys_index);
-   }
+            var y_pct = 100 * $event.pageY / $window.innerHeight;
+            var x_pct = 100 * $event.pageX / $window.innerWidth;
+            if ( x_pct >= styler.carousel.pos.x &&
+                 x_pct <= styler.carousel.pos.x + styler.carousel.size.w &&
+                 y_pct >= styler.carousel.pos.y &&
+                 y_pct <= styler.carousel.pos.y + styler.carousel.size.h)
+            {
+                return;
+            }
+            stopDragging();
+        }
 
-   // roll systems left
-   $scope.keyArrowLeft = function()
-   {
-      if (!$scope.sys_index)
-      {
-         $scope.sys_index++; // start animation
-         $scope.cancel_timeout();
-         $scope.timeout_promise = $timeout(function()
-         {
-           delete $scope.timeout_promise;
-           $scope.sys_index=0;
-           ThemeService.previousSystem();
-           GameService.getGamelist(ThemeService.system.name);
-           $scope.$evalAsync();
-           util.defaultFocus();
-         }, 500, false);
-      }
-   }
+        // either a click or stop dragging
+        function mouseUp($event)
+        {
+          $event.preventDefault();
+          $event.stopPropagation();
+            if (!page.systembar.dragged)
+            {
+                if (page.systembar.clicked_system_name !== undefined)
+                {
+                    goSystemDetail(page.systembar.clicked_system_name);
+                }
+            }
+            else if (page.systembar.change_ix)
+            {
+              CarouselService.nextCarouselSystem(page.systembar.change_ix);
+              GameService.show_favorite = false;
+              GameService.getGamelist(ThemeService.system.name);
+            }
 
-   // roll systems right
-   $scope.keyArrowRight = function(repeated)
-   {
-      if (!$scope.sys_index)
-      {
-         $scope.sys_index--; // start animation
-         $scope.cancel_timeout();
-         $scope.timeout_promise = $timeout(function()
-         {
-           delete $scope.timeout_promise;
-           $scope.sys_index=0;
-           ThemeService.nextSystem();
-           GameService.getGamelist(ThemeService.system.name);
-           $scope.$evalAsync();
-           util.defaultFocus();
-         }, 500, false);
-      }
-   }
+            stopDragging();
+        }
 
-   // remember the start dragging point offset
-   // and which system clicked
-   $scope.mouseDown = function($event, clicked_ix)
-   {
-      //$event.preventDefault();
-      var pageX, pageY;
-      if($event.touches)
-      {
-         if(!$event.touches.length)
-         {
-            return;
-         }
-         pageX = $event.touches[0].pageX;
-         pageY = $event.touches[0].pageY;
-      }
-      else
-      {
-         pageX = $event.pageX;
-         pageY = $event.pageY;
-      }
-      if (!$scope.systembar.dragging)
-      {
-         $scope.systembar.clicked_pageX = pageX;
-         $scope.systembar.clicked_pageY = pageY;
-         $scope.systembar.clicked_offsetX = pageX - $scope.systembar.x;
-         $scope.systembar.clicked_ix = clicked_ix + ThemeService.system_index;
-         $scope.systembar.dragging = true;
-         $scope.systembar.dragged = false;
-      }
-   }
+        function nextSystem()
+        {
+            if (!page.animating)
+            {
+                page.animating = true;
+                CarouselService.nextCarouselSystem();
+            }
+        }
 
-   // reindex and recenter, clear everything
-   $scope.stopDragging = function($event)
-   {
-      $scope.systembar.dragging = false;
-      $scope.initSystembar();
-   }
-   $scope.mouseOut = function($event)
-   {
-      var y_pct = 100 * $event.pageY / $scope.window_height;
-      if ( y_pct >= 37.95 && y_pct <= 68.42)
-      {
-         return;
-      }
-      $scope.stopDragging();
-   }
+        function previousSystem()
+        {
+            if (!page.animating)
+            {
+                page.animating = true;
+                CarouselService.previousCarouselSystem();  
+            }
+        }
 
-   // change systembar x by difference in mouse x
-   $scope.mouseMove = function($event)
-   {
-      $event.preventDefault();
-      var pageX, pageY;
-      if($event.touches)
-      {
-         if(!$event.touches.length)
-         {
-            return;
-         }
-         pageX = $event.touches[0].pageX;
-         pageY = $event.touches[0].pageY;
-      }
-      else
-      {
-         pageX = $event.pageX;
-         pageY = $event.pageY;
-      }
-      var x_pct = 100 * pageX / $scope.window_width;
-      if ( x_pct >= 98 && x_pct <= 2)
-      {
-         return $scope.stopDragging();
-      }
+        // reindex and recenter, clear everything
+        function stopDragging($event)
+        {
+            initSystembar();
+            util.waitForRender($scope).then(function() {
+                page.systembar.dragging = false;
+            });
+        }
+    }
 
-      if ($scope.systembar.dragging)
-      {
-         var new_x = pageX - $scope.systembar.clicked_offsetX;
-         if ($scope.systembar.x != new_x)
-         {
-            $scope.systembar.x = new_x;
-            var change_pct = 100 * new_x / $scope.window_width;
-            $scope.systembar.change_ix = Math.sign(-change_pct) *
-                                         Math.floor((19+Math.abs(change_pct))/38);
-            $scope.setLogoStyle(-2, -25 + change_pct);
-            $scope.setLogoStyle(-1, 12 + change_pct);
-            $scope.setLogoStyle(0, 50 + change_pct);
-            $scope.setLogoStyle(1, 88 + change_pct);
-            $scope.setLogoStyle(2, 125 + change_pct);
-
-            $scope.systembar.dragged = true;
-         }
-      }
-   }
-
-   // either a click or stop dragging
-   $scope.mouseUp = function($event)
-   {
-      if (!$scope.systembar.dragged)
-      {
-         if ($scope.systembar.clicked_ix !== undefined)
-         {
-            $scope.cancel_timeout();
-            ThemeService.goSystemDetail($scope.systembar.clicked_ix);
-         }
-      }
-      else if ($scope.systembar.change_ix)
-      {
-        ThemeService.nextSystem($scope.systembar.change_ix);
-        GameService.show_favorite = false;
-        GameService.getGamelist(ThemeService.system.name);
-      }
-
-      $scope.stopDragging();
-   }
-
-
-   // styles used for logo and info while dragging
-   // (keys uses class animations)
-   $scope.setLogoStyle = function(offset, x_pct)
-   {
-      var style = $scope.systembar['logostyle'+offset];
-      var infostyle = $scope.systembar['infostyle'+offset];
-
-      style.left = x_pct + '%';
-      var prop;
-      if (x_pct < 12)
-      {
-         prop = (x_pct+25)/(12+25);
-         style.width = (18+(23-18)*prop)+'%';
-         style.height = (8+(12-8)*prop)+'%';
-         style['font-size'] = (7+(11-7)*prop)+'vmin';
-         infostyle.opacity = 0;
-      }
-      else if (x_pct < 50)
-      {
-         prop=(x_pct-12)/(50-12);
-         style.width = (23+(35-23)*prop)+'%';
-         style.height = (12+(17-12)*prop)+'%';
-         style['font-size'] = (11+(15-11)*prop)+'vmin';
-         infostyle.opacity = prop;
-      }
-      else if (x_pct < 88)
-      {
-         prop=(x_pct-50)/(88-50);
-         style.width = (35+(23-35)*prop)+'%';
-         style.height = (17+(12-17)*prop)+'%';
-         style['font-size'] = (15+(11-15)*prop)+'vmin';
-         infostyle.opacity = 1 - prop;
-      }
-      else
-      {
-         prop=(x_pct-88)/(125-88)
-         style.width = (23+(18-23)*prop)+'%';
-         style.height = (12+(8-12)*prop)+'%';
-         style['font-size'] = (11+(7-11)*prop)+'vmin';
-         infostyle.opacity = 0;
-      }
-      infostyle.left = style.left;
-      infostyle.width = style.width;
-   }
-
-   $scope.go_favorites = function()
-   {
-      GameService.show_favorite = true;
-      util.call('/all');
-   }
-
-   // keep track of page width to '$scope.window_width'
-   $scope.window = angular.element($window);
-   $scope.$watch(
-      function () { return $window.innerWidth; },
-      function (value) { $scope.window_width = value; },
-      true
-   );
-   $scope.$watch(
-      function () { return $window.innerHeight; },
-      function (value) { $scope.window_height = value; },
-      true
-   );
-   $scope.$watch('ThemeService.view.carousel.systemcarousel.pos.y', $scope.initSystembar);
-
-   $scope.window.bind('resize', function()
-   {
-      $scope.$evalAsync();
-   });
-
-}]);
+})();
