@@ -400,8 +400,8 @@ input, select, textarea {
     background-color: #ddd;
     position: absolute;
     top: 5vh;
-    left: 15vw; width: 70vw;
-    z-index: 80;
+    left: 5vw; width: 85vw;
+    z-index: 200;
     -webkit-border-radius: 0.8em;
     -moz-border-radius: 0.8em;
     border-radius: 0.8em;
@@ -415,7 +415,7 @@ input, select, textarea {
 .game_editor .rom {
     padding: 1% 2%;
     font-weight: bold;
-    font-size: 5vmin;
+    font-size: 4.5vmin;
     text-align: left;
     text-transform: uppercase;
     text-decoration: underline;

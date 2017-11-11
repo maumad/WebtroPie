@@ -25,7 +25,6 @@
         self.getDefaultGamelistViewName = getDefaultGamelistViewName;
         self.getGamelist = getGamelist;
         self.getGameMetadata = getGameMetadata;
-        self.getImageUrl = getImageUrl;
         self.getParentDir = getParentDir;
         self.getSubDirectory = getSubDirectory;
         self.getSystemGamelist = getSystemGamelist;
@@ -260,13 +259,29 @@
 
                 if (name == 'name')
                 {
+                    if (!game.isDir)
+                    {
+                        // remove [.*]
+                        if(text)
+                            text = text.replace(/\[[^\]]*\]/g,'')
+                        // remove (.*)
+                        if(text)
+                            text = text.replace(/\([^\)]*\)/g,'');
+                    }
                     if (game.new)
                     {
                         text = 'New: '+text;
                     }
                     if (game.isDir)
                     {
-                        text = text+' ('+self.subdirs[game.path].games+')';
+                        text += ' ('+self.subdirs[game.path].games+')';
+                    }
+                    else
+                    {
+                        if (self.system_name.substring(0,4)=='auto')
+                        {
+                            text += ' ('+game.sys+')';
+                        }
                     }
                 }
 
@@ -274,42 +289,6 @@
             }
 
             return (typeof obj) == 'object' ? obj.text : obj;
-        }
-
-
-        // local file path to url translations
-        function getImageUrl(path, filename)
-        {
-            if (!filename) return;
-
-            var image_url;
-
-            var RetroPie1 = '/home/pi/RetroPie';
-            var RetroPie2 = '~/RetroPie';
-            var homeES1 = '~/.emulationstation';
-            var homeES2 = '/home/pi/.emulationstation';
-
-            if (filename.substring(0,2) == './')
-                image_url = filename.substring(2);
-            else if (filename.substr(0,RetroPie1.length+5) == RetroPie1+'/roms')
-                image_url = 'svr'+filename.substr(RetroPie1.length);
-            else if (filename.substr(0,RetroPie2.length+5) == RetroPie2+'/roms')
-                image_url = 'svr'+filename.substr(RetroPie2.length);
-            else if (filename.substr(0,homeES1.length+18) == homeES1+'/downloaded_images')
-                image_url = 'svr'+filename.substr(homeES1.length);
-            else if (filename.substr(0,homeES2.length+18) == homeES2+'/downloaded_images')
-                image_url = 'svr'+filename.substr(homeES2.length);
-            else if (filename.substring(0,1) != '/')
-                image_url = path+'/'+filename;
-            else if (filename.substr(0,path.length) == path) {
-                filename = filename.substr(path.length);
-                image_url = path+'/'+filename;
-            }
-            else {
-                //console.log(filename);
-                return;
-            }
-            return 'url("'+image_url+'")';
         }
 
         // return path of parent directory

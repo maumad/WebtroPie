@@ -1,4 +1,9 @@
 <a name="0.2.2"></a>
+- auto create external media directory links (2017-11-11)
+- remove square/curly brackets from game lists (2017-11-11)
+- show system after game name in auto game lists (2017-11-11)
+- Change number of players input on Editor to text instead of number (2017-11-11)
+- only description set to multiline (2017-11-11)
 - handle themes containing unicode chars (2017-11-09)
 - better theme failure handling
 

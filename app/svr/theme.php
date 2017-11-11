@@ -70,14 +70,10 @@ function filepathinfo($file)
    $path = pathinfo($file, PATHINFO_DIRNAME );
    $file = pathinfo($file, PATHINFO_BASENAME );
 
-   // simplify path remove ./
-   $path = preg_replace('|/\./|','/',$path);
-   $path = preg_replace('|/\.$|','',$path);
-   // simplify path remove "dir/.."
-   $path = preg_replace('|([^/]*)/\.\.|','',$path);
-   $path = preg_replace('|^\/|','',$path);
-   // simplify path remove //
-   $path = preg_replace('|//|','/',$path);
+   $path = simplify_path($path);
+
+   // remove starting /
+   $path = preg_replace('|^/|','',$path);
 
    if($path)
       $fullpath = $path.'/'.$file;
@@ -97,7 +93,6 @@ function get_font_metrics(&$text, $path)
       return;
 
    $fullpath = filepathinfo($themepath.'/'.$path.'/'.$text['fontPath'])['fullpath'];
-   // alternate method, avoids php bug in filepathinfo
    if(!file_exists($fullpath))
    {
       $fullpath =  preg_replace('|.*('.$themepath.')|','$1',
@@ -172,7 +167,7 @@ function load_and_include($file, &$parent, $index)
    }
 
    // the files that will be returned as an array
-   $arr = load_file_xml_as_array($themepath.'/'.$incfile);
+   $arr = load_file_xml_as_array($themepath.'/'.$incfile, false, true);
    get_views_font_metrics($arr['view'], $path);
    //get_views_font_metrics($arr['feature']['view'], $path);
    foreach ($arr['feature'] as &$feature) {

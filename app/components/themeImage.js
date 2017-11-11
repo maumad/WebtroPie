@@ -150,19 +150,13 @@
         {
             if (vm.game && vm.game[vm.md] && ! vm.game[vm.md+'_missing'])
             {
-                // set up Game image
-                if (!vm.game[vm.md+'_url'])
-                {
-                    vm.game[vm.md+'_url'] = GameService
-                         .getImageUrl('svr/roms/'+vm.game.sys, vm.game[vm.md]);
-                }
                 if (vm.obj.div)
                 {
-                    vm.obj.div['background-image'] = vm.game[vm.md+'_url'];
+                    vm.obj.div['background-image'] = 'url("svr/'+vm.game[vm.md+'_url']+'")';
                 }
                 else if (vm.obj.img)
                 {
-                    vm.obj.img_src = vm.game[vm.md+'_url'];
+                    vm.obj.img_src = 'url("svr/'+vm.game[vm.md+'_url']+'")';
                 }
             }
             else

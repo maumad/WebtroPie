@@ -45,38 +45,38 @@
                 if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
                 if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
 
-                if (self.es.CollectionSystemsAuto)
-                self.es.CollectionSystemsAuto
-                .split(',')
-                .forEach(function(system) {
-                    if (system=='all')
-                    {
+                //if (self.es.CollectionSystemsAuto)
+                //self.es.CollectionSystemsAuto
+                //.split(',')
+                //.forEach(function(system) {
+                    //if (system=='all')
+                    //{
                         self.systems['auto-allgames'] = {
                             name: 'auto-allgames',
                             fullname: 'all',
                             theme: 'auto-allgames',
                             has_games: true
                         }
-                    }
-                    if (system=='favorites')
-                    {
+                    //}
+                    //if (system=='favorites')
+                    //{
                         self.systems['auto-favorites'] = {
                             name: 'auto-favorites',
                             fullname: 'favorites',
                             theme: 'auto-favorites',
                             has_games: true
                         }
-                    }
-                    if (system=='recent')
-                    {
+                    //}
+                    //if (system=='recent')
+                    //{
                         self.systems['auto-lastplayed'] = {
                             name: 'auto-lastplayed',
                             fullname: 'recent',
                             theme: 'auto-lastplayed',
                             has_games: true
                         }
-                    }
-                });
+                    //}
+                //});
                 if(self.es.CollectionSystemsCustom)
                 self.es.CollectionSystemsCustom
                 .split(',')

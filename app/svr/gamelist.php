@@ -4,6 +4,7 @@ require_once("xml_util.php");
 require_once("vars.php");
 
 $system='';
+$svr_dir = getcwd();
 $local_client = preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? true : false;
 
 // get a full list of games for a system
@@ -48,31 +49,63 @@ function human_filesize($bytes, $decimals = 1)
 
 function check_media($media, $ext) {
 
-   global $SYSTEM_PATH, $response, $game, $index, $has, $match_media;
+   global $SYSTEM_PATH, $response, $game, $index, $has, $match_media, $system;
+   global $svr_dir;
 
    if (isset($game[$media]))
    {
-      $has[$media] = true;
-      $mediafile = $game[$media];
-      if(substr($mediafile,0,2) == "./")
-      {
-         $mediafile = substr($mediafile,2);
-         $response['game'][$index][$media] = $mediafile;
-         $mediafile = $SYSTEM_PATH.'/'.$mediafile;
-      }
-      elseif (substr($mediafile,0,2) == "~/")
-      {
-         $mediafile = HOME.'/'.substr($mediafile,2);
-      }
-      elseif (substr($mediafile,0,1) != "/")
-      {
-         $mediafile = $SYSTEM_PATH.'/'.$mediafile;
-      }
-
-      // absolute path
-      if (!file_exists($mediafile))
+      if (!file_exists($game[$media]))
       {
          $response['game'][$index][$media.'_missing'] = true;
+      }
+
+      $has[$media] = true;
+
+      $url='';
+      $fullpath='';
+      if(substr($game[$media],0,2) == "./")
+      {
+         $url = $SYSTEM_PATH.'/'.substr($game[$media],2);
+      }
+      elseif (substr($game[$media],0,2) == "~/")
+      {
+         $fullpath = HOME.'/'.substr($game[$media],2);
+      }
+      elseif (substr($game[$media],0,1) != "/")
+      {
+         $url = $SYSTEM_PATH.'/'.$game[$media];
+      }
+      else
+      {
+         $fullpath = $game[$media];
+      }
+      if ($fullpath)
+      {
+         $fullpath = simplify_path($fullpath);
+         $l = strlen('/home/pi/RetroPie/');
+         if (substr($fullpath, 0, $l) === '/home/pi/RetroPie/')
+         {
+             $url = substr($fullpath, $l);
+             if (!file_exists($url))
+             {
+                 $p = strpos($url, '/'.$system.'/');
+                 if ($p !== false)
+                 {
+                     $url_dir = $svr_dir.'/'.substr($url, 0, $p);
+                     if (!file_exists($url_dir))
+                     {
+                        $full_dir = substr($fullpath, 0, $p+$l);
+                        // pull media directory to under our web root
+                        //$ret = symlink($full_dir, $url_dir);
+                        exec("ln -s $full_dir $url_dir");
+                     }
+                 }
+             }
+         }
+      }
+      if ($url)
+      {
+         $response['game'][$index][$media.'_url'] = $url;
       }
    }
    elseif ($match_media)
@@ -94,6 +127,8 @@ if ($getlist)
    $index_types = array('game'=>0); // store the index number as an object member
 
    $response = load_file_xml_as_array($gamelist_file);
+
+   chdir($SYSTEM_PATH);
 
    // $scan flag is set to request scan
    if ($scan)
@@ -189,16 +224,14 @@ if ($getlist)
    $has['marquee'] = false;
    foreach ($response['game'] as $index => $game)
    {
+/*
       // remove ./ (only changes get saved back)
       if (substr($game['path'],0,2) == "./")
       {
          $response['game'][$index]['path'] = substr($game['path'],2);
       }
-
-      if (substr($game['path'],0,1) == "/")
-         $fullpath = $response['game'][$index]['path']; 
-      else
-         $fullpath = $SYSTEM_PATH."/".$response['game'][$index]['path']; 
+*/
+      $fullpath = $response['game'][$index]['path'];
 
       // maybe read cue files in future to get bin sizes
       //$extension = strtolower(preg_replace(".*\.","",$fullpath));

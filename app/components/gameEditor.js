@@ -89,11 +89,11 @@
             }
         }
 
-        function gameImageStyle(path, filename)
+        function gameImageStyle(md)
         {
-            if (filename)
+            if (vm.game[md+'_url'])
             {
-                return { 'background-image': GameService.getImageUrl(path, filename) }
+                return { 'background-image': 'url("svr/'+vm.game[md+'_url']+'")' }
             }
         }
 

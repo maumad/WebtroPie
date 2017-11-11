@@ -45,9 +45,9 @@
             delete vm.obj.div['background-image'];
             if (vm.game && !vm.game.video_url)
             {
-                if (vm.game.video)
+                if (vm.game.video_url)
                 {
-                    vm.video_url = 'svr/roms/'+vm.game.sys+'/'+vm.game.video;
+                    vm.video_url = 'svr/'+vm.game.video_url;
                 }
                 else if (vm.obj.fulldefault)
                 {
@@ -56,11 +56,6 @@
                 else if (vm.obj.showSnapshotNoVideo == 'true' && vm.game.image)
                 {
                     vm.video_url = '';
-                    if (!vm.game.image_url)
-                    {
-                        vm.game.image_url = GameService
-                             .getImageUrl('svr/roms/'+vm.game.sys, vm.game.image);
-                    }
                     vm.obj.div['background-image'] = vm.game.image_url;
                     if (!vm.obj.div.width)
                     {

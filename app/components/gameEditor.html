@@ -12,8 +12,7 @@
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('name')">
         </td>
-        <td class=snap rowspan=5
-            ng-style="vm.gameImageStyle(app.GameService.path, vm.game.image)">
+        <td class=snap rowspan=5 ng-style="vm.gameImageStyle('image')">
             <md-media-upload md="image" accept="image/*"></md-media-upload>
         </td>
     </tr>
@@ -65,15 +64,14 @@
                        size-units="vmin"></md-image-toggle>
             </small>
         </td>
-        <td class=snap rowspan=3
-                   ng-style="vm.gameImageStyle(app.GameService.path, vm.game.marquee)">
+        <td class=snap rowspan=3 ng-style="vm.gameImageStyle('marquee')">
             <md-media-upload md="marquee" accept="image/*"></md-media-upload>
         </td>
     </tr>
     <tr>
         <th>{{app.config.lang.md_labels.players}}</th>
         <td class=narrow>
-            <input type=number min=1 max=10
+            <input type=text style="width: 55%"
                    placeholder="?"
                    ng-model="vm.game.players"
                    ng-keydown="vm.editorKeyPress($event)"

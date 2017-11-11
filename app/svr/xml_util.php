@@ -138,19 +138,32 @@ function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
    return new SimpleXMLElement(
                  wrap_xml(file_get_contents($filename),$wrap_tag));
 }
-
-function simplexml_load_file_strip_comments($filename)
-{
-try {
-   return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
-   //return new SimpleXMLElement(strip_comments(file_get_contents($filename)));
-} catch (Exception $e) {
-   echo $filename, "\nCaught exception: ",  $e->getMessage(), "\n";
-   exit;
+/*   - requires mb extension
+function file_get_contents_utf8($fn) { 
+    $content = file_get_contents($fn); 
+     return mb_convert_encoding($content, 'UTF-8', 
+         mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true)); 
 }
-   //return new SimpleXMLElement(
-                 //strip_comments(file_get_contents($filename)));
-
+*/
+function simplexml_load_file_strip_comments($filename, $utf8_encode)
+{
+    try
+    {
+        if ($utf8_encode)
+        {
+            return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
+            //return new SimpleXMLElement(strip_comments(file_get_contents_utf8($filename)));
+        }
+        else
+        {
+            return new SimpleXMLElement(strip_comments(file_get_contents($filename)));
+        }
+    }
+    catch (Exception $e)
+    {
+        echo $filename, "\nCaught exception: ",  $e->getMessage(), "\n";
+        exit;
+    }
 }
 
 function unwrap_xml($filename, $wrap_tag='wrapped')
@@ -175,7 +188,7 @@ function simplexml_save_file_unwrapped($xml, $filename, $wrap_tag='wrapped')
    rename($filename.'.tmp',$filename);
 }
 
-function load_file_xml_as_array($filename, $wrap_tag='')
+function load_file_xml_as_array($filename, $wrap_tag='', $utf8_encode=false)
 {
    if (!file_exists($filename)) {
       return array("error" => "file $filename does not exist");
@@ -186,8 +199,20 @@ function load_file_xml_as_array($filename, $wrap_tag='')
    }
    else
    {
-      return xmlobj_to_array(simplexml_load_file_strip_comments($filename));
+      return xmlobj_to_array(simplexml_load_file_strip_comments($filename,$utf8_encode));
    }
+}
+
+function simplify_path($path)
+{
+   // simplify "/./" to "/"
+   $path = preg_replace('|/\./|','/',$path);
+   // simplify "/dir/.." to "/"
+   $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
+   $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
+   $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
+
+   return $path;
 }
 
 ?>

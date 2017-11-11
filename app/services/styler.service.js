@@ -52,7 +52,6 @@
         self.createCarsouselClasses = createCarsouselClasses;
         self.createImageStyle = createImageStyle;
         self.createTextStyle = createTextStyle;
-        self.createTextStyleML = createTextStyleML;
         self.createRatingStyle = createRatingStyle;
         self.createVideoStyle = createVideoStyle;
         self.createViewStyles = createViewStyles;
@@ -315,7 +314,6 @@
                      image.pos.x<0 || image.pos.y<0)
                 {
                     style.display = 'none';
-//console.log('     ----> ' + image.name + ' is offscreen : x=' + image.pos.x + ', y=' + image.pos.y);
                     return;
                 }
                 //style.left = util.pct(image.pos.x,'vw');
@@ -638,7 +636,7 @@
         }
 
         // convert theme text attributes to style
-        function createTextStyle(text, allow_multiline)
+        function createTextStyle(text)
         {
             if (!text || (typeof text) != 'object' || text.styled)
             {
@@ -739,37 +737,21 @@
 
             calcObjBounds(text);
 
+            if (text.name == 'md_description')
+            {
+                text.multiline = true;
+            }
+
             if (text.size)
             {
-                if (text.size.w && !text.size.h)  // wrap, expand h dynamically
+                if (text.size.w)
                 {
                     text.div['max-width'] =
                     text.div.width = util.pct(text.size.w,'vw');
-                    if (allow_multiline && (text.name == 'md_desc'))
-                    {
-                        text.multiline = true;
-                    }
                 }
-                else if (!allow_multiline)     // not textbox
+                if (text.size.h)
                 {
-                    if (text.size.w)
-                    {
-                        text.div.width = util.pct(text.size.w,'vw');
-                    }
-                    if (text.size.h)
-                    {
-                        text.div.height = util.pct(text.size.h,'vh');
-                    }
-                }
-                else if (text.size.w && text.size.h)
-                {
-                    text.div.width = util.pct(text.size.w,'vw');
                     text.div.height = util.pct(text.size.h,'vh');
-                    if (text.size.h * 0.6 >= text.fontSize * 2)  // h can fit two lines
-                    //if (text.size.h / text.fontSize > 2)
-                    {
-                        text.multiline = true;
-                    }
                 }
                 text.style.width = text.div.width;
           }
@@ -866,12 +848,6 @@
                      'width': util.pct(textlist.horizontalMargin,'vw')
                 }
             }
-        }
-
-        // multiline text style
-        function createTextStyleML(text)
-        {
-            createTextStyle(text, true);
         }
 
         function createVideoStyle(video)
@@ -990,7 +966,7 @@
             }
             if (!view.styled)
             {
-                angular.forEach(view.text,        createTextStyleML); // allow multi line
+                angular.forEach(view.text,        createTextStyle);
                 angular.forEach(view.textlist,    createTextlistStyle);
                 angular.forEach(view.datetime,    createTextStyle);
                 angular.forEach(view.image,       createImageStyle);
