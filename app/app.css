@@ -492,12 +492,10 @@ input, select, textarea {
 }
 .game_editor input[type=number] {
     width: 15%;
-    text-align: center;
     margin-right: 0.25vw;
 }
 .game_editor input[type=date] {
-    width: 55%;
-    text-align: center;
+    width: 50%;
 }
 .game_editor input, .game_editor select {
     width: 100%;

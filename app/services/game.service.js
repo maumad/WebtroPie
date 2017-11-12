@@ -247,6 +247,8 @@
                 {
                     if (name == 'genre')
                         return 'Unknown';
+                    else if (name == 'players')
+                        return '1';
                     else if (name == 'playcount')
                         return '0';
                     return;
@@ -476,15 +478,6 @@
                         else
                         {
                             game.playcount = parseInt(game.playcount);
-                        }
-
-                        if (game.players)
-                        {
-                            game.players = parseInt(game.players);
-                        }
-                        else
-                        {
-                            game.players = 1;
                         }
 
                         if (game.rating<0)
