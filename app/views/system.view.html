@@ -52,8 +52,9 @@
 <div ng-if="app.styler.systemInfo.div"
      ng-style="app.styler.systemInfo.div" class="text fade-in-out ng-hide"
      ng-show="!page.animating && !page.systembar.dragging">
-  <div ng-style="app.styler.systemInfo.style" class="text_inner">
-    {{app.GameService.systems[app.CarouselService.getRelativeCarouselSystemTheme(0).name].total}}
+  <div ng-style="app.styler.systemInfo.style" class="text_inner"
+       ng-show="app.GameService.systems[app.CarouselService.getCurrentCarouselSystemName()].total">
+    {{app.GameService.systems[app.CarouselService.getCurrentCarouselSystemName()].total}}
     GAMES AVAILABLE
   </div>
 </div>

@@ -603,6 +603,7 @@
 
                     // Add any directories that contained games (in the game.path)
                     // but not in the game list file as entries themselves
+                    var dir_count = 0;
                     angular.forEach(system.subdirs, function(dir, name)
                     {
                         if (!dir.game)
@@ -612,7 +613,14 @@
                             // add it to the game list
                             system.gamelist.push(dir.game);
                         }
+                        dir_count++;
                     });
+
+                    console.groupCollapsed("%s (%d)", system_name, system.total);
+                    console.log("games = %04d", system.total);
+                    console.log("directories = %04d", dir_count);
+                    console.log("total = %04d", system.gamelist.length);
+                    console.groupEnd();
 
                     deferred.resolve(system);
                     delete system.promise;

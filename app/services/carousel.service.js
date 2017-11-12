@@ -24,6 +24,7 @@
         self.centerOffset = centerOffset;
         self.getCarouselSystemName = getCarouselSystemName;
         self.getCarouselSystemTheme = getCarouselSystemTheme;
+        self.getCurrentCarouselSystemName = getCurrentCarouselSystemName;
         self.getRelativeCarouselSystemName = getRelativeCarouselSystemName;
         self.getRelativeCarouselSystemTheme = getRelativeCarouselSystemTheme;
         self.goCurrentCarouselSystem = goCurrentCarouselSystem;
@@ -55,6 +56,11 @@
         function getRelativeCarouselSystemName(offset)
         {
             return getCarouselSystemName(self.system_index + offset)
+        }
+
+        function getCurrentCarouselSystemName()
+        {
+            return getRelativeCarouselSystemName(0);
         }
 
         // return E.g previous or next system theme

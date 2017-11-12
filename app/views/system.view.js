@@ -133,7 +133,7 @@
             }
 
             page.animating = false;
-            GameService.getGamelist(ThemeService.system.name)
+            GameService.getGamelist(CarouselService.getCurrentCarouselSystemName())
             .then(createDefaultGamelistView);
             util.defaultFocus();
         }
@@ -153,7 +153,7 @@
 
         function createDefaultGamelistView()
         {
-            var system_name = CarouselService.getRelativeCarouselSystemName(0);
+            var system_name = CarouselService.getCurrentCarouselSystemName();
             var default_view = GameService.getDefaultGamelistViewName(system_name);
             styler.createViewStyles(ThemeService.system.view[default_view], true);
         }
