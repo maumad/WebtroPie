@@ -43,7 +43,7 @@
         function updateVideo()
         {
             delete vm.obj.div['background-image'];
-            if (vm.game && !vm.game.video_url)
+            if (vm.game && vm.game.video_url)
             {
                 if (vm.game.video_url)
                 {
