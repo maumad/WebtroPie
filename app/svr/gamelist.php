@@ -105,9 +105,9 @@ function check_media($media, $ext) {
       if (file_exists($fullpath))
       {
          $has[$media] = true;
-         list($width, $height, $type, $attr) = getimagesize($fullpath);
-         $response['game'][$index][$media.'_width'] = $width;
-         $response['game'][$index][$media.'_height'] = $width;
+         //list($width, $height, $type, $attr) = getimagesize($fullpath);
+         //$response['game'][$index][$media.'_width'] = $width;
+         //$response['game'][$index][$media.'_height'] = $width;
       }
       else
       {
