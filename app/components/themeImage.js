@@ -158,7 +158,7 @@
                 }
                 else if (vm.obj.img)
                 {
-                    vm.obj.img_src = 'url("svr/'+vm.game[vm.md+'_url']+'")';
+                    vm.obj.img_src = 'svr/'+vm.game[vm.md+'_url'];
                 }
                 if (vm.game[vm.md+'_width'] && vm.game[vm.md+'_height'])
                 {
