@@ -47,7 +47,10 @@ if ($_GET['get'] & THEMES)
 if ($_GET['get'] & SYSTEMS)
 {
     $array_types = array('system'=>true);
-    $systems = load_file_xml_as_array(ES_PATH."/es_systems.cfg");
+    if (file_exists(HOME_ES."/es_systems.cfg"))
+        $systems = load_file_xml_as_array(HOME_ES."/es_systems.cfg");
+    else
+        $systems = load_file_xml_as_array(ES_PATH."/es_systems.cfg");
     $config['systems'] = array();
     for($i=0; $i<count($systems['system']);$i++)
     {

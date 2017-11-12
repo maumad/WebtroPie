@@ -198,10 +198,11 @@
                  //system.name.substring(0,6)=='custom'
                 )      // get all systems
             {
-                angular.forEach(ThemeService.theme.systems, function(sys)
+                angular.forEach(config.systems, function(sys)
                 {
-                    if (sys.name.substring(0,4)=='auto' //||
-                         //sys.name.substring(0,6)=='custom'
+                    if (sys.name.substring(0,4)=='auto' ||
+                         sys.name.substring(0,6)=='custom' ||
+                         !sys.has_games
                      )
                     {
                         return;
