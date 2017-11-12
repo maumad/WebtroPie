@@ -18,9 +18,11 @@
             replace: true,
             scope: true,
             template: '<div id={{vm.obj.name}} title={{vm.title}} '+
-                                'ng-click="vm.click($event)">'+
+                               'ng-click="vm.click($event)">'+
                           '<div ng-if="vm.obj.div" ng-style="vm.obj.div"></div>'+
-                          '<img ng-if="vm.obj.img_src" ng-src="{{vm.obj.img_src}}" ng-style="vm.obj.img">'+
+                          '<img ng-if="vm.obj.img_src" '+
+                               'ng-src="{{vm.obj.img_src}}" '+
+                               'ng-style="vm.obj.img">'+
                       '</div>',
             controller: controller,
             controllerAs: 'vm',
@@ -148,7 +150,7 @@
 
         function updateImage(new_val, old_val)
         {
-            if (vm.game && vm.game[vm.md] && ! vm.game[vm.md+'_missing'])
+            if (vm.game && vm.game[vm.md+'_url'])
             {
                 if (vm.obj.div)
                 {
@@ -157,6 +159,10 @@
                 else if (vm.obj.img)
                 {
                     vm.obj.img_src = 'url("svr/'+vm.game[vm.md+'_url']+'")';
+                }
+                if (vm.game[vm.md+'_width'] && vm.game[vm.md+'_height'])
+                {
+                    vm.title = vm.game[vm.md+'_width'] +' x ' + vm.game[vm.md+'_height'];
                 }
             }
             else

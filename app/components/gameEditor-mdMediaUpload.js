@@ -20,7 +20,7 @@
             template:
           '<form class="upload" novalidate'+
                 ' ng-hide="app.GameService.game[vm.md] && '+
-                ' !app.GameService.game[vm.md+\'_missing\']">'+
+                ' app.GameService.game[vm.md+\'_url\']">'+
               '<div ng-show="vm.uploading" class="progressbar"'+
                   ' ng-style="{width: vm.progress+\'%\'}">{{vm.progress}}%'+
               '</div>'+

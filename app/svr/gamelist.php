@@ -54,12 +54,6 @@ function check_media($media, $ext) {
 
    if (isset($game[$media]))
    {
-      if (!file_exists($game[$media]))
-      {
-         $response['game'][$index][$media.'_missing'] = true;
-      }
-
-      $has[$media] = true;
 
       $url='';
       $fullpath='';
@@ -103,6 +97,19 @@ function check_media($media, $ext) {
              }
          }
       }
+
+      if (file_exists($fullpath))
+      {
+         $has[$media] = true;
+         list($width, $height, $type, $attr) = getimagesize($fullpath);
+         $response['game'][$index][$media.'_width'] = $width;
+         $response['game'][$index][$media.'_height'] = $width;
+      }
+      else
+      {
+         $response['game'][$index][$media.'_missing'] = true;
+      }
+
       if ($url)
       {
          $response['game'][$index][$media.'_url'] = $url;

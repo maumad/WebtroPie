@@ -1,14 +1,14 @@
 <div class=window_size>
    <!-- all theme components including game centric components -->
-    <theme-image ng-repeat="obj in page.view.image track by obj.name" obj="obj" game="page.game" system="page.system"
+    <theme-image ng-repeat="obj in page.view.image" obj="obj" game="page.game" system="page.system"
                                            ></theme-image>
-    <theme-video ng-repeat="obj in page.view.video track by obj.name" obj="obj" game="page.game" system="page.system"
+    <theme-video ng-repeat="obj in page.view.video" obj="obj" game="page.game" system="page.system"
                                            ></theme-video>
-     <theme-text ng-repeat="obj in page.view.text track by obj.name" obj="obj" game="page.game" system="page.system"
+     <theme-text ng-repeat="obj in page.view.text" obj="obj" game="page.game" system="page.system"
                  ng-if="!obj.anchor_label" ></theme-text>
-   <theme-rating ng-repeat="obj in page.view.rating track by obj.name" obj="obj" game="page.game"
+   <theme-rating ng-repeat="obj in page.view.rating" obj="obj" game="page.game"
                  ng-if="!obj.anchor_label" ></theme-rating>
-     <theme-date ng-repeat="obj in page.view.datetime track by obj.name" obj="obj" game="page.game"
+     <theme-date ng-repeat="obj in page.view.datetime" obj="obj" game="page.game"
                  ng-if="!obj.anchor_label" ></theme-date>
 
    <!-- the list -->
