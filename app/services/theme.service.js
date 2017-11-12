@@ -167,6 +167,10 @@
                         {
                             angular.forEach(view.image, function (image, imagename)
                             {
+                                if (image.name && image.name == 'logo')
+                                {
+                                    return;
+                                }
                                 if ((!image.name || image.name.substring(0, 3) != "md_") &&
                                     // compare both themes image paths :-
                                     theme.systems.default.view[v].image[imagename] &&
@@ -199,12 +203,12 @@
                             });
                         });
                         theme.systems.default.done = true;
+                        theme.systems.default.name = 'default';
                         delete theme.systems.default.logo;
                         delete theme.systems.default.path;
-                        delete theme.systems.default.view.basic.image.logo.path;
-                        delete theme.systems.default.view.detailed.image.logo.path;
-                        if (theme.systems.default.view.system.image)
-                           delete theme.systems.default.view.system.image.logo.path;
+                        delete theme.systems.default.view.basic.image.logo;
+                        delete theme.systems.default.view.detailed.image.logo;
+                        delete theme.systems.default.view.system.image.logo;
                     }
                 });
             }
