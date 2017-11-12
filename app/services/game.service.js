@@ -259,7 +259,7 @@
 
                 if (name == 'name')
                 {
-                    if (!game.isDir)
+                    if (!game.isDir && self.system_name.substring(0,4)=='auto')
                     {
                         // remove [.*]
                         if(text)

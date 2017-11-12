@@ -29,7 +29,7 @@
                     |filter:{name:app.GameService.filter}
                     |directory:vm.subdir:app.config.app.ShowEmptyDirectories
                     |orderBy:vm.orderby.orderby:vm.orderby.reverse )
-                    |limitTo:app.ThemeService.gamelist.rows+100:vm.buffer_index track by game.sys+'/'+game.path"
+                    |limitTo:app.ThemeService.gamelist.rows+100:vm.buffer_index"
                  ng-click="vm.clickGame(game, $event, $index)"
                  ng-style="vm.getGameRowStyle(game, vm.buffer_index+$index)"
                  ng-mouseover="vm.mouseOver(game, $event)">
