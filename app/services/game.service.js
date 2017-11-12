@@ -202,6 +202,7 @@
                 {
                     if (sys.name.substring(0,4)=='auto' ||
                          sys.name.substring(0,6)=='custom' ||
+                         sys.name.substring(0,6)=='retropie' ||
                          !sys.has_games
                      )
                     {
@@ -410,7 +411,6 @@
                     system.has_video =  response.data.has_video;
                     system.has_marquee =  response.data.has_marquee;
 
-                    // look for sub directories
                     angular.forEach(response.data.game, function(game)
                     {
                         // continue if already loaded and not new
@@ -617,11 +617,49 @@
                         dir_count++;
                     });
 
-                    console.groupCollapsed("%s (%d)", system_name, system.total);
-                    console.log("games = %04d", system.total);
-                    console.log("directories = %04d", dir_count);
-                    console.log("total = %04d", system.gamelist.length);
-                    console.groupEnd();
+                    if (config.app.LogSystemTotals)
+                    {
+                        system.gamelist.sort(function (a, b)
+                        {
+                            return (a.shortpath > b.shortpath ? 1 : -1);
+                        });
+
+                        // look for sub directories
+                        var last_game = {};
+                        system.duplicates = 0;
+                        console.groupCollapsed("%s (%d)", system_name, system.total);
+                        console.log("games = %d", system.total);
+                            console.groupCollapsed("duplicates");
+                            angular.forEach(system.gamelist, function(game) {
+                                if (game.shortpath == last_game.shortpath)
+                                {
+                                    console.groupCollapsed(game.shortpath);
+                                        console.log("Index = %s", last_game.index);
+                                        console.log("Name = %s", last_game.name);
+                                        console.log("Path = %s", last_game.path);
+                                        console.log("Index = %s", game.index);
+                                        console.log("Name = %s", game.name);
+                                        console.log("Path = %s", game.path);
+                                    console.groupEnd();
+                                    system.duplicates++;
+                                }
+                                last_game = game;
+                            })
+                            console.groupEnd();
+                        console.log("duplicates = %d", system.duplicates);
+                        console.log("directories = %d", dir_count);
+                        console.log("total = %d", system.gamelist.length);
+                        console.groupEnd();
+
+                        system.gamelist.sort(function (a, b)
+                        {
+                            return (a.name > b.name ? 1 : -1);
+                        });
+                        if(system.duplicates > 0)
+                        {
+                            console.log("Warning: %s gamelist.xml contains %d duplicate rom paths", system_name, system.duplicates);
+                        }
+                    }
 
                     deferred.resolve(system);
                     delete system.promise;
@@ -629,6 +667,7 @@
                     self.gamelists_loaded++;
 
                 });
+
             }
 
             return deferred.promise;

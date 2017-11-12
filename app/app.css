@@ -401,7 +401,7 @@ input, select, textarea {
     position: absolute;
     top: 5vh;
     left: 5vw; width: 85vw;
-    z-index: 200;
+    z-index: 1000;
     -webkit-border-radius: 0.8em;
     -moz-border-radius: 0.8em;
     border-radius: 0.8em;

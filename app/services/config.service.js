@@ -45,6 +45,8 @@
                 if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
                 if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
 
+                delete self.systems.retropie;
+
                 //if (self.es.CollectionSystemsAuto)
                 //self.es.CollectionSystemsAuto
                 //.split(',')

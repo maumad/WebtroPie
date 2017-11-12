@@ -32,11 +32,13 @@ function merge_arrays(&$target, &$source)
 
 function xmlobj_to_array($xmlobj)
 {
-
    global $array_types, $index_types;
 
    if (!$xmlobj)
       return;
+
+   if (gettype($xmlobj)=='array')
+      return $xmlobj;
 
    $arr = array();
 
@@ -138,21 +140,28 @@ function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
    return new SimpleXMLElement(
                  wrap_xml(file_get_contents($filename),$wrap_tag));
 }
-/*   - requires mb extension
+
+//   - requires mb extension
 function file_get_contents_utf8($fn) { 
     $content = file_get_contents($fn); 
      return mb_convert_encoding($content, 'UTF-8', 
          mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true)); 
 }
-*/
+
 function simplexml_load_file_strip_comments($filename, $utf8_encode)
 {
     try
     {
         if ($utf8_encode)
         {
-            return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
-            //return new SimpleXMLElement(strip_comments(file_get_contents_utf8($filename)));
+            if (function_exists('mb_convert_encoding'))
+            {
+                return new SimpleXMLElement(strip_comments(file_get_contents_utf8($filename)));
+            }
+            else
+            {
+                return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
+            }
         }
         else
         {
@@ -161,8 +170,7 @@ function simplexml_load_file_strip_comments($filename, $utf8_encode)
     }
     catch (Exception $e)
     {
-        echo $filename, "\nCaught exception: ",  $e->getMessage(), "\n";
-        exit;
+        return array("filename"=>$filename, "error"=>$e->getMessage());
     }
 }
 
@@ -203,7 +211,7 @@ function load_file_xml_as_array($filename, $wrap_tag='', $utf8_encode=false)
    }
 }
 
-function simplify_path($path)
+function simplify_path($path, $directory)
 {
    // simplify "/./" to "/"
    $path = preg_replace('|/\./|','/',$path);
@@ -211,6 +219,26 @@ function simplify_path($path)
    $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
    $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
    $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
+
+   if ($directory)
+   {
+       // expand home
+       if (substr($path,0,2) == "~/")
+       {
+          $path = HOME.'/'.substr($path,2);
+       }
+       // remove directory
+       elseif (substr($path,0,2) == "./")
+       {
+          $path = substr($path,2);
+       }
+
+       $l = strlen($directory);
+       if (substr($path, 0, $l)== $directory)
+       {
+           $path = substr($path,$l);
+       }
+   }
 
    return $path;
 }

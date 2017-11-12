@@ -163,7 +163,6 @@
                 if (vm.game[vm.md+'_width'] && vm.game[vm.md+'_height'])
                 {
                     vm.title = vm.game[vm.md+'_width'] +' x ' + vm.game[vm.md+'_height'];
-console.log(vm.title);
                 }
             }
             else

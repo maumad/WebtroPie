@@ -105,9 +105,6 @@ function check_media($media, $ext) {
       if (file_exists($fullpath))
       {
          $has[$media] = true;
-         //list($width, $height, $type, $attr) = getimagesize($fullpath);
-         //$response['game'][$index][$media.'_width'] = $width;
-         //$response['game'][$index][$media.'_height'] = $width;
       }
       else
       {
@@ -243,6 +240,8 @@ if ($getlist)
       }
 */
       $fullpath = $response['game'][$index]['path'];
+      $response['game'][$index]['index'] = $index;
+      $response['game'][$index]['shortpath'] = simplify_path($fullpath, HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
 
       // maybe read cue files in future to get bin sizes
       //$extension = strtolower(preg_replace(".*\.","",$fullpath));

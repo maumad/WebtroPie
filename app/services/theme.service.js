@@ -298,6 +298,12 @@
             // expand system theme, merge included files, then convert images
             angular.forEach(self.theme.systems, function (sys)
             {
+                if (sys.theme && sys.theme.error)
+                {
+                    console.log(sys.theme);
+                    delete self.theme.systems[sys.name];
+                    return;
+                }
                 styler.loadMedia(self.theme, sys.theme, sys.path, file_count);
 
                 // expand merged views etc (where key contains a comma)
@@ -319,6 +325,7 @@
                 // remove unnecessary 'theme' tier, promote view to replace parent
                 if (sys.theme)
                 {
+
                     sys.view = sys.theme.view;
                     if (sys.theme.variables)
                     {
@@ -349,13 +356,6 @@
                     {
                         sys.logo = 'url("' + sys.view.system.image.logo.fullpath + '")';
                     }
-/*
-                    sys.text = sys.name;
-                    if (config.systems[sys.name])
-                    {
-                        sys.text = config.systems[sys.name].fullname;
-                    }
-*/
                 }
             });
 

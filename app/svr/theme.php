@@ -168,6 +168,10 @@ function load_and_include($file, &$parent, $index)
 
    // the files that will be returned as an array
    $arr = load_file_xml_as_array($themepath.'/'.$incfile, false, true);
+   if(isset($arr['error']))
+   {
+      return $arr;
+   }
    get_views_font_metrics($arr['view'], $path);
    //get_views_font_metrics($arr['feature']['view'], $path);
    foreach ($arr['feature'] as &$feature) {
