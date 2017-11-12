@@ -448,16 +448,7 @@
                             }
                         }
 
-                        var path = game.path;
-
                         game.sys = system_name;
-
-                        // strip home directory (?shouldn't be any)
-                        var sysdir = "/home/pi/RetroPi/roms/"+system_name;
-                        if (path.substring(0,sysdir.length) == sysdir)
-                        {
-                            path = path.substring(0,sysdir.length);
-                        }
 
                         // extra year
                         if (game.releasedate &&
@@ -473,7 +464,7 @@
 
                         if (!game.playcount)
                         {
-                            game.playcount=0;
+                            game.playcount = 0;
                         }
                         else
                         {
@@ -489,59 +480,15 @@
                             game.rating = 1;
                         }
 
-                        // dont even try if its and abs path we dont know about
-                        // TODO: check need path translation?
-                        if (path.substring(0,1) == "/")
-                        {
-                            return;
-                        }
-
-                        // no need to point to current directory - this breaks urls so strip
-                        if (path.substring(0,2) == "./")
-                        {
-                            path = path.substring(2);
-                        }
-
-                        var subdir = getSubDirectory(system, path);
-                        if (subdir)
-                        {
-                            game.subdir = subdir;
-                            system.subdirs[subdir].games++;
-                        }
-
-                        if (!game.name)
-                        {
-                            if (subdir)
-                            {
-                                game.name = path.substring(subdir.length+1);
-                            }
-                            else
-                            {
-                                game.name = path;
-                            }
-                        }
-
-                        // if rescan then append new game to existing list
+                        // Add to list and auto lists
                         if (rescan)
                         {
                             system.gamelist.push(game);
                             self.systems['auto-allgames'].gamelist.push(game);
                         }
-                        if (game.isDir)
+
+                        if (!game.isDir)
                         {
-                            if (!system.subdirs[path])
-                            {
-                                system.subdirs[path] = {
-                                        path: path,
-                                        game_index: 0,
-                                        buffer_index: 0,
-                                        scrolltop: 0,
-                                        games: 0
-                                     };
-                            }
-                            system.subdirs[path].game = game;
-                        }
-                        else {
                             system.total++;
                             self.systems['auto-allgames'].gamelist.push(game);
                             self.systems['auto-allgames'].total++;
@@ -593,6 +540,65 @@
                                 }
                             }
                         }
+
+                        // Work out subdirectories
+                        //  only relative or under roms directory
+
+                        var path = game.path;
+
+                        // strip home directory (?shouldn't be any)
+                        var sysdir = "/home/pi/RetroPi/roms/"+system_name;
+                        if (path.substring(0,sysdir.length) == sysdir)
+                        {
+                            path = path.substring(0,sysdir.length);
+                        }
+          
+                        // dont even try if its and abs path
+                        if (path.substring(0,1) == "/")
+                        {
+                            return;
+                        }
+
+                        // no need to point to current directory - this breaks urls so strip
+                        if (path.substring(0,2) == "./")
+                        {
+                            path = path.substring(2);
+                        }
+
+                        var subdir = getSubDirectory(system, path);
+                        if (subdir)
+                        {
+                            game.subdir = subdir;
+                            system.subdirs[subdir].games++;
+                        }
+
+                        if (!game.name)
+                        {
+                            if (subdir)
+                            {
+                                game.name = path.substring(subdir.length+1);
+                            }
+                            else
+                            {
+                                game.name = path;
+                            }
+                        }
+
+                        if (game.isDir)
+                        {
+                            if (!system.subdirs[path])
+                            {
+                                system.subdirs[path] = {
+                                        path: path,
+                                        game_index: 0,
+                                        buffer_index: 0,
+                                        scrolltop: 0,
+                                        games: 0
+                                     };
+                            }
+                            system.subdirs[path].game = game;
+                        }
+
                     });
 
                     // Add any directories that contained games (in the game.path)
