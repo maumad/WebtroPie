@@ -97,6 +97,10 @@ function check_media($media, $ext) {
              }
          }
       }
+      else
+      {
+          $fullpath = $svr_dir.'/'.$url;
+      }
 
       if (file_exists($fullpath))
       {
