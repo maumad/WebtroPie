@@ -141,27 +141,13 @@ function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
                  wrap_xml(file_get_contents($filename),$wrap_tag));
 }
 
-//   - requires mb extension
-function file_get_contents_utf8($fn) { 
-    $content = file_get_contents($fn); 
-     return mb_convert_encoding($content, 'UTF-8', 
-         mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true)); 
-}
-
 function simplexml_load_file_strip_comments($filename, $utf8_encode)
 {
     try
     {
         if ($utf8_encode)
         {
-            if (function_exists('mb_convert_encoding'))
-            {
-                return new SimpleXMLElement(strip_comments(file_get_contents_utf8($filename)));
-            }
-            else
-            {
-                return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
-            }
+            return new SimpleXMLElement(utf8_encode(strip_comments(file_get_contents($filename))));
         }
         else
         {
