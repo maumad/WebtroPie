@@ -17,7 +17,7 @@
             restrict: 'E',
             replace: true,
             scope: true,
-            template: '<div id={{vm.obj.name}} title={{vm.title}} '+
+            template: '<div id={{vm.obj.name}} title="{{vm.title}}" '+
                                'ng-click="vm.click($event)">'+
                           '<div ng-if="vm.obj.div" ng-style="vm.obj.div"></div>'+
                           '<img ng-if="vm.obj.img_src" '+
@@ -163,6 +163,7 @@
                 if (vm.game[vm.md+'_width'] && vm.game[vm.md+'_height'])
                 {
                     vm.title = vm.game[vm.md+'_width'] +' x ' + vm.game[vm.md+'_height'];
+console.log(vm.title);
                 }
             }
             else
