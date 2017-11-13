@@ -754,57 +754,40 @@
                     text.div.height = util.pct(text.size.h,'vh');
                 }
                 text.style.width = text.div.width;
-          }
+            }
 
-          var height = text.fontSize * self.defaultLineSpacing; // text.lineSpacing
-          if (text.size && text.size.h)
-          {
+            var height = text.fontSize * self.defaultLineSpacing; // text.lineSpacing
+            if (text.size && text.size.h)
+            {
                 height = text.size.h;
-          }
-          var margin = ( height - text.fontSize ) * 0.5;
+            }
 
-          if (!text.multiline)
-          {
-              text.style['margin-top'] = util.pct(margin,'vh');
-          }
-          text.div.height = util.pct(height,'vh');
+            text.div.height = util.pct(height,'vh');
 
-          text.style['font-size'] = util.pct(text.fontSize,'vmin');
+            text.style['font-size'] = util.pct(text.fontSize,'vmin');
 
-          text.style['line-height'] = 'normal';
-        
-          if (self.fonts[text.fontFamily])
-          {
-                if (parseInt(text.forceUppercase))
-                {
-                     text.style['line-height'] = self.fonts[text.fontFamily].uppercase_line_height + '%';
-                }
-                else
-                {
-                     text.style['line-height'] = self.fonts[text.fontFamily].mixedcase_line_height + '%';
-                }
-          }
+            text.style['line-height'] = 'normal';
 
-          if (text.size)
-          {
-                text.rows = Math.floor(text.size.h /
-                                                (text.fontSize + text.lineSpacing/100));
+            if (text.size)
+            {
+                    text.rows = Math.floor(text.size.h /
+                                    (text.fontSize + text.lineSpacing/100));
                 if (!text.rows)
-                     text.rows=1;
-          }
-          else
-          {
+                    text.rows=1;
+            }
+            else
+            {
                 text.rows = 1;
-          }
+            }
 
 
-          if (text.rows>1 && text.lineSpacing)
-          {
+            if (text.multiline && text.lineSpacing)
+            {
                 if (text.name != 'gamelist')
                 {
-                     text.style['line-height'] = text.lineSpacing;
+                    text.style['line-height'] = text.lineSpacing;
                 }
-          }
+            }
 
 
             if (text.color)
@@ -1208,14 +1191,6 @@
             $document[0].body.appendChild(style_el);
             font.style_el = style_el;
             self.fonts[text.fontFamily] = font;
-/*
-console.log(text.fontFamily + ' upper ascender = ' + font.uppercase_ascender );
-console.log(text.fontFamily + ' upper descender = ' + font.uppercase_descender );
-console.log(text.fontFamily + ' mixed ascender = ' + font.mixedcase_ascender );
-console.log(text.fontFamily + ' mixed descender = ' + font.mixedcase_descender );
-console.log(text.fontFamily + ' upper line height = ' + font.uppercase_line_height );
-console.log(text.fontFamily + ' mixed line height = ' + font.mixedcase_line_height );
-*/
         }
 
         // Store full font path relative to the file it was included in
@@ -1410,12 +1385,7 @@ console.log(text.fontFamily + ' mixed line height = ' + font.mixedcase_line_heig
                 help.div['font-size'] = util.pct(help.fontSize, 'vmin');
             }
             help.div['line-height'] = (help.height / help.fontSize) + '%';
-/*
-            if (self.fonts[help.fontFamily])
-            {
-                help.div['line-height'] = (1.2 * self.fonts[help.fontFamily].mixedcase_line_height) + '%';
-            }
-*/
+
             if (help)
             {
                 // already done?

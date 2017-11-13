@@ -80,6 +80,9 @@ input, select, textarea {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
 }
 
 .text_multiline {

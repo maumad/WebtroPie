@@ -85,7 +85,8 @@ function filepathinfo($file)
                 'file' => $file);
 }
 
-function get_font_metrics(&$text, $path)
+
+function get_font(&$text, $path)
 {
    global $response, $themepath;
 
@@ -106,46 +107,24 @@ function get_font_metrics(&$text, $path)
    $family = str_replace(array('-','/'),'_',$family);
    $text['fontFamily'] = $family;
    unset($text['fontPath']);
-   if(!isset($response['fonts'][$family])) {
 
-      $em = 1000;
-      $uppercase_dims   = imagettfbbox($em, 0, $fullpath, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()');
-      $mixedcase_dims   = imagettfbbox($em, 0, $fullpath, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()abcdefghijklmnopqrstuvwxyz');
-      $uppercase_ascender  = -$uppercase_dims[5] / 12;
-      $uppercase_descender =  $uppercase_dims[1] / 12;
-      $mixedcase_ascender  = -$mixedcase_dims[5] / 12;
-      $mixedcase_descender =  $mixedcase_dims[1] / 12;
-
-      $ascender = max($mixedcase_ascender, $uppercase_ascender);
-      //if($ascender<100) $ascender=100;
-
-      $uppercase_height    = $uppercase_ascender;
-      $mixedcase_height    = $mixedcase_ascender; // + //; //$uppercase_ascender; // +
-                              // max($mixedcase_descender, $uppercase_descender);
-      $average_height = ( $uppercase_height + $mixedcase_height ) / 2;
-
+   if(!isset($response['fonts'][$family]))
+   {
       $response['fonts'][$family] = array(
          'fullpath' => 'svr/'.$fullpath,
-         'family' => $family,
-         'uppercase_ascender'    => $uppercase_ascender,
-         'uppercase_descender' => $uppercase_descender,
-         'mixedcase_ascender'    => $mixedcase_ascender,
-         'mixedcase_descender' => $mixedcase_descender,
-         'uppercase_line_height' => $uppercase_height,
-         'mixedcase_line_height' => $mixedcase_height,
-         'average_line_height' => $average_height
+         'family' => $family
         );
    }
 }
 
-function get_views_font_metrics(&$views, $path)
+function get_views_fonts(&$views, $path)
 {
    foreach ($views as &$view)
    {
-      foreach ($view['text'] as &$el)       get_font_metrics($el, $path);
-      foreach ($view['textlist'] as &$el)   get_font_metrics($el, $path);
-      foreach ($view['datetime'] as &$el)   get_font_metrics($el, $path);
-      foreach ($view['helpsystem'] as &$el) get_font_metrics($el, $path);
+      foreach ($view['text'] as &$el)       get_font($el, $path);
+      foreach ($view['textlist'] as &$el)   get_font($el, $path);
+      foreach ($view['datetime'] as &$el)   get_font($el, $path);
+      foreach ($view['helpsystem'] as &$el) get_font($el, $path);
    }
 }
 
@@ -172,10 +151,10 @@ function load_and_include($file, &$parent, $index)
    {
       return $arr;
    }
-   get_views_font_metrics($arr['view'], $path);
-   //get_views_font_metrics($arr['feature']['view'], $path);
+
+   get_views_fonts($arr['view'], $path);
    foreach ($arr['feature'] as &$feature) {
-      get_views_font_metrics($feature['view'], $path);
+      get_views_fonts($feature['view'], $path);
    }
 
    // store include file in response
@@ -193,7 +172,6 @@ function load_and_include($file, &$parent, $index)
 }
 // array of 'systems', get theme for each system/platform
 // where roms/system/gamelist.xml exists
-//if ($dh = opendir(ROMSPATH))
 if (file_exists(ROMSPATH))
 {
    $response['systems'] = array();
@@ -208,7 +186,6 @@ if (file_exists(ROMSPATH))
    }
 
    // (usable -having roms) system themes
-   //while (($system = readdir($dh)) !== false)
    foreach ($config['systems'] as $system_name => $system)
    {
       if (is_dir(ROMSPATH.'/'.$system_name) &&
@@ -245,7 +222,6 @@ if (file_exists(ROMSPATH))
          }
       }
    }
-   //closedir($dh);
 
    // collections
    foreach (array('auto-allgames','auto-favorites','auto-lastplayed','custom-collections') as $system)

@@ -236,8 +236,7 @@
 
                 f.style = { left:  util.pct(x,'vw'),
                               width:  util.pct(f.vw,'vw'),
-                      'max-width':  util.pct(f.vw,'vw'),
-                         transform: 'translate(0,-50%)'};
+                      'max-width':  util.pct(f.vw,'vw')};
 
                 x += f.vw + spacing;
 
@@ -252,7 +251,7 @@
 
                 f.headerstyle = angular.copy(f.style);
 
-                f.style.height = util.pct(fontsize,'vh');
+                //f.style.height = util.pct(fontsize,'vh');
                 f.headerstyle['max-height'] = util.pct(fontsize * 1.35 * gl.linesize * 100,'vh');
             });
         }
