@@ -66,7 +66,6 @@
         // return E.g previous or next system theme
         function getRelativeCarouselSystemTheme(change_ix)
         {
-            //return ThemeService.theme.systems[getRelativeCarouselSystemName(parseInt(change_ix))];
             return ThemeService.getSystemTheme(getRelativeCarouselSystemName(parseInt(change_ix)));
         }
 
@@ -77,14 +76,12 @@
 
         function goNextCarouselSystemGamelist(replace)
         {
-            //GameService.goSystem(getRelativeCarouselSystemName(+1))
             self.system_index++;
             goCurrentCarouselSystem(replace)
         }
 
         function goPreviousCarouselSystemGamelist(replace)
         {
-            //GameService.goSystem(getRelativeCarouselSystemName(-1))
             self.system_index--;
             goCurrentCarouselSystem(replace)
         }
@@ -96,8 +93,6 @@
 
             var system_name = getCarouselSystemName(system_index);
 
-            //delete ThemeService.system;
-            //delete ThemeService.view;
             if (replace)
             {
                 util.go('/'+system_name);
@@ -135,7 +130,7 @@
         // change system by system index
         function setCarouselSystemByIndex(system_index, view_name, keep_style)
         {
-            self.system_index = system_index;
+            self.system_index = wrapIndex(system_index);
             ThemeService.setSystem(getCarouselSystemName(system_index), view_name, keep_style);
         }
         function setCarouselSystemIndexByName(system_name)
