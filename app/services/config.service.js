@@ -47,56 +47,8 @@
 
                 delete self.systems.retropie;
 
-                //if (self.es.CollectionSystemsAuto)
-                //self.es.CollectionSystemsAuto
-                //.split(',')
-                //.forEach(function(system) {
-                    //if (system=='all')
-                    //{
-                        self.systems['auto-allgames'] = {
-                            name: 'auto-allgames',
-                            fullname: 'all',
-                            theme: 'auto-allgames',
-                            has_games: true
-                        }
-                    //}
-                    //if (system=='favorites')
-                    //{
-                        self.systems['auto-favorites'] = {
-                            name: 'auto-favorites',
-                            fullname: 'favorites',
-                            theme: 'auto-favorites',
-                            has_games: true
-                        }
-                    //}
-                    //if (system=='recent')
-                    //{
-                        self.systems['auto-lastplayed'] = {
-                            name: 'auto-lastplayed',
-                            fullname: 'recent',
-                            theme: 'auto-lastplayed',
-                            has_games: true
-                        }
-                    //}
-                //});
-                if(self.es.CollectionSystemsCustom)
-                self.es.CollectionSystemsCustom
-                .split(',')
-                .forEach(function(system) {
-                    self.systems['custom-'+system] = {
-                        name: 'custom-'+system,
-                        fullname: system,
-                        theme: 'custom-collections',
-                        has_games: true
-                    }
-                });
                 deferred.resolve(response);
             });
-
-            if (bitmask == self.ALL)
-            {
-                self.promise = deferred.promise;
-            }
 
             return deferred.promise;
         }
@@ -109,7 +61,56 @@
             {
                 return self.promise;
             }
-            return load(get, lang, refresh);
+            self.promise = load(get, lang, refresh);
+
+            self.promise
+            .then(initConfigFetched)
+
+            return self.promise;
+        }
+
+        function initConfigFetched()
+        {
+            if (!self.systems['auto-allgames'])
+            {
+                self.systems['auto-allgames'] = {
+                    name: 'auto-allgames',
+                    fullname: 'all',
+                    theme: 'auto-allgames',
+                    has_games: true
+                }
+            }
+            if (!self.systems['auto-favorites'])
+            {
+                self.systems['auto-favorites'] = {
+                    name: 'auto-favorites',
+                    fullname: 'favorites',
+                    theme: 'auto-favorites',
+                    has_games: true
+                }
+            }
+            if (!self.systems['auto-lastplayed'])
+            {
+                self.systems['auto-lastplayed'] = {
+                    name: 'auto-lastplayed',
+                    fullname: 'recent',
+                    theme: 'auto-lastplayed',
+                    has_games: true
+                }
+            }
+/*
+                if(self.es.CollectionSystemsCustom)
+                self.es.CollectionSystemsCustom
+                .split(',')
+                .forEach(function(system) {
+                    self.systems['custom-'+system] = {
+                        name: 'custom-'+system,
+                        fullname: system,
+                        theme: 'custom-collections',
+                        has_games: true
+                    }
+                });
+*/
         }
 
         function save(setting, value, type, file)

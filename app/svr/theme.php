@@ -188,8 +188,7 @@ if (file_exists(ROMSPATH))
    // (usable -having roms) system themes
    foreach ($config['systems'] as $system_name => $system)
    {
-      if (is_dir(ROMSPATH.'/'.$system_name) &&
-         ($_GET['all']  ||
+      if (($_GET['all']  ||
           ($scan &&
            (file_exists(ROMSPATH.'/'.$system_name."/gamelist.xml") ||
             file_exists(HOME_ES."/gamelists/".$system_name."/gamelist.xml") ||

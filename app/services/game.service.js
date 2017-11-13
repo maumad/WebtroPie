@@ -284,7 +284,7 @@
                     {
                         if (self.system_name.substring(0,4)=='auto')
                         {
-                            text += ' ('+game.sys+')';
+                            text += ' ['+game.sys+']';
                         }
                     }
                 }

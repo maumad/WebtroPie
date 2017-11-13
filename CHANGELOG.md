@@ -1,4 +1,6 @@
 <a name="0.2.2"></a>
+- Show all systems + get themes even when system ROM dir does not exist (2017-11-12)
+- Text positioning, vertical align single line text within available space (2017-11-12)
 - auto create external media directory links (2017-11-11)
 - remove square/curly brackets from game lists (2017-11-11)
 - show system after game name in auto game lists (2017-11-11)

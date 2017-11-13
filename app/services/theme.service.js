@@ -103,6 +103,9 @@
 
         function createCarouselSystems()
         {
+            if(self.theme.carousel_systems)
+                return;
+
             self.theme.carousel_systems_list = [];
             self.theme.carousel_systems = {};
 
@@ -135,9 +138,6 @@
                     return -1;
                 return 0;
             });
-
-            // alphabetically first system
-            self.first_system = self.theme.carousel_systems_list[0];
         }
 
 
@@ -269,6 +269,8 @@
             var file_count = 0;
 
             self.theme = theme;
+
+            createCarouselSystems();
 
             // LOAD INCLUDES:
             // expand (E.g split "basic, detailed" views) for each include file
@@ -494,6 +496,12 @@
                 {
                     decodeTheme(response.data);
 
+                    if (!system_name)
+                    {
+                        // first system
+                        system_name = self.theme.carousel_systems_list[0];
+                    }
+
                     self.setThemeSystemView(self.theme, system_name, view_name);
 
                     deferred.resolve(self.theme);
@@ -525,6 +533,11 @@
                         .then(function onSuccess(response)
                         {
                             decodeTheme(response.data);
+                            if (!system_name)
+                            {
+                                // first system
+                                system_name = self.theme.carousel_systems_list[0];
+                            }
 
                             self.setThemeSystemView(self.theme, system_name, view_name);
 
@@ -652,7 +665,7 @@
         function setCurrentSystem()
         {
             //console.log('setCurrentSystem '+self.system)
-            self.setSystem(self.system_name || self.first_system);
+            self.setSystem(self.system_name);
         }
 
         // creates easy access to deep branches of the themes tree
@@ -755,7 +768,6 @@
         {
             self.theme = theme;
 
-            createCarouselSystems();
 
             config.app.ThemeSet = theme.name;
 

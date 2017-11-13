@@ -49,11 +49,12 @@ function human_filesize($bytes, $decimals = 1)
 
 function check_media($media, $ext) {
 
-   global $SYSTEM_PATH, $response, $game, $index, $has, $match_media, $system;
+   global $SYSTEM_PATH, $response, $game, $index, $match_media, $system;
    global $svr_dir;
 
    if (isset($game[$media]))
    {
+      $response['has_'.$media] = true;
 
       $url='';
       $fullpath='';
@@ -102,11 +103,7 @@ function check_media($media, $ext) {
           $fullpath = $svr_dir.'/'.$url;
       }
 
-      if (file_exists($fullpath))
-      {
-         $has[$media] = true;
-      }
-      else
+      if (!file_exists($fullpath))
       {
          $response['game'][$index][$media.'_missing'] = true;
       }
@@ -227,9 +224,9 @@ if ($getlist)
 
    }
 
-   $has['image'] = false;
-   $has['video'] = false;
-   $has['marquee'] = false;
+   $response['has_image'] = false;
+   $response['has_video'] = false;
+   $response['has_marquee'] = false;
    foreach ($response['game'] as $index => $game)
    {
 /*
@@ -278,9 +275,6 @@ if ($getlist)
 
    $response['name'] = $system;
    $response['path'] = 'svr/roms/'.$system;
-   $response['has_image'] = $has['image'];
-   $response['has_video'] = $has['video'];
-   $response['has_marquee'] = $has['marquee'];
 
    if ($debug)
    {

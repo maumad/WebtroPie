@@ -55,7 +55,7 @@ if ($_GET['get'] & SYSTEMS)
     for($i=0; $i<count($systems['system']);$i++)
     {
         $system_name = $systems['system'][$i]['name'];
-        if ($systems['system'][$i]['path']."/gamelist.xml" ||
+        if (file_exists($systems['system'][$i]['path']."/gamelist.xml") ||
             file_exists(ROMSPATH.'/'.$system_name."/gamelist.xml") ||
             file_exists(HOME_ES."/gamelists/".$system_name."/gamelist.xml") ||
             file_exists(ES_PATH."/gamelists/".$system_name."/gamelist.xml")

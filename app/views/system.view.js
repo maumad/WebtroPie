@@ -92,12 +92,13 @@
             })
             .then(function(data)
             {
+                console.log(data);
                 ThemeService.setSystem(ThemeService.system_name, 'system');
                 ThemeService.playSound('bgsound');
 
                 // get the current system gamelist
                 // (to show games total and get list ahead of navigation)
-                return GameService.getGamelist(ThemeService.system.name)
+                return GameService.getGamelist(CarouselService.getCurrentCarouselSystemName())
             })
             .then(function()
             {
