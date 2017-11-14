@@ -107,7 +107,7 @@ input, select, textarea {
 .gamelist {
     position: relative;
     outline: none;
-    z-index: 1000; /* wiki 75; */
+    z-index: 20; /* wiki 75; */
 }
 .gamelist_selector {
     left: 0;
@@ -115,7 +115,7 @@ input, select, textarea {
     background-repeat: no-repeat;
     background-position: left;
     position: absolute;
-    z-index: 1001;
+    z-index: 21;
 }
 .gamelist_context {
     color: #777777;
@@ -132,7 +132,7 @@ input, select, textarea {
 }
 .gamerow {
     position: absolute;
-    z-index: 1002;
+    z-index: 22;
     white-space: nowrap;
     width: 100%;
     max-width: 100%;
