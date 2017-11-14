@@ -35,7 +35,11 @@ if (!file_exists($gamelist_file))
       $gamelist_file = ES_PATH."/gamelists/".$system."/gamelist.xml";
       if (!file_exists($gamelist_file))
       {
-         exit;
+         $gamelist_file = "/opt/retropie/configs/all/emulationstation/".$system_name."/gamelist.xml";
+         if (!file_exists($gamelist_file))
+         {
+            exit;
+         }
       }
    }
 }
