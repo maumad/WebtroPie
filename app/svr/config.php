@@ -56,16 +56,18 @@ if ($_GET['get'] & SYSTEMS)
     {
         $system_name = $systems['system'][$i]['name'];
         if (file_exists($systems['system'][$i]['path']."/gamelist.xml") ||
-            file_exists(ROMSPATH.'/'.$system_name."/gamelist.xml") ||
+            file_exists(ROMSPATH.$system_name."/gamelist.xml") ||
             file_exists(HOME_ES."/gamelists/".$system_name."/gamelist.xml") ||
-            file_exists(ES_PATH."/gamelists/".$system_name."/gamelist.xml")
+            file_exists(ES_PATH."/gamelists/".$system_name."/gamelist.xml") ||
+            file_exists("/opt/retropie/configs/all/emulationstation/".$system_name."/gamelist.xml")
             )
         {
             $systems['system'][$i]['has_gamelist'] = true;
             if (filesize($systems['system'][$i]['path']."/gamelist.xml") > 40 ||
-                filesize(ROMSPATH.'/'.$system_name."/gamelist.xml") > 40 ||
+                filesize(ROMSPATH.$system_name."/gamelist.xml") > 40 ||
                 filesize(HOME_ES."/gamelists/".$system_name."/gamelist.xml") > 40 ||
-                filesize(ES_PATH."/gamelists/".$system_name."/gamelist.xml") > 40
+                filesize(ES_PATH."/gamelists/".$system_name."/gamelist.xml") > 40  ||
+                filesize("/opt/retropie/configs/all/emulationstation/".$system_name."/gamelist.xml") > 40
                 )
                 $systems['system'][$i]['has_games'] = true;
         }
