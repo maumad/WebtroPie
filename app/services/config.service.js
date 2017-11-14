@@ -44,7 +44,8 @@
                 if (bitmask & self.THEMES)  self.themes = response.data.themes;
                 if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
                 if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
-
+console.log('systems')
+console.log(self.systems);
                 delete self.systems.retropie;
 
                 deferred.resolve(response);

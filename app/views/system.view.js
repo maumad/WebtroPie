@@ -431,7 +431,7 @@
             {
               CarouselService.nextCarouselSystem(page.systembar.change_ix);
               GameService.show_favorite = false;
-              GameService.getGamelist(ThemeService.system.name);
+              GameService.getGamelist(CarouselService.getCurrentCarouselSystemName());
             }
 
             stopDragging();
