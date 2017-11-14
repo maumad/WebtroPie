@@ -135,7 +135,7 @@
 
             page.animating = false;
             GameService.getGamelist(CarouselService.getCurrentCarouselSystemName())
-            .then(createDefaultGamelistView);
+            .then(createAllSystemStyles);
             util.defaultFocus();
         }
 
@@ -145,9 +145,11 @@
             styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(0).view.system, true);
             styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+1).view.system, true);
             styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-1).view.system, true);
-            angular.forEach(ThemeService.theme.systems, function(sys) {
-                styler.createViewStyles(sys.view.system, true);
-            })
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+2).view.system, true);
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-2).view.system, true);
+            //angular.forEach(ThemeService.theme.systems, function(sys) {
+            //    styler.createViewStyles(sys.view.system, true);
+            //})
 
             createDefaultGamelistView();
         }
