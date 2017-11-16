@@ -69,12 +69,6 @@ if ($run)
 if ($upload)
 {
    $response = array();
-   //$response['filename'] = $filename;
-   //$response['path'] = $path;
-   //$response['system'] = $system;
-   //$response['systempath'] = $SYSTEM_PATH;
-   //$response['files'] = $_FILES['upload'];
-   //$filename = 'svr/'.$SYSTEM_PATHddP
    if ($_FILES['upload']['error'] == 0)
    {
       $filename = $SYSTEM_PATH;
@@ -133,15 +127,12 @@ if($update)
 {
    $response = array();
 
-   //array_push($response, $_POST);
    $gamelist = simplexml_load_file($gamelist_file);
 
    for ($i=0; $i<count($gamelist->game); $i++)
    {
       $game = $gamelist->game[$i];
-      //$game_path = strtolower( preg_replace("/^\.\//","", $game->path));
-      $game_path = preg_replace("/^\.\//","", $game->path);
-      if ($game_path == $path)
+      if ($game->path == $path)
       {
          // for all meta data posted...
          foreach (array(
