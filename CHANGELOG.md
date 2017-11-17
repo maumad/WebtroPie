@@ -1,4 +1,6 @@
 <a name="0.2.2"></a>
+- Better z-index calculation
+- Fix Save bug (2017-11-16)
 - Show all systems + get themes even when system ROM dir does not exist (2017-11-12)
 - Text positioning, vertical align single line text within available space (2017-11-12)
 - auto create external media directory links (2017-11-11)

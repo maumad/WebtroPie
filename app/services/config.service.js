@@ -25,34 +25,9 @@
         self.THEMES_LIST = 64;  // theme tweaks
         self.ALL    = 255;
 
-        self.load = load;
         self.init = init;
+        self.load = load;
         self.save = save;
-
-        function load(bitmask, lang, refresh)
-        {
-            var deferred = $q.defer();
-
-            // fetch from server
-            $http.get('svr/config.php', {cache: false, params: {get: bitmask, lang: lang}})
-            .then(function onSuccess(response)
-            {
-                if (bitmask & self.APP)     self.app = response.data.app;
-                if (bitmask & self.ENV)     self.env = response.data.env;
-                if (bitmask & self.LANG)    self.lang = response.data.lang;
-                if (bitmask & self.ES)      self.es = response.data.es;
-                if (bitmask & self.THEMES)  self.themes = response.data.themes;
-                if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
-                if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
-console.log('systems')
-console.log(self.systems);
-                delete self.systems.retropie;
-
-                deferred.resolve(response);
-            });
-
-            return deferred.promise;
-        }
 
         // get either from memory or server
         function init(get, lang, refresh)
@@ -62,6 +37,7 @@ console.log(self.systems);
             {
                 return self.promise;
             }
+            console.log('config.init()');
             self.promise = load(get, lang, refresh);
 
             self.promise
@@ -112,6 +88,30 @@ console.log(self.systems);
                     }
                 });
 */
+        }
+
+        function load(bitmask, lang, refresh)
+        {
+            var deferred = $q.defer();
+
+            // fetch from server
+            $http.get('svr/config.php', {cache: false, params: {get: bitmask, lang: lang}})
+            .then(function onSuccess(response)
+            {
+                if (bitmask & self.APP)     self.app = response.data.app;
+                if (bitmask & self.ENV)     self.env = response.data.env;
+                if (bitmask & self.LANG)    self.lang = response.data.lang;
+                if (bitmask & self.ES)      self.es = response.data.es;
+                if (bitmask & self.THEMES)  self.themes = response.data.themes;
+                if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
+                if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
+
+                delete self.systems.retropie;
+
+                deferred.resolve(response);
+            });
+
+            return deferred.promise;
         }
 
         function save(setting, value, type, file)

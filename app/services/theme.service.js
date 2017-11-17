@@ -266,6 +266,7 @@
         // convert raw theme data elements object into expanded desciptive object 
         function decodeTheme(theme)
         {
+            console.log('ThemeService.decodeTheme('+theme.name+')');
             var file_count = 0;
 
             self.theme = theme;
@@ -449,7 +450,7 @@
         // get either from memory or server
         function getTheme(themename, system_name, view_name, scan)
         {
-            //console.log('getTheme sys = ' + system_name + ' view = ' + view_name)
+            console.log('ThemeService.getTheme('+themename+', ' + system_name + ', ' + view_name+')')
             // if ThemeSet not in config for some reason
             if (!themename)
             {

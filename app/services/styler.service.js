@@ -288,9 +288,11 @@
         // convert theme image attributes to style
         function createImageStyle(image)
         {
+            console.log('styler.createImageStyle('+image.name+') : index ' + image.ix + ' : z-index = ' + image.zIndex)
             // skip non image
             if (!image || (typeof image) != 'object' || !image.name || image.styled)
             {
+                console.log('already done');
                 return; // continue
             }
 
@@ -298,13 +300,14 @@
             style['position'] = 'absolute';
 
             // flag if image fills screen
-            if ( (image.pos=='0 0' && image.size=='1 1')
-                //|| (!image.pos && !image.size && !image.maxSize)
-                )
+            if (image.name == 'background')
             {
                 image.fullscreen = true;
-                image.pos = '0 0';
-                image.size = '1 1';
+                image.ix = 0;
+            }
+            else if (image.pos=='0 0' && image.size=='1 1')
+            {
+                image.fullscreen = true;
             }
 
             if (image.pos)
@@ -336,36 +339,29 @@
                     style.height = util.pct(image.size.h,'%');
                 }
 
-                if (image.fullscreen ||
-                     image.name == 'background' ||
-                     (image.size.w >=1 && image.size.h >=1))
+                if (image.size.w >=1 && image.size.h >=1)
                 {
-                    if (image.fullpath)
-                    {
-                        image.index = 1;
-                    }
-                    else
-                    {
-                        image.index = 0;
-                    }
+                    image.fullscreen = true;
                 }
                 else if (image.size.w >=1 || image.size.h >=1)
                 {
-                    image.index = 2;
+                    image.banner = true;
                 }
-                else
-                {
-                    image.index = 3;
-                }
+            }
 
+            if(image.ix > 1 && (image.fullscreen || image.banner))
+            {
+                image.ix = 1;
+            }
+            else if (!image.fullscreen && !image.banner)
+            {
+                image.ix+=2;
             }
 
             // give background image z-index of 0
             // otherwise use order image appears in file (or included file?)
             if (image.name == 'md_image' || image.name == 'md_marquee')
             {
-                image.index = 50;
-
                 if (!image.origin)
                 {
                     image.origin = '0.5 0.5';
@@ -539,7 +535,7 @@
             }
 
             // Either use new zIndex property or calculated
-            style['z-index'] = image.zIndex || image.index+5;
+            style['z-index'] = image.zIndex || image.ix;
 
             // no longer needed
             delete image.path;
@@ -560,12 +556,13 @@
             }
 //console.log(style);
             image.styled = true;
-        }
+         }
 
 
         // set up position, background / foregrund stars
         function createRatingStyle(rating)
         {
+            console.log('styler.createRatingStyle('+rating.name+') : index ' + rating.ix + ' : z-index = ' + rating.zIndex)
             if(!rating || (typeof rating) != 'object' || rating.styled)
             {
                 return;
@@ -627,7 +624,7 @@
                     // original colour would be :-
                     //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
-                style['z-index'] = rating.zIndex || 10;
+                style['z-index'] = rating.zIndex || rating.ix+2;
             }
             calcObjBounds(rating);
             rating.div = style;
@@ -835,6 +832,7 @@
 
         function createVideoStyle(video)
         {
+            console.log('styler.createVideoStyle('+video.name+') : index ' + video.ix)
             if (!video || (typeof video) != 'object' || video.styled)
             {
                 return;
@@ -916,7 +914,7 @@
             calcObjBounds(video);
 
             style['position'] = 'absolute';
-            style['z-index'] = video.zIndex || 10;
+            style['z-index'] = video.zIndex || video.ix+2;
 
             video.div = style;
             video.styled = true;
@@ -925,6 +923,7 @@
         // convert theme view object attributes to styles
         function createViewStyles(view, keep_style)
         {
+            console.log('styler.createViewStyles('+view.name+', '+keep_style+')')
             if (!view)
             {
                 return;

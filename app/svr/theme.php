@@ -30,8 +30,11 @@ $inc=true;
 global $inc;
 require("config.php");
 
+// things we want as an list array not an object
 $array_types = array('include'=>true, 'feature'=>true);
-$index_types = array('image'=>0, 'view'=>0);
+// things that we want to contain an index
+//$index_types = array('image'=>0, 'video'=>0, 'text'=>0, 'rating'=>0, 'view'=>0);
+$index_types = array('image'=>0, 'video'=>0, 'rating'=>0, 'view'=>0);
 
 // find all system directories that have a gamelist.xml
 // and return the system themes for those systems

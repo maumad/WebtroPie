@@ -30,9 +30,10 @@ function merge_arrays(&$target, &$source)
    }
 }
 
-function xmlobj_to_array($xmlobj)
+function xmlobj_to_array($xmlobj, $tier)
 {
    global $array_types, $index_types;
+   static $tier_counts;
 
    if (!$xmlobj)
       return;
@@ -41,6 +42,12 @@ function xmlobj_to_array($xmlobj)
       return $xmlobj;
 
    $arr = array();
+
+   if($tier==0)
+      $tier_counts = array();
+
+   if(!isset($tier_counts[$tier]))
+      $tier_counts[$tier] = 0;
 
    foreach ($xmlobj->children() as $xmlchild)
    {
@@ -59,13 +66,6 @@ function xmlobj_to_array($xmlobj)
       if (!isset($arr[$type]))
       {
          $arr[$type] = array();
-
-         // keep count for index values (within this parent)
-         if (isset($index_types[$type]))
-         {
-            $arr[$type]['count']=0;
-         }
-
       }
 
       // convert child to either another object or a string if it has no children
@@ -75,11 +75,10 @@ function xmlobj_to_array($xmlobj)
 
       if ($xmlchild->count()>0)
       {
-         $child = xmlobj_to_array($xmlchild);
+         $child = xmlobj_to_array($xmlchild, $tier+1);
 
          if (isset($index_types[$type])) {
-            $child['index'] = $arr[$type]['count']++;
-            //$child['index_global'] = $index_types[$type]++;
+            $child['ix'] = $tier_counts[$tier]++;
          }
 
          foreach ($xmlchild->attributes() as $key => $val)
@@ -104,13 +103,6 @@ function xmlobj_to_array($xmlobj)
          $arr[$type][] = $child;
       else
          $arr[$type] = $child;
-   }
-
-   // we dont need counts anymore
-   foreach ($arr as $key => $value)
-   {
-       if (isset($index_types[$key]) && gettype($value)=='array' && isset($value['count']))
-          unset($arr[$key]['count']);
    }
 
    return $arr;
@@ -189,11 +181,11 @@ function load_file_xml_as_array($filename, $wrap_tag='', $utf8_encode=false)
    }
    if ($wrap_tag)
    {
-      return xmlobj_to_array(simplexml_load_file_wrapped($filename, $wrap_tag));
+      return xmlobj_to_array(simplexml_load_file_wrapped($filename, $wrap_tag), 0);
    }
    else
    {
-      return xmlobj_to_array(simplexml_load_file_strip_comments($filename,$utf8_encode));
+      return xmlobj_to_array(simplexml_load_file_strip_comments($filename,$utf8_encode), 0);
    }
 }
 
