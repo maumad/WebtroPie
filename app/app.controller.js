@@ -180,7 +180,7 @@
                 hideMenu();
             }
 
-            ThemeService.getTheme(config.app.ThemeSet, ThemeService.system.name, ThemeService.view.name)
+            ThemeService.getTheme(config.app.ThemeSet, CarouselService.getCurrentCarouselSystemName(), ThemeService.view.name)
             .then(function()
             {
                 // only save if it actually worked

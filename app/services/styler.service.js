@@ -288,27 +288,18 @@
         // convert theme image attributes to style
         function createImageStyle(image)
         {
-            console.log('styler.createImageStyle('+image.name+') : index ' + image.ix + ' : z-index = ' + image.zIndex)
+            var theme_ix = image.ix;
+            var theme_size = image.size;
+            var theme_position = image.position;
+
             // skip non image
             if (!image || (typeof image) != 'object' || !image.name || image.styled)
             {
-                console.log('already done');
                 return; // continue
             }
 
             var style = {}
             style['position'] = 'absolute';
-
-            // flag if image fills screen
-            if (image.name == 'background')
-            {
-                image.fullscreen = true;
-                image.ix = 0;
-            }
-            else if (image.pos=='0 0' && image.size=='1 1')
-            {
-                image.fullscreen = true;
-            }
 
             if (image.pos)
             {
@@ -319,10 +310,8 @@
                     style.display = 'none';
                     return;
                 }
-                //style.left = util.pct(image.pos.x,'vw');
-                style.left = util.pct(image.pos.x,'%');
-                //style.top = util.pct(image.pos.y,'vh');
-                style.top = util.pct(image.pos.y,'%');
+                style.left = util.pct(image.pos.x,'vw');
+                style.top = util.pct(image.pos.y,'vh');
             }
 
             if (image.size)
@@ -330,13 +319,11 @@
                 image.size = denormalize('size',image.size);
                 if(image.size.w)
                 {
-                    //style.width = util.pct(image.size.w,'vw');
-                    style.width = util.pct(image.size.w,'%');
+                    style.width = util.pct(image.size.w,'vw');
                 }
                 if(image.size.h)
                 {
-                    //style.height = util.pct(image.size.h,'vh');
-                    style.height = util.pct(image.size.h,'%');
+                    style.height = util.pct(image.size.h,'vh');
                 }
 
                 if (image.size.w >=1 && image.size.h >=1)
@@ -349,13 +336,21 @@
                 }
             }
 
-            if(image.ix > 1 && (image.fullscreen || image.banner))
+            if (image.name == 'background')
             {
-                image.ix = 1;
+                image.ix = 1;  // background
             }
-            else if (!image.fullscreen && !image.banner)
+            else if(image.fullscreen)
             {
-                image.ix+=2;
+                image.ix = 2;
+            }
+            else if(image.banner)
+            {
+                image.ix += 2;
+            }
+            else
+            {
+                image.ix += 20;
             }
 
             // give background image z-index of 0
@@ -554,8 +549,14 @@
             {
                 image.img = style;
             }
-//console.log(style);
+
             image.styled = true;
+            console.log('styler.createImageStyle('+image.name+') ' +
+             ' : index ' + theme_ix +
+             ' : zIndex = ' + image.zIndex +
+             ' : size = ' + theme_size +
+             ' : position = ' + theme_position +
+             ' : result z-index = ' + image.ix);
          }
 
 
@@ -624,7 +625,7 @@
                     // original colour would be :-
                     //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
-                style['z-index'] = rating.zIndex || rating.ix+2;
+                style['z-index'] = rating.zIndex || rating.ix+20;
             }
             calcObjBounds(rating);
             rating.div = style;
@@ -914,7 +915,7 @@
             calcObjBounds(video);
 
             style['position'] = 'absolute';
-            style['z-index'] = video.zIndex || video.ix+2;
+            style['z-index'] = video.zIndex || video.ix+20;
 
             video.div = style;
             video.styled = true;

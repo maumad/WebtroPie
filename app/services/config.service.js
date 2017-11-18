@@ -37,7 +37,6 @@
             {
                 return self.promise;
             }
-            console.log('config.init()');
             self.promise = load(get, lang, refresh);
 
             self.promise
