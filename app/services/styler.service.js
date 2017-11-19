@@ -242,7 +242,6 @@
 
             // create previous, current and next background images container attributes
             // and classes that can be animated
-            //for (var index = -1; index <= 1; index++)
             for (var index = carousel.loIndex; index <= carousel.hiIndex; index++)
             {
                 var cell = {index: index};
@@ -271,7 +270,7 @@
             // create the class string
             var str = '.'+className+' { '
             angular.forEach(style_array, function(value, key) {
-                if (key != 'index')
+                if (key != 'index' && key != 'ix')
                 {
                     str += key + ': ' + value + ';';
                 }
@@ -285,17 +284,27 @@
             self.class[className] = style; // save for later removal
         }
 
+        function createDatetimeStyle(text)
+        {
+            createTextStyle(text);
+            //delete text.div.height;
+        }
+
         // convert theme image attributes to style
         function createImageStyle(image)
         {
-            var theme_ix = image.ix;
-            var theme_size = image.size;
-            var theme_position = image.position;
-
             // skip non image
             if (!image || (typeof image) != 'object' || !image.name || image.styled)
             {
                 return; // continue
+            }
+
+            if (config.app.LogThemeStyles)
+            {
+                console.groupCollapsed('styler.createImageStyle('+image.name+')');
+                angular.forEach(image, function(value, key) {
+                    console.log(key + ' = ' + value);
+                });
             }
 
             var style = {}
@@ -308,6 +317,11 @@
                      image.pos.x<0 || image.pos.y<0)
                 {
                     style.display = 'none';
+                    if (config.app.LogThemeStyles)
+                    {
+                        console.log('Offscreen - hidden');
+                        console.groupEnd('styler.createImageStyle('+image.name+')');
+                    }
                     return;
                 }
                 style.left = util.pct(image.pos.x,'vw');
@@ -325,7 +339,6 @@
                 {
                     style.height = util.pct(image.size.h,'vh');
                 }
-
                 if (image.size.w >=1 && image.size.h >=1)
                 {
                     image.fullscreen = true;
@@ -334,23 +347,6 @@
                 {
                     image.banner = true;
                 }
-            }
-
-            if (image.name == 'background')
-            {
-                image.ix = 1;  // background
-            }
-            else if(image.fullscreen)
-            {
-                image.ix = 2;
-            }
-            else if(image.banner)
-            {
-                image.ix += 2;
-            }
-            else
-            {
-                image.ix += 20;
             }
 
             // give background image z-index of 0
@@ -379,19 +375,12 @@
                 image.maxSize = denormalize('size',image.maxSize);
                 if (image.maxSize.w)
                 {
-                    //style['max-width'] = util.pct(image.maxSize.w,'vw');
-                    style['max-width'] = util.pct(image.maxSize.w,'%');
+                    style['max-width'] = util.pct(image.maxSize.w,'vw');
                 }
                 if (image.maxSize.h)
                 {
-                    //style['max-height'] = util.pct(image.maxSize.h,'vh');
-                    style['max-height'] = util.pct(image.maxSize.h,'%');
+                    style['max-height'] = util.pct(image.maxSize.h,'vh');
                 }
-                //if (!image.size && image.name=='md_image')
-                //{
-                    //style.width = style['max-width'];
-                    //style.height = style['max-height'];
-                //}
             }
             calcObjBounds(image);
 
@@ -442,8 +431,7 @@
                     else
                     {
                         // speia is yellow (+60 degrees) so rotate -60 degrees
-                        style.filter =
-                                'sepia(100%) saturate(5000%) hue-rotate('+((hsl.h-60)%360)+'deg)';
+                        style.filter = 'sepia(100%) saturate(5000%) hue-rotate('+((hsl.h-60)%360)+'deg)';
                         if (hsl.a)
                         {
                             style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
@@ -462,10 +450,10 @@
                 {
                     style['background-image'] = 'url("'+image.fullpath+'")';
                     style['background-size'] = '100% 100%';
-                    //style.width = '100vw';
-                    style.width = '100%';
-                    //style.height = '100vh';
-                    style.height = '100%';
+                    style.left = 0;
+                    style.top = 0;
+                    style.width = '100vw';
+                    style.height = '100vh';
                 }
                 // stretch/shrink FIT keeping aspect ratio (uses background-size: contain)
                 else if (style['max-width'] && style['max-height'] && image.right <= 1)
@@ -529,9 +517,6 @@
                 style['background-color'] = util.hex2rgba(image.color);
             }
 
-            // Either use new zIndex property or calculated
-            style['z-index'] = image.zIndex || image.ix;
-
             // no longer needed
             delete image.path;
             delete image.color;
@@ -550,23 +535,70 @@
                 image.img = style;
             }
 
+            if (image.name == 'background')
+            {
+                style['z-index'] = 1;
+            }
+            else if (image.zIndex)
+            {
+                style['z-index'] = image.zIndex+1;
+            }
+            else if (image.fullscreen)
+            {
+                style['z-index'] = 3;
+            }
+            else if (image.banner)
+            {
+                style['z-index'] = 6;
+            }
+            else if(image.extra)
+            {
+                style['z-index'] = 10;
+            }
+            else if (image.name == 'md_image')
+            {
+                style['z-index'] = 30;
+            }
+            else if (image.name == 'md_video')
+            {
+                style['z-index'] = 30;
+            }
+            else if (image.name == 'md_marquee')
+            {
+                style['z-index'] = 35;
+            }
+            else if (image.name == 'logo')
+            {
+                style['z-index'] = 50;
+            }
+            else 
+            {
+                style['z-index'] = image.ix;
+            }
+
             image.styled = true;
-            console.log('styler.createImageStyle('+image.name+') ' +
-             ' : index ' + theme_ix +
-             ' : zIndex = ' + image.zIndex +
-             ' : size = ' + theme_size +
-             ' : position = ' + theme_position +
-             ' : result z-index = ' + image.ix);
+            if (config.app.LogThemeStyles)
+            {
+                console.log(style);
+                console.groupEnd('styler.createImageStyle('+image.name+')');
+            }
          }
 
 
         // set up position, background / foregrund stars
         function createRatingStyle(rating)
         {
-            console.log('styler.createRatingStyle('+rating.name+') : index ' + rating.ix + ' : z-index = ' + rating.zIndex)
             if(!rating || (typeof rating) != 'object' || rating.styled)
             {
                 return;
+            }
+
+            if (config.app.LogThemeStyles)
+            {
+                console.groupCollapsed('styler.createRatingStyle('+rating.name+')');
+                angular.forEach(rating, function(value, key) {
+                    console.log(key + ' = ' + value);
+                });
             }
 
             var style = {position: 'absolute'}
@@ -625,12 +657,31 @@
                     // original colour would be :-
                     //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
-                style['z-index'] = rating.zIndex || rating.ix+20;
+
+                if (rating.name.substring(0,3)=='md_')
+                {
+                    style['z-index'] = 30;
+                }
+                else if (rating.zIndex)
+                {
+                    style['z-index'] = rating.zIndex+1;
+                }
+                else
+                {
+                    style['z-index'] = rating.ix;
+                }
             }
             calcObjBounds(rating);
             rating.div = style;
             rating.stars = stars;
             rating.styled = true;
+
+            if (config.app.LogThemeStyles)
+            {
+                console.log(style);
+                console.log(stars);
+                console.groupEnd('styler.createRatingStyle('+rating.name+')');
+            }
         }
 
         // convert theme text attributes to style
@@ -639,6 +690,14 @@
             if (!text || (typeof text) != 'object' || text.styled)
             {
                 return;
+            }
+
+            if (config.app.LogThemeStyles)
+            {
+                console.groupCollapsed('styler.createTextStyle('+text.name+')');
+                angular.forEach(text, function(value, key) {
+                    console.log(key + ' = ' + value);
+                });
             }
 
             text.div = {};
@@ -675,6 +734,11 @@
                 else
                 {
                     text.div.display = 'none';
+                    if (config.app.LogThemeStyles)
+                    {
+                        console.log('no position - hidden');
+                        console.groupEnd('styler.createTextStyle('+text.name+')');
+                    }
                     return;
                 }
             }
@@ -687,6 +751,11 @@
                      text.pos.x<0 || text.pos.y<0)
                 {
                     text.div.display = 'none';
+                    if (config.app.LogThemeStyles)
+                    {
+                        console.log('Offscreen - hidden');
+                        console.groupEnd('styler.createTextStyle('+text.name+')');
+                    }
                     return;
                 }
 
@@ -762,7 +831,7 @@
 
             text.div.height = util.pct(height,'vh');
 
-            text.style['font-size'] = util.pct(text.fontSize,'vmin');
+            text.style['font-size'] = util.pct(text.fontSize,'vh');
 
             text.style['line-height'] = 'normal';
 
@@ -815,12 +884,32 @@
                 text.div['text-align'] = text.alignment;
             }
 
+            if (text.name.substring(0,3)=='md_')
+            {
+                text.div['z-index'] = 40;
+            }
+            else if (text.zIndex)
+            {
+                text.div['z-index'] = text.zIndex;
+            }
+
             text.styled = true;
+
+            if (config.app.LogThemeStyles)
+            {
+                console.log(text.div);
+                console.log(text.style);
+                console.groupEnd('styler.createTextStyle('+text.name+')');
+            }
         }
 
         function createTextlistStyle(textlist)
         {
             createTextStyle(textlist);
+            textlist.selectorOffsetY = parseFloat(textlist.selectorOffsetY || 0);
+            textlist.fontSize        = parseFloat(textlist.fontSize);
+            textlist.selectorHeight  = parseFloat(textlist.selectorHeight);
+            textlist.lineSpacing     = parseFloat(textlist.lineSpacing);
             if (textlist.fullselectorImagePath)
             {
                 textlist.selector = {
@@ -833,10 +922,17 @@
 
         function createVideoStyle(video)
         {
-            console.log('styler.createVideoStyle('+video.name+') : index ' + video.ix)
             if (!video || (typeof video) != 'object' || video.styled)
             {
                 return;
+            }
+
+            if (config.app.LogThemeStyles)
+            {
+                console.groupCollapsed('styler.createVideoStyle('+video.name+')');
+                angular.forEach(video, function(value, key) {
+                    console.log(key + ' = ' + value);
+                });
             }
 
             var style = {};
@@ -915,21 +1011,40 @@
             calcObjBounds(video);
 
             style['position'] = 'absolute';
-            style['z-index'] = video.zIndex || video.ix+20;
+
+            if (video.name.substring(0,3)=='md_')
+            {
+                style['z-index'] = 30;
+            }
+            else if (video.zIndex)
+            {
+                style['z-index'] = video.zIndex+1;
+            }
+            else
+            {
+                style['z-index'] = video.ix;
+            }
 
             video.div = style;
+
             video.styled = true;
+
+            if (config.app.LogThemeStyles)
+            {
+                console.log(style);
+                console.groupEnd('styler.createVideoStyle('+video.name+')');
+            }
         }
 
         // convert theme view object attributes to styles
         function createViewStyles(view, keep_style)
         {
-            console.log('styler.createViewStyles('+view.name+', '+keep_style+')')
             if (!view)
             {
                 return;
             }
-            // already done ?
+
+            // system carousel update
             if (view.name == 'system' && !keep_style)
             {
                 if (!view.carousel)
@@ -947,11 +1062,18 @@
                 }
                 createSystemInfoStyle(view.text.systemInfo)
             }
+
+            // already done ?
             if (!view.styled)
             {
+                if (config.app.LogThemeStyles)
+                {
+                    console.groupCollapsed('styler.createViewStyles('+view.name+')');
+                }
+
                 angular.forEach(view.text,        createTextStyle);
                 angular.forEach(view.textlist,    createTextlistStyle);
-                angular.forEach(view.datetime,    createTextStyle);
+                angular.forEach(view.datetime,    createDatetimeStyle);
                 angular.forEach(view.image,       createImageStyle);
                 angular.forEach(view.rating,      createRatingStyle);
                 angular.forEach(view.helpsystem,  createTextStyle);
@@ -972,9 +1094,13 @@
                         label.style.float = 'left';
                     }
                 });
-            }
+                if (config.app.LogThemeStyles)
+                {
+                    console.groupEnd('styler.createViewStyles('+view.name+')');
+                }
 
-            view.styled = true;
+                view.styled = true;
+            }
         }
 
         function createSystemInfoStyle(systemInfo)
@@ -1062,7 +1188,6 @@
                     if (image.name && image.path)
                     {
                         fullpath(image, 'path', path);
-                        image.index += file_count * 5;
                     }
                 });
 
@@ -1382,7 +1507,7 @@
 
             if(help.fontSize)
             {
-                help.div['font-size'] = util.pct(help.fontSize, 'vmin');
+                help.div['font-size'] = util.pct(help.fontSize, 'vh');
             }
             help.div['line-height'] = (help.height / help.fontSize) + '%';
 
@@ -1571,13 +1696,13 @@
             {
                  pct = Math.abs(index);
                  scale = (self.carousel.logoScale * (1 - pct)) + pct;
-                 opacity = 1 - (0.3 * pct); // (1 - pct) + (0.5 * pct);
+                 opacity = 1 - (0.5 * pct); // (1 - pct) + (0.5 * pct);
                  cell['z-index'] = 31;
             }
             else
             {
                  scale = 1;
-                 opacity = 0.7;
+                 opacity = 0.5;
                  cell['z-index'] = 30;
             }
 

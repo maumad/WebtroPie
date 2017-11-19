@@ -23,7 +23,7 @@ function merge_arrays(&$target, &$source)
       {
          merge_arrays($target[$key], $value);
       }
-      else  // overwrite
+      else if($key!='ix')  // overwrite
       {
          $target[$key] = $value;
       }
@@ -96,6 +96,7 @@ function xmlobj_to_array($xmlobj, $tier)
          elseif(gettype($arr[$type][$name])=='array' &&
                 gettype($child)=='array')
          {
+            unset($child['ix']);
             merge_arrays($arr[$type][$name], $child);
          }
       }
@@ -193,10 +194,11 @@ function simplify_path($path, $directory)
 {
    // simplify "/./" to "/"
    $path = preg_replace('|/\./|','/',$path);
+
    // simplify "/dir/.." to "/"
-   $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
-   $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
-   $path = preg_replace('|/[^/\.][^/]*/\.\.|','/',$path);
+   $path = preg_replace('|/[^/\.][^/]*/\.\.|','',$path);
+   $path = preg_replace('|/[^/\.][^/]*/\.\.|','',$path);
+   $path = preg_replace('|/[^/\.][^/]*/\.\.|','',$path);
 
    if ($directory)
    {

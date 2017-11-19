@@ -266,7 +266,6 @@
         // convert raw theme data elements object into expanded desciptive object 
         function decodeTheme(theme)
         {
-            console.log('ThemeService.decodeTheme('+theme.name+')');
             var file_count = 0;
 
             self.theme = theme;
@@ -311,7 +310,7 @@
                     delete self.theme.systems[sys.name];
                     return;
                 }
-                styler.loadMedia(self.theme, sys.theme, sys.path, file_count);
+                styler.loadMedia(self.theme, sys.theme, sys.path, file_count++);
 
                 // expand merged views etc (where key contains a comma)
                 self.expandMerged(sys);
@@ -398,7 +397,7 @@
                     tmp2.push(key);
                 }
             });
-            /* */
+
             // sort so that elements in duplicate combined sets
             // have presedence if in a smaller set
             if (tmp2.length > 1)
@@ -412,7 +411,7 @@
                     return 0;
                 });
             }
-            /* */
+
             // merge all of the splits
             //angular.forEach(tmp, function(value, key)
             angular.forEach(tmp2, function (key)
@@ -560,7 +559,7 @@
         // into two seperate objects that may already exist
         function mergeValue(target_obj, prop, value)
         {
-            if (prop == 'index' || prop == 'name')
+            if (prop == 'ix' || prop == 'name')
             {
                 return;
             }

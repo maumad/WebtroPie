@@ -172,28 +172,45 @@
             // as width increases scale down to smaller font so text isn't truncated
             var fontsize;
             var gl_width;
+            var selectorBarHeight;
+
+            var linesize = gl.fontSize + gl.selectorOffsetY + (gl.lineSpacing || 1.5)/100;
+            if (gl.selectorHeight && !gl.fullselectorImagePath)
+            {
+                selectorBarHeight = gl.selectorHeight;
+            }
+            else
+            {
+                selectorBarHeight = linesize;
+            }
             if (stretch)
             {
                 fontsize = gl.fontSize / ( 1 + extra_width);
                 gl_width = width / (1 + extra_width);
+                linesize = linesize / (1 + extra_width);
+                selectorBarHeight = selectorBarHeight / (1 + extra_width);
             }
             else {
                 fontsize = gl.fontSize * gl.size.w / ( max_width + extra_width);
                 gl_width = width * gl.size.w / ( max_width + extra_width);
+                linesize = linesize * gl.size.w / ( max_width + extra_width);
+                selectorBarHeight = selectorBarHeight / (1 + extra_width);
             }
             delete gl.div['font-size'];
 
-            // lineSpacing default 1.6, so 1.6 * font size = line size
-            gl.linesize = fontsize * gl.lineSpacing;
+            gl.linesize = linesize;
+            gl.fontsize_scaled = fontsize;
+            gl.selectorBarHeight = selectorBarHeight;
 
             // more rows with smaller font ?
             gl.rows = gl.size.h / gl.linesize - vm.header;
+            gl.height_adjusted = gl.selectorOffsetY + gl.size.h - vm.header * gl.linesize;
 
             gl.width = util.pct(gl_width,'vw');
 
-            vm.liststyle.top              = util.pct(gl.pos.y + vm.header * gl.linesize,'vh');
-            vm.liststyle['max-height'] = util.pct(gl.size.h - vm.header * gl.linesize,'vh');
-            vm.liststyle.height          = util.pct(gl.size.h - vm.header * gl.linesize,'vh');
+            vm.liststyle.top = util.pct(gl.pos.y + vm.header * gl.linesize,'vh');
+            vm.liststyle['max-height'] =
+               vm.liststyle.height = util.pct(gl.height_adjusted,'vh');
 
             vm.liststyle['font-size']  = util.pct(fontsize,'vh');
             vm.liststyle['font-family']  = gl.fontFamily;
@@ -219,7 +236,6 @@
             }
             vm.liststyle.left = gl.div.left;
             vm.headerstyle.left = gl.div.left;
-
 
             // work out x + widths proportional to overall width
             var x = 0;
@@ -281,7 +297,6 @@
         }
 
 
-        
         // clear all 'selected' flags for all games in the selected list
         function clearSelection()
         {
@@ -351,24 +366,8 @@
                 return;
 
             var gl = ThemeService.gamelist;
-            var style = {  top: util.pct($index * gl.linesize, 'vh'),
-                            height: util.pct(gl.linesize,'vh') };
-
-            if (styler.fonts[gl.fontFamily])
-            {
-/*
-                if (parseInt(gl.forceUppercase))
-                {
-                    style['line-height'] = styler.fonts[gl.fontFamily].uppercase_line_height + '%';
-                }
-                else
-                {
-*/
-                    style['line-height'] = styler.fonts[gl.fontFamily].mixedcase_line_height + '%';
-/*
-                }
-*/
-            }
+            var style = {  top: util.pct(gl.selectorOffsetY + ($index * gl.linesize), 'vh'),
+                           height: util.pct(gl.selectorBarHeight,'vh') };
 
             // game rom file does not exists
             if (game && !game.size && !game.isDir)

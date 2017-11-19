@@ -98,14 +98,12 @@
             config.init()
             .then(function(response)
             {
-                console.log('gamelist.view config.init() done');
                 var default_view = GameService.getDefaultGamelistViewName(page.system);
 
                 return ThemeService.themeInit(page.system, default_view, !!config.app.ScanAtStartup);
             })
             .then(function(theme_output)
             {
-                console.log('gamelist.view ThemeService.themeInit() done');
                 CarouselService.setCarouselSystemIndexByName(page.system);
 
                 util.register_keyPressCallback(keyPress);
@@ -114,7 +112,6 @@
                 $scope.$watch('app.GameService.show_favorite', filterChange);
                 $scope.$watch('app.GameService.show_nested', filterChange);
                 $scope.$watch('app.GameService.filter', filterChange);
-                console.log('gamelist.view done');
             });
         }
 

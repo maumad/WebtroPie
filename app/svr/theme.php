@@ -70,10 +70,10 @@ function filepathinfo($file)
 {
    global $themepath;
 
+   $file = simplify_path($file);
+
    $path = pathinfo($file, PATHINFO_DIRNAME );
    $file = pathinfo($file, PATHINFO_BASENAME );
-
-   $path = simplify_path($path);
 
    // remove starting /
    $path = preg_replace('|^/|','',$path);

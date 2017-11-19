@@ -82,7 +82,9 @@ input, select, textarea {
     white-space: nowrap;
     position: relative;
     top: 50%;
-    transform: translate(0, -50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .text_multiline {
@@ -107,7 +109,7 @@ input, select, textarea {
 .gamelist {
     position: relative;
     outline: none;
-    z-index: 20; /* wiki 75; */
+    z-index: 20;
 }
 .gamelist_selector {
     left: 0;
@@ -144,7 +146,9 @@ input, select, textarea {
 }
 .headerfield {
     top:  50%;
-    transform: translate(0,-50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
     line-height: 135%;
     border-bottom: 1px solid rgba(150,150,150,0.4); 
     overflow: hidden;
@@ -153,7 +157,9 @@ input, select, textarea {
 }
 .gamefield {
     top:  50%;
-    transform: translate(0,-50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -243,7 +249,7 @@ input, select, textarea {
 .helpsystembar {
     position: absolute;
     top: 94.5vh;
-    z-index: 175;
+    z-index: 4000;
     text-transform: uppercase;
 }
 .helpsystembar input {
@@ -288,7 +294,7 @@ input, select, textarea {
     line-height: 110%;
     position: absolute;
     border-radius: 0.25em;
-    z-index: 200;
+    z-index: 5000;
     white-space: nowrap;
 }
 /* drop 'down' */
