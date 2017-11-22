@@ -31,7 +31,8 @@
                 maxLogoCount: 3,
                 logoScale: 1.4,
                 logoSize: {w: 0.24, h: 0.14},
-                fontSize: 0.16
+                fontSize: 0.16,
+                zIndex: 40
             },
             systemInfo: {
                 name: 'systemInfo',
@@ -41,7 +42,8 @@
                 color: '#555',
                 alignment: 'center',
                 fontSize: 0.04,
-                lineSpacing: 1
+                lineSpacing: 1,
+                zIndex: 50
             }
         };
 
@@ -116,6 +118,11 @@
                 return;
             }
 
+            if (config.app.LogThemeStyles)
+            {
+                console.groupCollapsed('styler.createCarouselStyle('+carousel.name+')');
+            }
+
             if (!carousel.type)
             {
                 carousel.type = 'horizontal';
@@ -169,6 +176,7 @@
                 carousel.logoScale = self.defaultCarousel.systemcarousel.logoScale;
             }
 
+
             carousel.midX = carousel.pos.x + carousel.size.w / 2;
             carousel.midY = carousel.pos.y + carousel.size.h / 2;
 
@@ -193,13 +201,25 @@
             {
                 carousel.color = self.defaultCarousel.systemcarousel.color;
             }
-            style['background-color'] = util.hex2rgba(carousel.color);
-            style['color'] =  '#222';
+
+            if (carousel.zIndex)
+            {
+                carousel.zIndex = parseInt(carousel.zIndex);
+            }
+            else
+            {
+                carousel.zIndex = self.defaultCarousel.systemcarousel.zIndex;
+            }
 
             if (!carousel.fontSize)
             {
                 carousel.fontSize = self.defaultCarousel.systemcarousel.fontSize;
             }
+
+            style['background-color'] = util.hex2rgba(carousel.color);
+            style['color'] =  '#222';
+            style['z-index'] = carousel.zIndex;
+
 
             carousel.div = style;
 
@@ -215,6 +235,11 @@
             }
 
             createCarsouselClasses(carousel);
+
+            if (config.app.LogThemeStyles)
+            {
+                console.groupEnd('styler.createCarouselStyle('+carousel.name+')');
+            }
 
             carousel.styled = true;
         }
@@ -258,6 +283,11 @@
         function createClass(className, style_array)
         {
             var style;
+
+            if (config.app.LogThemeStyles)
+            {
+                console.groupCollapsed('styler.createClass('+className+')');
+            }
             if (self.class[className])
             {
                 style = self.class[className];
@@ -280,6 +310,12 @@
             style.innerHTML = str;
 
             document.getElementsByTagName('head')[0].appendChild(style);
+
+            if (config.app.LogThemeStyles)
+            {
+                console.log(style);
+                console.groupEnd('styler.createClass('+className+')');
+            }
 
             self.class[className] = style; // save for later removal
         }
@@ -310,6 +346,21 @@
             var style = {}
             style['position'] = 'absolute';
 
+            if (image.name=='background')
+            {
+                image.fullscreen = true;
+                if (!image.pos)
+                {
+                    image.size = '0 0';
+                    console.log('(background) pos = 0 0');
+                }
+                if (!image.size)
+                {
+                    image.size = '1 1';
+                    console.log('(background) size = 1 1');
+                }
+            }
+
             if (image.pos)
             {
                 image.pos = denormalize('pos',image.pos);
@@ -339,6 +390,7 @@
                 {
                     style.height = util.pct(image.size.h,'vh');
                 }
+
                 if (image.size.w >=1 && image.size.h >=1)
                 {
                     image.fullscreen = true;
@@ -349,8 +401,6 @@
                 }
             }
 
-            // give background image z-index of 0
-            // otherwise use order image appears in file (or included file?)
             if (image.name == 'md_image' || image.name == 'md_marquee')
             {
                 if (!image.origin)
@@ -382,10 +432,14 @@
                     style['max-height'] = util.pct(image.maxSize.h,'vh');
                 }
             }
+
             calcObjBounds(image);
 
             // image file - not just a color
-            if (image.fullpath || (image.name == 'md_image' || image.name == 'md_marquee'))
+            if (image.fullpath ||
+                   (image.name == 'md_image' ||
+                    image.name == 'md_marquee' ||
+                    image.name == 'background'))
             {
                 if ( image.color )
                 {
@@ -450,8 +504,6 @@
                 {
                     style['background-image'] = 'url("'+image.fullpath+'")';
                     style['background-size'] = '100% 100%';
-                    style.left = 0;
-                    style.top = 0;
                     style.width = '100vw';
                     style.height = '100vh';
                 }
@@ -541,7 +593,7 @@
             }
             else if (image.zIndex)
             {
-                style['z-index'] = image.zIndex+1;
+                style['z-index'] = parseInt(image.zIndex)+1;
             }
             else if (image.fullscreen)
             {
@@ -658,13 +710,13 @@
                     //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
 
-                if (rating.name.substring(0,3)=='md_')
+                if (rating.name && rating.name.substring(0,3)=='md_')
                 {
                     style['z-index'] = 30;
                 }
                 else if (rating.zIndex)
                 {
-                    style['z-index'] = rating.zIndex+1;
+                    style['z-index'] = parseInt(rating.zIndex)+1;
                 }
                 else
                 {
@@ -884,13 +936,13 @@
                 text.div['text-align'] = text.alignment;
             }
 
-            if (text.name.substring(0,3)=='md_')
+            if (text.name && text.name.substring(0,3)=='md_')
             {
                 text.div['z-index'] = 40;
             }
             else if (text.zIndex)
             {
-                text.div['z-index'] = text.zIndex;
+                text.div['z-index'] = parseInt(text.zIndex)+1;
             }
 
             text.styled = true;
@@ -910,12 +962,13 @@
             textlist.fontSize        = parseFloat(textlist.fontSize);
             textlist.selectorHeight  = parseFloat(textlist.selectorHeight);
             textlist.lineSpacing     = parseFloat(textlist.lineSpacing);
+
             if (textlist.fullselectorImagePath)
             {
                 textlist.selector = {
                      'background-image': 'url("'+textlist.fullselectorImagePath+'")',
                      'height': util.pct(textlist.selectorHeight,'vh'),
-                     'width': util.pct(textlist.horizontalMargin,'vw')
+                     'width': util.pct(textlist.size.w,'vw')
                 }
             }
         }
@@ -1012,13 +1065,13 @@
 
             style['position'] = 'absolute';
 
-            if (video.name.substring(0,3)=='md_')
+            if (video.name && video.name.substring(0,3)=='md_')
             {
                 style['z-index'] = 30;
             }
             else if (video.zIndex)
             {
-                style['z-index'] = video.zIndex+1;
+                style['z-index'] = parseInt(video.zIndex)+1;
             }
             else
             {
@@ -1164,9 +1217,48 @@
             object['full'+field] = object['full'+field].replace(/[^\/]*\/\.\.\//, '');
         }
 
+        function fullViewImagePaths(view, path)
+        {
+            angular.forEach(view.video, function(video)
+            {
+                if (video.default)
+                {
+                    fullpath(video, 'default', path);
+                }
+            });
+
+            angular.forEach(view.image, function(image)
+            {
+                if (image.name && image.path)
+                {
+                    fullpath(image, 'path', path);
+                }
+            });
+
+            if(view.textlist &&
+                view.textlist.gamelist &&
+                view.textlist.gamelist.selectorImagePath)
+            {
+                 fullpath(view.textlist.gamelist, 'selectorImagePath', path);
+            }
+
+            // expand paths of rating star images if themed
+            if (view.rating && view.rating.md_rating)
+            {
+                if (view.rating.md_rating.unfilledPath)
+                {
+                    fullpath(view.rating.md_rating, 'unfilledPath', path);
+                }
+                if (view.rating.md_rating.filledPath)
+                {
+                    fullpath(view.rating.md_rating, 'filledPath', path);
+                }
+            }
+        }
+
         // Store full image path relative to the file it was included in
         // (so that the path doesn't get lost after expansion)
-        function fullImagePaths(themefile, path, file_count)
+        function fullImagePaths(themefile, path)
         {
             if (!themefile || !themefile.view)
             {
@@ -1175,41 +1267,7 @@
 
             angular.forEach(themefile.view, function(view)
             {
-                angular.forEach(view.video, function(video)
-                {
-                    if (video.default)
-                    {
-                        fullpath(video, 'default', path);
-                    }
-                });
-
-                angular.forEach(view.image, function(image)
-                {
-                    if (image.name && image.path)
-                    {
-                        fullpath(image, 'path', path);
-                    }
-                });
-
-                if(view.textlist &&
-                    view.textlist.gamelist &&
-                    view.textlist.gamelist.selectorImagePath)
-                {
-                     fullpath(view.textlist.gamelist, 'selectorImagePath', path);
-                }
-
-                // expand paths of rating star images if themed
-                if (view.rating && view.rating.md_rating)
-                {
-                    if (view.rating.md_rating.unfilledPath)
-                    {
-                        fullpath(view.rating.md_rating, 'unfilledPath', path);
-                    }
-                    if (view.rating.md_rating.filledPath)
-                    {
-                        fullpath(view.rating.md_rating, 'filledPath', path);
-                    }
-                }
+                fullViewImagePaths(view, path)
             });
         }
 
@@ -1356,9 +1414,9 @@
             });
         }
 
-        function loadMedia(theme, node, path, file_count)
+        function loadMedia(theme, node, path)
         {
-            fullImagePaths(node, path, file_count);
+            fullImagePaths(node, path);
             loadFonts(theme, node, path, 'text');
             loadFonts(theme, node, path, 'textlist');
             loadFonts(theme, node, path, 'datetime');
@@ -1664,12 +1722,12 @@
             var scale;
             var fontsize;
             var opacity;
+            var zIndex = parseInt(self.carousel.zIndex) || 40;
             
             cell.position = 'absolute';
             cell.top = '50%';
             cell.left = '50%';
             cell.transform = 'translate(-50%,-50%)';
-            cell['z-index'] = 34;
 
             if (self.carousel.type == 'vertical')
             {
@@ -1689,7 +1747,7 @@
             if (index==0 || index == '0')    // Center
             {
                  scale = self.carousel.logoScale;
-                 cell['z-index'] = 32;
+                 cell['z-index'] = zIndex + 3;
                  opacity = 1;
             }
             else if (index > -1 && index < 1)  // almost center
@@ -1697,13 +1755,13 @@
                  pct = Math.abs(index);
                  scale = (self.carousel.logoScale * (1 - pct)) + pct;
                  opacity = 1 - (0.5 * pct); // (1 - pct) + (0.5 * pct);
-                 cell['z-index'] = 31;
+                 cell['z-index'] = zIndex + 2;
             }
             else
             {
                  scale = 1;
                  opacity = 0.5;
-                 cell['z-index'] = 30;
+                 cell['z-index'] = zIndex + 1;
             }
 
             width = self.carousel.logoSize.w * scale;

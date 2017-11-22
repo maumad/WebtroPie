@@ -125,7 +125,6 @@ function strip_comments($xml)
 {
    return preg_replace('/^[^<]*/','',
           preg_replace('/<!--(.*)-->/Uis', '', $xml));
-          //preg_replace('|</*feature[^>]*>|','', $xml)));
 }
 
 function simplexml_load_file_wrapped($filename, $wrap_tag='wrapped')
@@ -196,9 +195,11 @@ function simplify_path($path, $directory)
    $path = preg_replace('|/\./|','/',$path);
 
    // simplify "/dir/.." to "/"
-   $path = preg_replace('|/[^/\.][^/]*/\.\.|','',$path);
-   $path = preg_replace('|/[^/\.][^/]*/\.\.|','',$path);
-   $path = preg_replace('|/[^/\.][^/]*/\.\.|','',$path);
+   $path = preg_replace('|[^/\.]+/\.\./|','',$path);
+   $path = preg_replace('|[^/\.]+/\.\./|','',$path);
+   $path = preg_replace('|[^/\.]+/\.\./|','',$path);
+   // simplify "/./" to "/"
+   $path = preg_replace('|/\./|','/',$path);
 
    if ($directory)
    {

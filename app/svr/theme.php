@@ -66,28 +66,6 @@ $response['includes'] = array();
 
 $response['fonts'] = array();
 
-function filepathinfo($file)
-{
-   global $themepath;
-
-   $file = simplify_path($file);
-
-   $path = pathinfo($file, PATHINFO_DIRNAME );
-   $file = pathinfo($file, PATHINFO_BASENAME );
-
-   // remove starting /
-   $path = preg_replace('|^/|','',$path);
-
-   if($path)
-      $fullpath = $path.'/'.$file;
-   else
-      $fullpath = $file;
-
-   return array('fullpath' => $fullpath,
-                'path' =>  $path,
-                'file' => $file);
-}
-
 
 function get_font(&$text, $path)
 {
@@ -96,12 +74,7 @@ function get_font(&$text, $path)
    if(!isset($text['fontPath']))
       return;
 
-   $fullpath = filepathinfo($themepath.'/'.$path.'/'.$text['fontPath'])['fullpath'];
-   if(!file_exists($fullpath))
-   {
-      $fullpath =  preg_replace('|.*('.$themepath.')|','$1',
-                   realpath($themepath.'/'.$path.'/'.$text['fontPath']));
-   }
+   $fullpath = simplify_path($themepath.'/'.$path.'/'.$text['fontPath']);
 
    if(!file_exists($fullpath)) {
       return;
@@ -135,10 +108,9 @@ function load_and_include($file, &$parent, $index)
 {
    global $response, $themepath;
 
-   $fi = filepathinfo($file);
-   $path = $fi['path'];
-   $file = $fi['file'];
-   $incfile = $fi['fullpath'];
+   $incfile = simplify_path($file);
+
+   $path = pathinfo($incfile, PATHINFO_DIRNAME );
 
    if(isset($index)) {
       // copy modified reference back to parent

@@ -173,8 +173,8 @@
             var fontsize;
             var gl_width;
             var selectorBarHeight;
+            var linesize = gl.fontSize * (gl.lineSpacing || 1.5);
 
-            var linesize = gl.fontSize + gl.selectorOffsetY + (gl.lineSpacing || 1.5)/100;
             if (gl.selectorHeight && !gl.fullselectorImagePath)
             {
                 selectorBarHeight = gl.selectorHeight;
@@ -183,17 +183,18 @@
             {
                 selectorBarHeight = linesize;
             }
+
             if (stretch)
             {
                 fontsize = gl.fontSize / ( 1 + extra_width);
                 gl_width = width / (1 + extra_width);
-                linesize = linesize / (1 + extra_width);
+                linesize = 0.95 * linesize / (1 + extra_width);
                 selectorBarHeight = selectorBarHeight / (1 + extra_width);
             }
             else {
                 fontsize = gl.fontSize * gl.size.w / ( max_width + extra_width);
                 gl_width = width * gl.size.w / ( max_width + extra_width);
-                linesize = linesize * gl.size.w / ( max_width + extra_width);
+                linesize = 0.95 * linesize * gl.size.w / ( max_width + extra_width);
                 selectorBarHeight = selectorBarHeight / (1 + extra_width);
             }
             delete gl.div['font-size'];

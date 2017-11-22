@@ -67,7 +67,7 @@
                     {
                         if (!view.datetime) view.datetime = {};
                         if (!view.datetime.md_releasedate) view.datetime.md_releasedate = {};
-                        self.mergeObjects(view.datetime.md_releasedate, view.text.md_releasedate);
+                        mergeObjects(view.datetime.md_releasedate, view.text.md_releasedate);
                         delete view.text.md_releasedate;
                     }
                     // lastplayed should be datetime
@@ -75,7 +75,7 @@
                     {
                         if (!view.datetime) view.datetime = {};
                         if (!view.datetime.md_lastplayed) view.datetime.md_lastplayed = {};
-                        self.mergeObjects(view.datetime.md_lastplayed, view.text.md_lastplayed);
+                        mergeObjects(view.datetime.md_lastplayed, view.text.md_lastplayed);
                         delete view.text.md_lastplayed;
                     }
                     // rating should be rating
@@ -83,7 +83,7 @@
                     {
                         if (!view.rating) view.rating = {};
                         if (!view.rating.md_rating) view.rating.md_rating = {};
-                        self.mergeObjects(view.rating.md_rating, view.text.md_rating);
+                        mergeObjects(view.rating.md_rating, view.text.md_rating);
                         delete view.text.md_rating;
                     }
                     // let missing text size (width) equal label size
@@ -266,26 +266,55 @@
         // convert raw theme data elements object into expanded desciptive object 
         function decodeTheme(theme)
         {
-            var file_count = 0;
-
             self.theme = theme;
 
-            createCarouselSystems();
+            // recursively remove nested features
+            function removeFeatures(obj)
+            {
+                if (obj.feature)
+                {
+                    if (typeof obj.feature == 'array')
+                    {
+                        obj.feature
+                        .forEach(function(feature)
+                        {
+                            angular.forEach(feature, function (subvalue, subkey)
+                            {
+                                mergeObjects(value, subvalue, true);
+                            });
+                        });
+                        obj.feature.length = 0; // truncate array
+                        delete obj.feature; // delete array
+                    }
+                    else if (typeof obj.feature == 'object')
+                    {
+                        angular.forEach(obj.feature, function (subvalue, subkey)
+                        {
+                            mergeObjects(obj, subvalue, true);
+                        });
+                        delete obj.feature; // delete array
+                    }
+                }
+                // recurse into children objects
+                angular.forEach(obj, function(value, key) {
+                    if (!value) return;
+                    if ((typeof value)=='object')
+                    {
+                        removeFeatures(value);
+                    }
+                    else if ((typeof value)=='array')
+                    {
+                        value.forEach(removeFeatures(subvalue))
+                    }
+                })
+            }
 
             // LOAD INCLUDES:
             // expand (E.g split "basic, detailed" views) for each include file
             // preserving paths relative to include file
             angular.forEach(self.theme.includes, function (inc, filename)
             {
-                // FEATURE: but first, promote contents of feature node up heirarchy
-                angular.forEach(inc.feature, function (value, key)
-                {
-                    if (value)
-                    {
-                        self.mergeObjects(inc, value);
-                    }
-                    delete inc.feature[key];
-                });
+                removeFeatures(inc);
 
                 var subdir = '';
                 var i = filename.lastIndexOf('/');
@@ -295,25 +324,30 @@
                 }
 
                 // LOAD INCLUDE FILE MEDIA
-                styler.loadMedia(self.theme, inc, self.theme.path + subdir, file_count++);
+                styler.loadMedia(self.theme, inc, self.theme.path + subdir);
 
                 // split combined objects (where key contains a comma)
-                self.expandMerged(inc);
+                expandMerged(inc);
             });
+
+            createCarouselSystems();
 
             // expand system theme, merge included files, then convert images
             angular.forEach(self.theme.systems, function (sys)
             {
                 if (sys.theme && sys.theme.error)
                 {
-                    console.log(sys.theme);
+                    console.log(sys.theme.error);
                     delete self.theme.systems[sys.name];
                     return;
                 }
-                styler.loadMedia(self.theme, sys.theme, sys.path, file_count++);
+
+                removeFeatures(sys);
+
+                styler.loadMedia(self.theme, sys.theme, sys.path);
 
                 // expand merged views etc (where key contains a comma)
-                self.expandMerged(sys);
+                expandMerged(sys);
 
                 // include includes
                 // - recursively merge each node of heirarchy
@@ -321,21 +355,24 @@
                 {
                     angular.forEach(sys.theme.include, function (filename)
                     {
-                        self.mergeThemes(sys.theme, filename, self.theme);
+                        mergeThemes(sys.theme, filename, self.theme);
                     });
                 }
 
                 // fix theme wrong tags used
-                self.correctThemeErrors(sys.theme);
+                correctThemeErrors(sys.theme);
 
                 // remove unnecessary 'theme' tier, promote view to replace parent
                 if (sys.theme)
                 {
-
+                    angular.forEach(sys.theme, function(value, key) {
+                        sys[key] = value;
+                    })
                     sys.view = sys.theme.view;
-                    if (sys.theme.variables)
+                    delete sys.theme;
+                    if (sys.variables)
                     {
-                        angular.forEach(sys.theme.variables, function (replace, pattern)
+                        angular.forEach(sys.variables, function (replace, pattern)
                         {
                             replaceVariablesInObject(sys);
                             
@@ -350,9 +387,7 @@
                                 });
                             }
                         });
-                        sys.variables = sys.theme.variables;
                     }
-                    delete sys.theme;
                 }
 
                 // create convenient shortcuts
@@ -387,7 +422,7 @@
                 // recursivley expand from bottom up
                 if ((typeof value) == 'object')
                 {
-                    self.expandMerged(value);
+                    expandMerged(value);
                 }
 
                 // add to list of things to unsplit
@@ -421,7 +456,7 @@
                 var keys = key.split(/\s*,\s*/); // E.g. key = "basic, detailed"
                 angular.forEach(keys, function (k)
                 {
-                    self.mergeValue(target_obj, k, value);  // E.g. k = "basic"
+                    mergeValue(target_obj, k, value);  // E.g. k = "basic"
                     //if (typeof value == 'object')
                     if (typeof target_obj[k] == 'object')
                     {
@@ -476,7 +511,7 @@
             if (self.themes[themename] &&
                 self.themes[themename].path)
             {
-                self.setThemeSystemView(self.themes[themename], system_name, view_name);
+                setThemeSystemView(self.themes[themename], system_name, view_name);
                 deferred.resolve(self.themes[themename]);
                 return deferred.promise;
             }
@@ -502,7 +537,7 @@
                         system_name = self.theme.carousel_systems_list[0];
                     }
 
-                    self.setThemeSystemView(self.theme, system_name, view_name);
+                    setThemeSystemView(self.theme, system_name, view_name);
 
                     deferred.resolve(self.theme);
                     delete self.theme_promise;
@@ -521,7 +556,7 @@
                     if (self.themes['carbon'] &&
                         self.themes['carbon'].path)
                     {
-                        self.setThemeSystemView(self.themes['carbon'], system_name, view_name);
+                        setThemeSystemView(self.themes['carbon'], system_name, view_name);
                         deferred.resolve(self.themes['carbon']);
                     }
                     else
@@ -539,7 +574,7 @@
                                 system_name = self.theme.carousel_systems_list[0];
                             }
 
-                            self.setThemeSystemView(self.theme, system_name, view_name);
+                            setThemeSystemView(self.theme, system_name, view_name);
 
                             deferred.resolve(self.theme);
                             delete self.theme_promise;
@@ -552,12 +587,40 @@
         }
 
 
+        // recurse whole target object and merge every value
+        function mergeObjects(target, source, overwrite)
+        {
+            angular.forEach(source, function (value, key)
+            {
+                mergeValue(target, key, value, overwrite);
+            });
+        }
+
+        // recurse whole target object and merge every value
+        function mergeThemes(target, filename, theme)
+        {
+            angular.forEach(theme.includes[filename], function (value, key)
+            {
+                // dont just merge the name property - include the whole file
+                if (key == 'include')
+                {
+                    angular.forEach(value, function (incfile)
+                    {
+                        mergeThemes(target, incfile, theme);
+                    });
+                }
+                else
+                {
+                    mergeValue(target, key, value);
+                }
+            });
+        }
 
         // copy if target has missing value, or child value, or granchild value ...
         // used to merge properties from included theme file into theme
         // and expanding combined properties E.g. seperate "basic, detailed" view
         // into two seperate objects that may already exist
-        function mergeValue(target_obj, prop, value)
+        function mergeValue(target_obj, prop, value, overwrite)
         {
             if (prop == 'ix' || prop == 'name')
             {
@@ -581,13 +644,17 @@
                 // recurse into children
                 angular.forEach(value, function (v, k)
                 {
-                    self.mergeValue(target_obj[prop], k, v);
+                    mergeValue(target_obj[prop], k, v, overwrite);
                 });
                 return;
             }
             else if ((typeof target_obj[prop] == 'string') && (typeof value) == 'string')
             {
-                if (target_obj[prop] == value)
+                if (overwrite)
+                {
+                    target_obj[prop] = value;
+                }
+                else if (target_obj[prop] == value)
                 {
                     return;
                 }
@@ -601,36 +668,12 @@
                     return;
                 }
             }
+            else if (overwrite)
+            {
+                target_obj[prop] = value;
+            }
         }
 
-        // recurse whole target object and merge every value
-        function mergeObjects(target, source)
-        {
-            angular.forEach(source, function (value, key)
-            {
-                self.mergeValue(target, key, value);
-            });
-        }
-
-        // recurse whole target object and merge every value
-        function mergeThemes(target, filename, theme)
-        {
-            angular.forEach(theme.includes[filename], function (value, key)
-            {
-                // dont just merge the name property - include the whole file
-                if (key == 'include')
-                {
-                    angular.forEach(value, function (incfile)
-                    {
-                        self.mergeThemes(target, incfile, theme);
-                    });
-                }
-                else
-                {
-                    self.mergeValue(target, key, value);
-                }
-            });
-        }
 
         // for the current theme using the sound name (E.g. scrollsystem)
         // look up the audio_id (E.g. carbon_click)
@@ -665,7 +708,7 @@
         function setCurrentSystem()
         {
             //console.log('setCurrentSystem '+self.system)
-            self.setSystem(self.system_name);
+            setSystem(self.system_name);
         }
 
         // creates easy access to deep branches of the themes tree
@@ -683,7 +726,7 @@
 
             // set self.system to point to theme/system object
             //self.system = self.theme.systems[system_name];
-            self.system = self.getSystemTheme(system_name);
+            self.system = getSystemTheme(system_name);
             self.system_name = system_name;
 
             // if not passed in, assume the same view as before
@@ -733,7 +776,7 @@
 
         function setSystemByName(system_name, view_name, nocheck)
         {
-            var system = self.getSystemTheme(system_name);
+            var system = getSystemTheme(system_name);
             //console.log('set system by name : sys = ' + system_name + ' : view = '+ view_name)
             if (!system)
             {
@@ -760,7 +803,7 @@
                 return; // already set
             }
 
-            self.setSystem(system.name, view_name);
+            setSystem(system.name, view_name);
         }
 
         // set the global current theme
@@ -768,21 +811,20 @@
         {
             self.theme = theme;
 
-
             config.app.ThemeSet = theme.name;
 
             // also ripple change to system theme change
             if (system_name)
             {
-                self.setSystemByName(system_name, view_name, true);
+                setSystemByName(system_name, view_name, true);
             }
             else if (self.default_system_name)
             {
-                self.setSystemByName(self.default_system_name, self.default_view_name, true);
+                setSystemByName(self.default_system_name, self.default_view_name, true);
             }
             else
             {
-                self.setCurrentSystem();
+                setCurrentSystem();
             }
 
             delete self.default_system_name;
@@ -791,14 +833,14 @@
 
         function switchView(view_name)
         {
-            self.setSystem(self.system_name, view_name);
+            setSystem(self.system_name, view_name);
             util.defaultFocus();
         }
 
         // load up (current) theme from memory otherwise from server
         function themeInit(system_name, view_name, scan)
         {
-            return self.getTheme(config.app.ThemeSet, system_name, view_name, scan);
+            return getTheme(config.app.ThemeSet, system_name, view_name, scan);
         }
 
         function variableReplace(str, system_name)

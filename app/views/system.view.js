@@ -92,7 +92,6 @@
             })
             .then(function(data)
             {
-                console.log(data);
                 ThemeService.setSystem(ThemeService.system_name, 'system');
                 ThemeService.playSound('bgsound');
 
@@ -145,13 +144,13 @@
             styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(0).view.system, true);
             styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+1).view.system, true);
             styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-1).view.system, true);
-            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+2).view.system, true);
-            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-2).view.system, true);
+            //styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+2).view.system, true);
+            //styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-2).view.system, true);
             //angular.forEach(ThemeService.theme.systems, function(sys) {
             //    styler.createViewStyles(sys.view.system, true);
             //})
 
-            createDefaultGamelistView();
+            //createDefaultGamelistView();
         }
 
         function createDefaultGamelistView()
