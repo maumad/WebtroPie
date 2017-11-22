@@ -382,8 +382,21 @@
                                 {
                                     if (typeof value == 'object' || typeof value == 'array')
                                         replaceVariablesInObject(value);
-                                    else if(value == '${'+pattern+'}')
-                                        obj[key] = replace;
+                                    else if (typeof value == 'string' && value)
+                                    {
+                                        if(value == '${'+pattern+'}')
+                                        {
+                                            obj[key] = replace;
+                                        }
+                                        else
+                                        {
+                                            var i = value.indexOf('${'+pattern+'}');
+                                            if (i >=0)
+                                            {
+                                                obj[key] = value.substring(0,i) + replace + value.substring(i+('${'+pattern+'}').length);
+                                            }
+                                        }
+                                    }
                                 });
                             }
                         });
