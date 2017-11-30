@@ -263,51 +263,54 @@
             }
         }
 
+        // recursively remove nested features
+        function removeFeatures(obj)
+        {
+            if (obj.feature)
+            {
+                if (typeof obj.feature == 'array')
+                {
+                    obj.feature
+                    .forEach(function(feature)
+                    {
+                        angular.forEach(feature, function (subvalue, subkey)
+                        {
+                            mergeObjects(value, subvalue, true);
+                        });
+                    });
+                    obj.feature.length = 0; // truncate array
+                    delete obj.feature; // delete array
+                }
+                else if (typeof obj.feature == 'object')
+                {
+                    angular.forEach(obj.feature, function (subvalue, subkey)
+                    {
+                        mergeObjects(obj, subvalue, true);
+                    });
+                    delete obj.feature; // delete array
+                }
+            }
+            // recurse into children objects
+            angular.forEach(obj, function(value, key) {
+                if (!value) return;
+                if ((typeof value)=='object')
+                {
+                    removeFeatures(value);
+                }
+                else if ((typeof value)=='array')
+                {
+                    value.forEach(removeFeatures(subvalue))
+                }
+            })
+        }
+
+
         // convert raw theme data elements object into expanded desciptive object 
         function decodeTheme(theme)
         {
             self.theme = theme;
 
-            // recursively remove nested features
-            function removeFeatures(obj)
-            {
-                if (obj.feature)
-                {
-                    if (typeof obj.feature == 'array')
-                    {
-                        obj.feature
-                        .forEach(function(feature)
-                        {
-                            angular.forEach(feature, function (subvalue, subkey)
-                            {
-                                mergeObjects(value, subvalue, true);
-                            });
-                        });
-                        obj.feature.length = 0; // truncate array
-                        delete obj.feature; // delete array
-                    }
-                    else if (typeof obj.feature == 'object')
-                    {
-                        angular.forEach(obj.feature, function (subvalue, subkey)
-                        {
-                            mergeObjects(obj, subvalue, true);
-                        });
-                        delete obj.feature; // delete array
-                    }
-                }
-                // recurse into children objects
-                angular.forEach(obj, function(value, key) {
-                    if (!value) return;
-                    if ((typeof value)=='object')
-                    {
-                        removeFeatures(value);
-                    }
-                    else if ((typeof value)=='array')
-                    {
-                        value.forEach(removeFeatures(subvalue))
-                    }
-                })
-            }
+            var include_count = 1;
 
             // LOAD INCLUDES:
             // expand (E.g split "basic, detailed" views) for each include file
@@ -324,7 +327,7 @@
                 }
 
                 // LOAD INCLUDE FILE MEDIA
-                styler.loadMedia(self.theme, inc, self.theme.path + subdir);
+                styler.loadMedia(self.theme, inc, self.theme.path + subdir, include_count++);
 
                 // split combined objects (where key contains a comma)
                 expandMerged(inc);
@@ -344,7 +347,7 @@
 
                 removeFeatures(sys);
 
-                styler.loadMedia(self.theme, sys.theme, sys.path);
+                styler.loadMedia(self.theme, sys.theme, sys.path, 0);
 
                 // expand merged views etc (where key contains a comma)
                 expandMerged(sys);
@@ -415,8 +418,38 @@
 
             createDefaultSystem(self.theme, theme.name);
 
+            findStaticImages();
+
             // store this fully expaned theme into the array for caching
             self.themes[theme.name] = self.theme;
+        }
+
+        // If the image path is the same as the default system image path
+        // and does not contain a variable assume that it is an unchanging image.
+        // (flag not to animate during transitions)
+        function findStaticImages()
+        {
+            angular.forEach(self.theme.systems, function (sys)
+            {
+                angular.forEach(sys.view, function (view, viewname)
+                {
+                    angular.forEach(view.image, function (image, imagename)
+                    {
+                        if (image.fullpath &&
+                            image.fullpath.indexOf('$')<0 &&
+                            self.theme.systems.default.view[viewname].image &&
+                            self.theme.systems.default.view[viewname].image[imagename] &&
+                            image.fullpath == self.theme.systems.default.view[viewname].image[imagename].fullpath)
+                        {
+                            image.static = true;
+                        }
+                        else
+                        {
+                            image.static = false;
+                        }
+                    });
+                });
+            });
         }
 
         // expand combined properties E.g. seperate view with key
@@ -635,7 +668,7 @@
         // into two seperate objects that may already exist
         function mergeValue(target_obj, prop, value, overwrite)
         {
-            if (prop == 'ix' || prop == 'name')
+            if (prop == 'index' || prop == 'name')
             {
                 return;
             }

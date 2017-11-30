@@ -136,7 +136,9 @@
     <tr>
         <th width="15%">{{app.config.lang.md_labels.description}}</th>
         <td colspan=2>
-            <textarea rows=4 ng-model="vm.game.desc"></textarea>
+            <textarea rows=4
+                      ng-model="vm.game.desc"
+                      ng-change="vm.mdChanged('desc')"></textarea>
         </td>
     </tr>
     </table>

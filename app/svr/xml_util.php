@@ -23,7 +23,7 @@ function merge_arrays(&$target, &$source)
       {
          merge_arrays($target[$key], $value);
       }
-      else if($key!='ix')  // overwrite
+      else if($key!='index')  // overwrite
       {
          $target[$key] = $value;
       }
@@ -78,7 +78,7 @@ function xmlobj_to_array($xmlobj, $tier)
          $child = xmlobj_to_array($xmlchild, $tier+1);
 
          if (isset($index_types[$type])) {
-            $child['ix'] = $tier_counts[$tier]++;
+            $child['index'] = $tier_counts[$tier]++;
          }
 
          foreach ($xmlchild->attributes() as $key => $val)
@@ -96,7 +96,7 @@ function xmlobj_to_array($xmlobj, $tier)
          elseif(gettype($arr[$type][$name])=='array' &&
                 gettype($child)=='array')
          {
-            unset($child['ix']);
+            unset($child['index']);
             merge_arrays($arr[$type][$name], $child);
          }
       }

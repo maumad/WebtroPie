@@ -716,6 +716,12 @@
         {
             game = game || self.game;  // the current game
 
+            // is it really different?
+            if(game.reset[md]==game[md])
+            {
+                return;
+            }
+
             if (!game.changes)
             {
                 game.changes = {};

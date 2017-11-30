@@ -27,21 +27,33 @@ $SYSTEM_PATH = ROMSPATH.$system;
 
 // work out which gamelist.xml to use
 $gamelist_file = $SYSTEM_PATH."/gamelist.xml";
+$gamelist_json = $svr_dir . '/' . $SYSTEM_PATH."/gamelist.json";
 if (!file_exists($gamelist_file))
 {
    $gamelist_file = HOME_ES."/gamelists/".$system."/gamelist.xml";
+   $gamelist_json = HOME_ES."/gamelists/".$system."/gamelist.json";
    if (!file_exists($gamelist_file))
    {
       $gamelist_file = ES_PATH."/gamelists/".$system."/gamelist.xml";
+      $gamelist_json = ES_PATH."/gamelists/".$system."/gamelist.json";
       if (!file_exists($gamelist_file))
       {
          $gamelist_file = "/opt/retropie/configs/all/emulationstation/".$system_name."/gamelist.xml";
+         $gamelist_json = "/opt/retropie/configs/all/emulationstation/".$system_name."/gamelist.json";
          if (!file_exists($gamelist_file))
          {
             exit;
          }
       }
    }
+}
+
+$settings = load_file_xml_as_array('../config/settings.cfg','y');
+if(file_exists($gamelist_json) &&
+    filemtime($gamelist_json) > filemtime($gamelist_file))
+{
+   echo file_get_contents($gamelist_json);
+   exit;
 }
 
 function human_filesize($bytes, $decimals = 1)
@@ -233,22 +245,8 @@ if ($getlist)
    $response['has_marquee'] = false;
    foreach ($response['game'] as $index => $game)
    {
-/*
-      // remove ./ (only changes get saved back)
-      if (substr($game['path'],0,2) == "./")
-      {
-         $response['game'][$index]['path'] = substr($game['path'],2);
-      }
-*/
       $fullpath = $response['game'][$index]['path'];
-      $response['game'][$index]['index'] = $index;
       $response['game'][$index]['shortpath'] = simplify_path($fullpath, HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
-
-      // maybe read cue files in future to get bin sizes
-      //$extension = strtolower(preg_replace(".*\.","",$fullpath));
-      //switch($extension) {
-         //case 'cue': $fullpath = preg_replace("/cue$/i","bin", $fullpath); break;
-      //}
 
       if (file_exists($fullpath))
       {
@@ -285,6 +283,11 @@ if ($getlist)
       echo 'response :-';
       print_r($response);
       exit;
+   }
+
+   if($settings['CacheUnchangedGamelists'])
+   {
+      file_put_contents($gamelist_json, json_encode($response, JSON_UNESCAPED_UNICODE));
    }
    echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }

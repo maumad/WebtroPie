@@ -211,7 +211,7 @@
         // roll systems Up
         function keyArrowDown()
         {
-            if (styler.carousel.type && styler.carousel.type == 'vertical')
+            if (styler.carousel.type && (styler.carousel.type == 'vertical' || styler.carousel.type == 'vertical_wheel'))
             {
                 nextSystem();
             }
@@ -238,7 +238,7 @@
         // roll systems Down
         function keyArrowUp()
         {
-            if (styler.carousel.type && styler.carousel.type == 'vertical')
+            if (styler.carousel.type && (styler.carousel.type == 'vertical' || styler.carousel.type == 'vertical_wheel'))
             {
                 previousSystem();
             }
@@ -380,6 +380,21 @@
                       page.systembar.change_ix = util.round(-change_pct / styler.carousel.logo_vh, 0);
                       page.systembar.dragged = true;
                   }
+                }
+                // vertical_wheel
+                // TODO: work out the angle between new_x, new_y, old x y, rotation origin
+                // into change_pct
+                if (styler.carousel.type && styler.carousel.type == 'vertical_wheel')
+                {
+                    var new_y = pageY - page.systembar.clicked_offsetY;
+                    if (page.systembar.y != new_y)
+                    {
+                        page.systembar.y = new_y;
+                        var change_pct = new_y / $window.innerHeight;
+                        styler.changeCarousel(change_pct);
+                        page.systembar.change_ix = util.round(-change_pct / styler.carousel.logo_vh, 0);
+                        page.systembar.dragged = true;
+                    }
                 }
                 // horizontal
                 else

@@ -205,13 +205,23 @@
 
             // more rows with smaller font ?
             gl.rows = gl.size.h / gl.linesize - vm.header;
-            gl.height_adjusted = gl.selectorOffsetY + gl.size.h - vm.header * gl.linesize;
+            /*
+            if (vm.header)
+            {
+                gl.height_adjusted = gl.size.h;
+            }
+            else
+            {
+                gl.height_adjusted = util.round(gl.size.h / gl.linesize, 0) * gl.linesize;
+            }
+            */
 
             gl.width = util.pct(gl_width,'vw');
 
             vm.liststyle.top = util.pct(gl.pos.y + vm.header * gl.linesize,'vh');
             vm.liststyle['max-height'] =
-               vm.liststyle.height = util.pct(gl.height_adjusted,'vh');
+               //vm.liststyle.height = util.pct(gl.height_adjusted,'vh');
+               vm.liststyle.height = util.pct(gl.size.h,'vh');
 
             vm.liststyle['font-size']  = util.pct(fontsize,'vh');
             vm.liststyle['font-family']  = gl.fontFamily;
@@ -228,6 +238,7 @@
             delete vm.headerstyle['overflow'];
             vm.headerstyle.color = util.hex2rgba(gl.secondaryColor);
             vm.liststyle['overflow'] = 'auto';
+            vm.liststyle['z-index'] = gl.div['z-index'];
 
             if (stretch)
             {

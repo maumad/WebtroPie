@@ -1,5 +1,10 @@
 <a name="0.2.2"></a>
-- Better z-index calculation
+- Metadata description not saving [#3](https://github.com/gazpan/WebtroPie/issues/3) (2017-11-30)
+- Speedup: Cache interpreted gamelist files (json) if gamelist is unchanged (2017-11-28)
+- Carousel vertical-wheel style (Space-Oddity theme), don't animate unchanging images (2017-11-22)
+- Improved variable substitution (2017-11-22)
+- Better handling of features, carousel zindex and gamelist line height (2017-11-22)
+- Better z-index calculation (2017-11-19)
 - Fix Save bug (2017-11-16)
 - Show all systems + get themes even when system ROM dir does not exist (2017-11-12)
 - Text positioning, vertical align single line text within available space (2017-11-12)

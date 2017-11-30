@@ -216,6 +216,11 @@
                 carousel.fontSize = self.defaultCarousel.systemcarousel.fontSize;
             }
 
+            if (carousel.logoRotationOrigin)
+            {
+                carousel.logoRotationOrigin = denormalize('pos',carousel.logoRotationOrigin);
+            }
+
             style['background-color'] = util.hex2rgba(carousel.color);
             style['color'] =  '#222';
             style['z-index'] = carousel.zIndex;
@@ -227,6 +232,11 @@
             {
                 carousel.logo_vw = carousel.size.w;
                 carousel.logo_vh = carousel.size.h / carousel.maxLogoCount;
+            }
+            else if (carousel.type == 'vertical_wheel')
+            {
+                carousel.logo_vw = carousel.logoSize.w;
+                carousel.logo_vh = carousel.logoSize.h;
             }
             else
             {
@@ -300,7 +310,7 @@
             // create the class string
             var str = '.'+className+' { '
             angular.forEach(style_array, function(value, key) {
-                if (key != 'index' && key != 'ix')
+                if (key != 'index')
                 {
                     str += key + ': ' + value + ';';
                 }
@@ -414,6 +424,8 @@
                 image.origin = denormalize('pos',image.origin);
                 if (image.origin.x!=0 || image.origin.y!=0)
                 {
+                    style['-webkit-transform'] =
+                    style['-ms-transform'] =
                     style.transform = 'translate('+
                                                 util.pct(-image.origin.x,'%')+','+
                                                 util.pct(-image.origin.y,'%')+')';
@@ -625,7 +637,7 @@
             }
             else 
             {
-                style['z-index'] = image.ix;
+                style['z-index'] = image.index;
             }
 
             image.styled = true;
@@ -720,7 +732,7 @@
                 }
                 else
                 {
-                    style['z-index'] = rating.ix;
+                    style['z-index'] = rating.index;
                 }
             }
             calcObjBounds(rating);
@@ -936,13 +948,13 @@
                 text.div['text-align'] = text.alignment;
             }
 
-            if (text.name && text.name.substring(0,3)=='md_')
-            {
-                text.div['z-index'] = 40;
-            }
-            else if (text.zIndex)
+            if (text.zIndex)
             {
                 text.div['z-index'] = parseInt(text.zIndex)+1;
+            }
+            else if (text.name && text.name.substring(0,3)=='md_')
+            {
+                text.div['z-index'] = 40;
             }
 
             text.styled = true;
@@ -1007,6 +1019,8 @@
                 video.origin = denormalize('pos',video.origin);
                 if (video.origin.x!=0 || video.origin.y!=0)
                 {
+                    style['-webkit-transform'] =
+                    style['-ms-transform'] =
                     style.transform = 'translate('+
                                                 util.pct(-video.origin.x,'%')+','+
                                                 util.pct(-video.origin.y,'%')+')';
@@ -1075,7 +1089,7 @@
             }
             else
             {
-                style['z-index'] = video.ix;
+                style['z-index'] = video.index;
             }
 
             video.div = style;
@@ -1217,7 +1231,7 @@
             object['full'+field] = object['full'+field].replace(/[^\/]*\/\.\.\//, '');
         }
 
-        function fullViewImagePaths(view, path)
+        function fullViewImagePaths(view, path, include_count)
         {
             angular.forEach(view.video, function(video)
             {
@@ -1232,6 +1246,7 @@
                 if (image.name && image.path)
                 {
                     fullpath(image, 'path', path);
+                    image.include_count = include_count;
                 }
             });
 
@@ -1258,7 +1273,7 @@
 
         // Store full image path relative to the file it was included in
         // (so that the path doesn't get lost after expansion)
-        function fullImagePaths(themefile, path)
+        function fullImagePaths(themefile, path, include_count)
         {
             if (!themefile || !themefile.view)
             {
@@ -1267,7 +1282,7 @@
 
             angular.forEach(themefile.view, function(view)
             {
-                fullViewImagePaths(view, path)
+                fullViewImagePaths(view, path, include_count)
             });
         }
 
@@ -1414,9 +1429,9 @@
             });
         }
 
-        function loadMedia(theme, node, path)
+        function loadMedia(theme, node, path, include_count)
         {
-            fullImagePaths(node, path);
+            fullImagePaths(node, path, include_count);
             loadFonts(theme, node, path, 'text');
             loadFonts(theme, node, path, 'textlist');
             loadFonts(theme, node, path, 'datetime');
@@ -1647,7 +1662,7 @@
             // vertical scroll
             if ( config.app.ViewTransitions=='Slide')
             {
-                if ( self.carousel.type == 'vertical')
+                if ( self.carousel.type == 'vertical' || self.carousel.type == 'vertical_wheel')
                 {
                     // work in units of logo distance rather than screen position
                     // so 1 = mouse movement between two logos
@@ -1727,6 +1742,8 @@
             cell.position = 'absolute';
             cell.top = '50%';
             cell.left = '50%';
+            cell['-webkit-transform'] =
+            cell['-ms-transform'] =
             cell.transform = 'translate(-50%,-50%)';
 
             if (self.carousel.type == 'vertical')
@@ -1736,7 +1753,29 @@
                             + self.carousel.size.h / 2         // half way vertically in carousel area
                             + cell.index * self.carousel.logo_vh;                // index position
             }
-            else
+            else if (self.carousel.type == 'vertical_wheel')
+            {
+                index = cell.index + pct / self.carousel.logo_vh;
+
+                if (self.carousel.logoAlignment == 'left')
+                {
+                    left = 0.04 + self.carousel.logoSize.w / 2;
+                }
+                else if (self.carousel.logoAlignment == 'right')
+                {
+                    left = 0.96 - self.carousel.logoSize.w / 2;
+                }
+
+                cell['-ms-transform-origin'] =
+                cell['-webkit-transform-origin'] =
+                cell['transform-origin'] = util.pct(self.carousel.logoRotationOrigin.x, '%') + ' ' +
+                                           util.pct(self.carousel.logoRotationOrigin.y, '%');
+
+                cell.transform += ' rotate('+(index * (parseFloat(self.carousel.logoRotation) || 7.5))+'deg) ';
+
+                cell['-ms-transform'] = cell['-webkit-transform'] = cell.transform;
+            }
+            else  // horizontal
             {
                  index = cell.index + pct / self.carousel.logo_vw;
                  left  = pct
