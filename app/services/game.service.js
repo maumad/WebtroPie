@@ -390,6 +390,7 @@
                     params:
                         {getlist: 1,
                           system: system_name,
+                           mtime: config.systems[system_name].gamelist_mtime,
                             scan: scan,
                      match_media: match_media}
                     }

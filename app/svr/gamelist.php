@@ -1,5 +1,13 @@
 <?php
 error_reporting(E_ERROR);
+if (isset($_GET['mtime']))
+{
+    $seconds_to_cache = 7 * 24 * 60 * 60; // cache for 1 week
+    $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+    header("Expires: $ts");
+    header("Pragma: cache");
+    header("Cache-Control: max-age=$seconds_to_cache");
+}
 require_once("xml_util.php");
 require_once("vars.php");
 
@@ -48,7 +56,6 @@ if (!file_exists($gamelist_file))
    }
 }
 
-$settings = load_file_xml_as_array('../config/settings.cfg','y');
 if(file_exists($gamelist_json) &&
     filemtime($gamelist_json) > filemtime($gamelist_file))
 {
@@ -285,6 +292,7 @@ if ($getlist)
       exit;
    }
 
+   $settings = load_file_xml_as_array('../config/settings.cfg','y');
    if($settings['CacheUnchangedGamelists'])
    {
       file_put_contents($gamelist_json, json_encode($response, JSON_UNESCAPED_UNICODE));

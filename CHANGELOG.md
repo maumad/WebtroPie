@@ -1,4 +1,5 @@
 <a name="0.2.2"></a>
+- Speedup: Cache gamelists client side
 - Metadata description not saving [#3](https://github.com/gazpan/WebtroPie/issues/3) (2017-11-30)
 - Speedup: Cache interpreted gamelist files (json) if gamelist is unchanged (2017-11-28)
 - Carousel vertical-wheel style (Space-Oddity theme), don't animate unchanging images (2017-11-22)
