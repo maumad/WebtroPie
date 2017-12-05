@@ -94,7 +94,7 @@
             var deferred = $q.defer();
 
             // fetch from server
-            $http.get('svr/config.php', {cache: false, params: {get: bitmask, lang: lang}})
+            $http.get('svr/config_ini.php', {cache: false, params: {get: bitmask, lang: lang}})
             .then(function onSuccess(response)
             {
                 if (bitmask & self.APP)     self.app = response.data.app;
@@ -104,6 +104,7 @@
                 if (bitmask & self.THEMES)  self.themes = response.data.themes;
                 if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
                 if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
+                self.edit = self.edit || response.data.edit;
 
                 delete self.systems.retropie;
 

@@ -6,9 +6,7 @@ header("Expires: $ts");
 header("Pragma: cache");
 header("Cache-Control: max-age=$seconds_to_cache");
 
-
-require_once("xml_util.php");
-require_once("vars.php");
+require("config.php");
 
 $theme = '';
 
@@ -18,23 +16,16 @@ if (isset($_GET['theme']) && $_GET['theme']!='null')
    $theme = $_GET['theme'];
 }
 
-$_GET['get'] = SYSTEMS;
-
-if (!$theme)
+if ($theme)
 {
-   $_GET['get'] |= APP | ENV;
+   $config = getConfig( SYSTEMS );
+}
+else
+{
+   $config = getConfig( SYSTEMS | APP | ENV );
 }
 
 $response = array();
-$inc=true;
-global $inc;
-require("config.php");
-
-// things we want as an list array not an object
-$array_types = array('include'=>true, 'feature'=>true);
-// things that we want to contain an index
-//$index_types = array('image'=>0, 'video'=>0, 'text'=>0, 'rating'=>0, 'view'=>0);
-$index_types = array('image'=>0, 'video'=>0, 'rating'=>0, 'view'=>0);
 
 // find all system directories that have a gamelist.xml
 // and return the system themes for those systems
@@ -121,7 +112,8 @@ function load_and_include($file, &$parent, $index)
    }
 
    // the files that will be returned as an array
-   $arr = load_file_xml_as_array($themepath.'/'.$incfile, false, true);
+   $arr = load_file_xml_as_array($themepath.'/'.$incfile, false, true, ['include'=>1, 'feature'=>1], ['image'=>1, 'video'=>1, 'rating'=>1, 'view'=>1]);
+
    if(isset($arr['error']))
    {
       return $arr;

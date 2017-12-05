@@ -82,6 +82,7 @@
             vm.pageVm.resetFields = resetFields; // make accessible to page / helpbar
             vm.pageVm.toggleStretch = toggleStretch;
             vm.pageVm.selectedList = vm.selectedList;
+            vm.pageVm.checkGameStillVisible = checkGameStillVisible;
 
             vm.fetching = true;
 

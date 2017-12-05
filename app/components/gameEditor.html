@@ -1,6 +1,6 @@
 <div class="game_editor gui">
-    <div class=rom>{{app.GameService.game.index}}) {{app.GameService.game.shortpath}}
-         <span ng-if="!vm.game.isDir && !vm.game.size" class=missing>
+    <div class=rom>{{app.GameService.game.index||'New'}}) {{app.GameService.game.shortpath}}
+         <span ng-if="vm.game.index && !vm.game.isDir && !vm.game.size" class=missing>
          - missing
          </span>
     </div>

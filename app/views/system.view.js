@@ -72,7 +72,7 @@
             }
             else
             {
-             page.loaded = true;
+                page.loaded = true;
             }
 
             page.initSystembar(); // ???
@@ -453,20 +453,14 @@
 
         function nextSystem()
         {
-            if (!page.animating)
-            {
-                page.animating = true;
-                CarouselService.nextCarouselSystem();
-            }
+            page.animating = true;
+            CarouselService.nextCarouselSystem();
         }
 
         function previousSystem()
         {
-            if (!page.animating)
-            {
-                page.animating = true;
-                CarouselService.previousCarouselSystem();  
-            }
+            page.animating = true;
+            CarouselService.previousCarouselSystem();  
         }
 
         // reindex and recenter, clear everything

@@ -70,7 +70,7 @@
         {
             $event.stopPropagation();
 
-            if (!config.env.read_only)
+            if (config.edit)
             {
                 // toggle value
                 vm.game[vm.md] = !vm.game[vm.md];
@@ -95,7 +95,7 @@
         {
             if (vm.game && vm.game[vm.md] )
             {
-                if (!config.env.read_only)
+                if (config.edit)
                 {
                     vm.title = 'Click to turn '+config.lang.md_labels[vm.md]+' OFF';
                 }
@@ -103,7 +103,7 @@
             }
             else
             {
-                if (!config.env.read_only)
+                if (config.edit)
                 {
                     vm.title = 'Click to turn '+config.lang.md_labels[vm.md]+' ON';
                 }

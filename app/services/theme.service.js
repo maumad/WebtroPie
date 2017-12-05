@@ -517,10 +517,15 @@
         // use default theme
         function getSystemTheme(system_name)
         {
-            var system = config.systems[system_name];
+            var system
 
-            if (system && self.theme.systems && self.theme.systems[system.theme])
-                return self.theme.systems[system.theme];   // Use system.theme by default if exists
+            if (config.systems)
+            {
+                system = config.systems[system_name];
+
+                if (system && self.theme.systems && self.theme.systems[system.theme])
+                    return self.theme.systems[system.theme];   // Use system.theme by default if exists
+            }
 
             return self.theme.systems[system_name]  // otherwise system.name if exists
                 || self.theme.systems.default;      // else use default theme
@@ -786,7 +791,6 @@
                 self.system.view &&
                 self.system.view[view_name])
             {
-
                 // if styles haven't been generated for the current theme system view
                 // then do that now after theme is returned
                 styler.createViewStyles(self.system.view[view_name], keep_style);

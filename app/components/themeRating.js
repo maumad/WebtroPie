@@ -90,7 +90,7 @@
         function click($event)
         {
             $event.stopPropagation();
-            if (!config.env.read_only)
+            if (config.edit)
             {
                 var width;
 

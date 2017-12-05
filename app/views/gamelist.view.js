@@ -49,7 +49,7 @@
 
            // for a Game, X = Edit, A = Launch (if enabled)
            ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_a.svg',
-                                   show: '!app.GameService.game.isDir && !app.config.env.read_only'}
+                                   show: '!app.GameService.game.isDir && app.config.edit'}
            ,{langButton: 'launch',click: GameService.launch,      svg: 'resources/button_x.svg',
                                    show: '!app.GameService.game.isDir && app.config.env.has_launch'},
 
@@ -57,7 +57,7 @@
            ,{langButton: 'open',  click: GameService.openFolder, svg: 'resources/button_a.svg',
                                    show: 'app.GameService.game.isDir'}
            ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_x.svg',
-                                   show: 'app.GameService.game.isDir && !app.config.env.read_only'}
+                                   show: 'app.GameService.game.isDir && app.config.edit'}
 
            ,{                     click: showFavoriteOn,  svg: 'resources/favorite-o.svg',
                                    show: '!app.GameService.show_favorite'}
@@ -77,7 +77,7 @@
             // Delay loading gamelist 1 second for slide animations
             // ... unknown currently why it interferes with this animation
             page.loaded = false;
-            
+/*
             if ($scope.app.animate_view_class &&
                  $scope.app.animate_view_class.substring(0,5) == 'slide')
             {
@@ -89,7 +89,8 @@
             {
                 page.loaded = true;
             }
-
+*/
+page.loaded = true;
             ThemeService.viewscope = page;
 
             $scope.app.registerThemeChangedCallback(null);
@@ -117,9 +118,9 @@
 
         function filterChange()
         {
-            if (GameService.checkGameStillVisible)
+            if (page.checkGameStillVisible)
             {
-                GameService.checkGameStillVisible();
+                page.checkGameStillVisible();
             }
             $scope.$evalAsync();
         }
@@ -156,7 +157,7 @@
             }
             util.back(parent_path);
             // TODO: just restore saved values
-            //GameService.checkGameStillVisible();
+            //page.checkGameStillVisible();
 
             return true;
         }
@@ -290,7 +291,7 @@
             .then(function(gamelist) {
                 util.waitForRender($scope).then(function() {
                     GameService.game = game;
-                    GameService.checkGameStillVisible();
+                    page.checkGameStillVisible();
                     util.defaultFocus();
                 });
             });

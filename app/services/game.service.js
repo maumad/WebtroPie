@@ -385,16 +385,24 @@
                     scan = 1;
                 }
 
-                $http.get('svr/gamelist.php',
-                    {cache: false,
-                    params:
-                        {getlist: 1,
-                          system: system_name,
-                           mtime: config.systems[system_name].gamelist_mtime,
-                            scan: scan,
-                     match_media: match_media}
-                    }
-                )
+                var params = {getlist: true, system: system_name};
+                var cache = false;
+
+                if (scan)
+                {
+                    params.scan = true;
+                }
+                if (match_media)
+                {
+                    params.match_media = true;
+                }
+                if (!scan && !match_media)
+                {
+                    params.mtime = config.systems[system_name].gamelist_mtime;
+                    cache = true;
+                }
+
+                $http.get('svr/gamelist.php', {cache: cache, params: params})
                 .then(function onSuccess(response) {
 
                     if (!rescan)
@@ -854,7 +862,6 @@
         // switch gamelist system, update system/gamelist globals
         function setSystem(system_name, subdir, chooseBestGamelistView, vm)
         {
-//console.log('gamelist setsystem ' + system_name + ' choose = ' + chooseBestGamelistView)
             checkSystemTheme(system_name, chooseBestGamelistView);
 
             // if switching systems remember the subdirectory we are leaving
@@ -903,7 +910,6 @@
                         vm.scrollTo(self.systems[system_name].scrollTop);
                     });
                 }
-//console.log('game.service setSystem trying to setGame');
                 vm.setGame();
             }
         }
@@ -911,11 +917,10 @@
         function showEditor()
         {
             //$scope.app.hideMenu();
-            if (config.env.read_only)
+            if (config.edit)
             {
-                return;
+                self.edit = true;
             }
-            self.edit = true;
         }
     }
 

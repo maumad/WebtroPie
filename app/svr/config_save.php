@@ -1,10 +1,10 @@
 <?php
 error_reporting(E_ERROR);
-require_once("xml_util.php");
-require_once("vars.php");
+require_once("config.php");
 
-if (preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) &&
-    isset($_POST['update']) && isset($_POST['file']))
+$config = getConfig( APP | ENV );
+
+if ($config['edit'] && isset($_POST['update']) && isset($_POST['file']))
 {
    $response = array('changed'=>false);
 

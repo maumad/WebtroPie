@@ -1,5 +1,8 @@
 <a name="0.2.2"></a>
-- Speedup: Cache gamelists client side
+- Allow next/prev system carousel while still animating (2017-12-04)
+- Option for WAN Edit mode (2017-12-04)
+- Scan Fix [#1](https://github.com/gazpan/WebtroPie/issues/1) (2017-12-04)
+- Speedup: Cache gamelists client side (2017-12-03)
 - Metadata description not saving [#3](https://github.com/gazpan/WebtroPie/issues/3) (2017-11-30)
 - Speedup: Cache interpreted gamelist files (json) if gamelist is unchanged (2017-11-28)
 - Carousel vertical-wheel style (Space-Oddity theme), don't animate unchanging images (2017-11-22)

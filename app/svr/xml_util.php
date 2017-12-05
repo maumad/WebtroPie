@@ -174,14 +174,25 @@ function simplexml_save_file_unwrapped($xml, $filename, $wrap_tag='wrapped')
    rename($filename.'.tmp',$filename);
 }
 
-function load_file_xml_as_array($filename, $wrap_tag='', $utf8_encode=false)
+function load_file_xml_as_array($filename, $wrap_tag='', $utf8_encode=false, $arrays=null, $index=null)
 {
+   global $array_types, $index_types;
+
+   if ($arrays)
+   {
+       $array_types = $arrays;
+   }
+   if ($index)
+   {
+       $index_types = $index;
+   }
+
    if (!file_exists($filename)) {
       return array("error" => "file $filename does not exist");
    }
    if ($wrap_tag)
    {
-      return xmlobj_to_array(simplexml_load_file_wrapped($filename, $wrap_tag), 0);
+      return xmlobj_to_array(simplexml_load_file_wrapped($filename, 'tag'), 0);
    }
    else
    {
