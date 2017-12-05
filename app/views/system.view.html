@@ -35,8 +35,8 @@
                         app.CarouselService.centerOffset($index) <= app.styler.carousel.hiIndex"
                 animation-end="page.carouselAnimationEnd"
                 ng-style="page.systembar.dragging?app.styler.carousel.logos[app.CarouselService.centerOffset($index)+app.styler.carousel.hiIndex]:{}"
-                ng-class="'logo'+app.CarouselService.centerOffset($index)+(!page.systembar.dragging?' systemtransition':'')">
-                <logo id="logo{{app.CarouselService.centerOffset($index)}}"
+                ng-class="'logo'+app.CarouselService.centerOffset($index)+(!page.systembar.dragging?' systemtransition':'')"
+               ><logo id="logo{{app.CarouselService.centerOffset($index)}}"
                     class="click"
                     system-name="sysname"
                     fullname="app.config.systems[sysname].fullname"
@@ -47,8 +47,8 @@
                     ng-touchstart="page.mouseDown($event,sysname)"
                     ng-touchmove="page.mouseMove($event)"
                     ng-touchcancel="page.mouseUp($event)"
-                    ng-touchend="page.mouseUp($event)"></logo>
-            </div>
+                    ng-touchend="page.mouseUp($event)"></logo
+           ></div>
         </div>
     </div>
 

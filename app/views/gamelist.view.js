@@ -74,23 +74,8 @@
 
         function activate()
         {
-            // Delay loading gamelist 1 second for slide animations
-            // ... unknown currently why it interferes with this animation
             page.loaded = false;
-/*
-            if ($scope.app.animate_view_class &&
-                 $scope.app.animate_view_class.substring(0,5) == 'slide')
-            {
-                $timeout(function() {
-                    page.loaded = true;
-                }, 600)
-            }
-            else
-            {
-                page.loaded = true;
-            }
-*/
-page.loaded = true;
+
             ThemeService.viewscope = page;
 
             $scope.app.registerThemeChangedCallback(null);
@@ -105,6 +90,9 @@ page.loaded = true;
             })
             .then(function(theme_output)
             {
+                page.loaded = true;
+                util.focus('#filter');
+
                 CarouselService.setCarouselSystemIndexByName(page.system);
 
                 util.register_keyPressCallback(keyPress);
