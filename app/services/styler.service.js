@@ -1079,13 +1079,13 @@
 
             style['position'] = 'absolute';
 
-            if (video.name && video.name.substring(0,3)=='md_')
-            {
-                style['z-index'] = 30;
-            }
-            else if (video.zIndex)
+            if (video.zIndex)
             {
                 style['z-index'] = parseInt(video.zIndex)+1;
+            }
+            else if (video.name && video.name.substring(0,3)=='md_')
+            {
+                style['z-index'] = 30;
             }
             else
             {
