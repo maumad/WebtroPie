@@ -374,7 +374,7 @@
             if (image.pos)
             {
                 image.pos = denormalize('pos',image.pos);
-                if (image.pos.x>1 || image.pos.y>1 ||
+                if (image.pos.x>=1 || image.pos.y>=1 ||
                      image.pos.x<0 || image.pos.y<0)
                 {
                     style.display = 'none';
