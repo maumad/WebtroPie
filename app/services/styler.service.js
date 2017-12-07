@@ -1079,7 +1079,11 @@
 
             style['position'] = 'absolute';
 
-            if (video.zIndex)
+            if (config.es.VideoOmxPlayer)
+            {
+                style['z-index'] = 5000;
+            }
+            else if (video.zIndex)
             {
                 style['z-index'] = parseInt(video.zIndex)+1;
             }
