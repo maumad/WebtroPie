@@ -26,8 +26,7 @@
             <div class="gamerow"
                  ng-repeat="game in vm.pageVm.filtered = vm.filtered = app.GameService.filtered =
                   ( vm.gamelist
-                    |filter:{name:app.GameService.filter}
-                    |directory:vm.subdir:app.config.app.ShowEmptyDirectories
+                    |directory:vm.subdir:app.config.app.ShowEmptyDirectories:app.GameService.filter
                     |orderBy:vm.orderby.orderby:vm.orderby.reverse )
                     |limitTo:app.ThemeService.gamelist.rows+100:vm.buffer_index"
                  ng-click="vm.clickGame(game, $event, $index)"

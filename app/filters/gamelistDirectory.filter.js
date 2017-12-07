@@ -25,39 +25,47 @@
         
     function directory(GameService)
     {
-        return function(rows, subdir, ShowEmptyDirectories)
+        return function(games, subdir, ShowEmptyDirectories, filter)
         {
             // everything, do nothing just return the input array
-            if (typeof rows === 'undefined' ||
+            if (typeof games === 'undefined' ||
                 (GameService.show_nested && !GameService.show_favorite))
             {
-                return rows;
+                return games;
             }
 
             var result = [];
-            angular.forEach(rows, function(row)
+            angular.forEach(games, function(game)
             {
                 // show nothing if empty directory
-                if (row.isDir &&
+                if (game.isDir &&
                       //!app.config.app.ShowEmptyDirectories &&
                       !ShowEmptyDirectories &&
                       GameService.subdirs &&
-                      GameService.subdirs[row.path].games == 0)
+                      GameService.subdirs[game.path].games == 0)
                 {
                     return;
                 }
+
+                if (filter)
+                {
+                    var name = ( game.new ? 'New: ' : '' ) + game.name;
+                    if (name.toLowerCase().indexOf(filter.toLowerCase()) < 0)
+                        return;
+                }
+
                 // folder and favourite filter
                 if ( ( (GameService.show_nested ||
                          GameService.system_name=='auto-allgames' ||
                          GameService.system_name=='auto-favorites' ||
-                         GameService.system_name=='auto-lastplayed') && !row.isDir) ||
-                      (!subdir && !row.subdir) ||                    // both root folder
-                      (subdir == row.subdir) )                       // matching folder name
+                         GameService.system_name=='auto-lastplayed') && !game.isDir) ||
+                      (!subdir && !game.subdir) ||                    // both root folder
+                      (subdir == game.subdir) )                       // matching folder name
                 {
                     if (!GameService.show_favorite ||                  // show all
-                        (GameService.show_favorite && row.favorite)) // show only favorite
+                        (GameService.show_favorite && game.favorite)) // show only favorite
                     {
-                        result.push(row);
+                        result.push(game);
                     }
                 }
             });

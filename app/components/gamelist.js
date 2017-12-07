@@ -206,16 +206,6 @@
 
             // more rows with smaller font ?
             gl.rows = gl.size.h / gl.linesize - vm.header;
-            /*
-            if (vm.header)
-            {
-                gl.height_adjusted = gl.size.h;
-            }
-            else
-            {
-                gl.height_adjusted = util.round(gl.size.h / gl.linesize, 0) * gl.linesize;
-            }
-            */
 
             gl.width = util.pct(gl_width,'vw');
 
@@ -424,6 +414,18 @@
             {
                 style.color = 'rgba(230,220,160,0.9)';
                 style['background-color'] = 'rgba(90,90,90,0.4)';
+            }
+            // new game from scan
+            else if (game && game.new)
+            {
+                style.color = '#fbef2e';
+                style['-webkit-text-stroke-width'] = '1px';
+                style['-webkit-text-stroke-color'] = '#fbb02e';
+                style['text-shadow'] = '2px 2px 3px black, '+  // blur shadow
+                                       '-1px -1px 0 black, '+  // black border
+                                       '1px -1px 0 black, '+
+                                       '-1px 1px 0 black, '+
+                                       '1px 1px 0 black';
             }
             // normal unselected non current game
             else

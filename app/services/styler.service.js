@@ -1609,12 +1609,12 @@
                 {
                     help.pos = denormalize('pos',help.pos);
 
-                    // If theme hides the helpbar, show at bottom middle
+                    // If theme hides the helpbar, show at bottom
                     if (help.pos.x>=1 || help.pos.y>=1 ||
                          help.pos.x<0 || help.pos.y<0)
                     {
                         help.pos = pos;
-                        help.pos.x = 0.4;
+                        delete help.div['font-size'];
 
                         help.div.left = util.pct(help.pos.x,'vw');
                         help.div.top = util.pct(help.pos.y,'vh');

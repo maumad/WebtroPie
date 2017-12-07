@@ -162,8 +162,8 @@ if ($getlist)
                     array_push($response['game'],
                         array(
                           'name' => $basename,
-                          //'path' => $subdir.$filename,
                           'path' => $subdirfilename,
+                          'shortpath' => simplify_path($subdirfilename, HOME.'/RetroPie/'.$SYSTEM_PATH.'/'),
                           'size' => $size,
                           'human_size' => human_filesize($size),
                           'new'  => 1  // flag as a new rom
