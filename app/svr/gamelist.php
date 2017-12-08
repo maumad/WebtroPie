@@ -140,31 +140,22 @@ if ($getlist)
             $path = '';
             if ($subdir)
             {
-                $path .= '/'.$subdir.'/';
+                $path = $subdir.'/';
             }
 
             foreach( glob($path.$scan, GLOB_BRACE) as $filename)
             {
-                //$subdirfilename = substr($filename,strlen($SYSTEM_PATH)+1);
-                $subdirfilename = $filename;
+                $shortpath = simplify_path($filename, HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
 
                 // already in gamelist.xml?
-                if (!isset($games[strtolower($subdirfilename)]))
+                if (!isset($games[strtolower($shortpath)]))
                 {
-                    // found new rom
-                    $size = filesize($filename);
-
-                    //strip off path from start of filename
-                    $filename = substr($filename,strlen($path));
-                    //strip off system path from start of filename
-                    list($basename, $extension) = preg_split('/\./',$filename);
-
                     array_push($response['game'],
                         array(
-                          'name' => $basename,
-                          'path' => $subdirfilename,
-                          'shortpath' => simplify_path($subdirfilename, HOME.'/RetroPie/'.$SYSTEM_PATH.'/'),
-                          'size' => $size,
+                          'name' => preg_replace('/\\.[^\\.]{1-3}/','', substr($filename,strlen($path))),
+                          'path' => $filename,
+                          'shortpath' => $shortpath,
+                          'size' => filesize($filename),
                           'human_size' => human_filesize($size),
                           'new'  => 1  // flag as a new rom
                         ));
@@ -174,29 +165,20 @@ if ($getlist)
             // scan for subdirectories
             foreach(glob($path.'*', GLOB_ONLYDIR) as $filename)
             {
-                //$subdirfilename = substr($filename,strlen($SYSTEM_PATH)+1);
-                $subdirfilename = $filename;
-
                 // already in gamelist.xml?
-                if (!isset($games[strtolower($subdirfilename)]))
+                if (!isset($games[strtolower($filename)]))
                 {
-                    //strip off path from start of filename
-                    $filename = substr($filename,strlen($path));
-                    //strip off system path from start of filename
-                    list($basename, $extension) = preg_split('/\./',$filename);
-
                     array_push($response['game'],
                         array(
-                          'name' => $filename,
-                          //'path' => $subdir.$filename,
-                          'path' => $subdirfilename,
+                          'name' => substr($filename,strlen($path)),
+                          'path' => $filename,
                           'isDir'  => 1,
                           'new'  => 1  // flag as a new directory
                         ));
                 }
+
                 // recurse into directory
-                //scan_dir($subdir.$filename);
-                scan_dir($subdirfilename);
+                scan_dir($path.$filename);
             }
         }
     }
@@ -221,8 +203,7 @@ if ($getlist)
 
         if ($scan)
         {
-            $gamepath = preg_replace('|\\./|','',$game['path']);
-            $games[strtolower($gamepath)] = 1;
+            $games[strtolower($game['shortpath'])] = 1;
         }
 
         check_media($game, 'image',   'png');
