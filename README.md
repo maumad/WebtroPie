@@ -142,7 +142,7 @@ Default options can be found in confg/settings.cfg. (TODO: user_settings.cfg a c
 * creators of retropie, emulationstation and emulator creators
 * retropie community
 * theme makers for emulationstation, thanks for making WebtroPie look good
-* google for making allegrojs
+* google for making angularjs
 * php guys
 
 
