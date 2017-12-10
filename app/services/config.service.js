@@ -121,7 +121,6 @@
                 url     : 'svr/config_save.php',
                 headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
                 data    : $httpParamSerializer({
-                            update: 1,
                             setting: setting,
                             value: value,
                             type: type,

@@ -1,13 +1,11 @@
 <?php
-error_reporting(E_ERROR);
 require_once("config.php");
 
 $config = getConfig( APP | ENV );
+$response = array('changed'=>false);
 
-if ($config['edit'] && isset($_POST['update']) && isset($_POST['file']))
+if ($config['edit'] && isset($_POST['file']))
 {
-   $response = array('changed'=>false);
-
    if ($_POST['file'] & APP)
    {
       $file = '../config/settings.cfg';
@@ -25,6 +23,7 @@ if ($config['edit'] && isset($_POST['update']) && isset($_POST['file']))
       if ( (string) $xmlchild['name'] == $_POST['setting'] )
       {
          $exists = true;
+         // update
          if ( (string) $xmlchild['value'] != $_POST['value'] )
          {
             $xmlchild['value'] = $_POST['value'];
@@ -33,6 +32,7 @@ if ($config['edit'] && isset($_POST['update']) && isset($_POST['file']))
          break;
       }
    }
+   // insert
    if (!$exists)
    {
       //$child = $xml->addChild($_POST['setting'], $_POST['value']);
@@ -51,9 +51,7 @@ if ($config['edit'] && isset($_POST['update']) && isset($_POST['file']))
    {
       $response['post'] = $_POST;
    }
-
-   echo json_encode($response);
-   exit;
 }
 
+echo json_encode($response);
 ?>

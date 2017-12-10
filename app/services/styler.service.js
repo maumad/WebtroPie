@@ -1572,7 +1572,8 @@
             }
             else if (system &&
                         system.view &&
-                        system.view.system)
+                        system.view.system &&
+                        system.view.system.helpsystem)
             {
                 help = system.view.system.helpsystem.help;
             }

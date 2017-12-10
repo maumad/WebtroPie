@@ -535,7 +535,7 @@
         // get either from memory or server
         function getTheme(themename, system_name, view_name, scan)
         {
-            console.log('ThemeService.getTheme('+themename+', ' + system_name + ', ' + view_name+')')
+//console.log('ThemeService.getTheme('+themename+', ' + system_name + ', ' + view_name+')')
             // if ThemeSet not in config for some reason
             if (!themename)
             {

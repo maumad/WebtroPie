@@ -250,7 +250,7 @@ input, select, textarea {
 .helpsystembar {
     position: absolute;
     top: 94.5vh;
-    z-index: 4000;
+    z-index: 5030;
     text-transform: uppercase;
 }
 .helpsystembar input {
@@ -295,7 +295,7 @@ input, select, textarea {
     line-height: 110%;
     position: absolute;
     border-radius: 0.25em;
-    z-index: 5000;
+    z-index: 5040;
     white-space: nowrap;
 }
 /* drop 'down' */
@@ -354,7 +354,7 @@ input, select, textarea {
     position: absolute;
     top: 15.5vh; /* height: 56vh; */
     left: 30vw; width: 40vw;
-    z-index: 3000;
+    z-index: 5020;
     -webkit-border-radius: 0.25em;
     -moz-border-radius: 0.25em;
     border-radius: 0.25em;
@@ -411,7 +411,7 @@ input, select, textarea {
     position: absolute;
     top: 5vh;
     left: 5vw; width: 85vw;
-    z-index: 1000;
+    z-index: 5010;
     -webkit-border-radius: 0.8em;
     -moz-border-radius: 0.8em;
     border-radius: 0.8em;

@@ -2,25 +2,15 @@
 
 WebtroPie is a ROM Manager specifically for RetroPie
 
-* [quick video, showing IE glitches](https://www.youtube.com/watch?v=LkteuV7x0R0&t=4s)
+* [source](https://github.com/gazpan/WebtroPie)
 * [early WIP very long video](https://www.youtube.com/watch?v=d1ovSZqve44)
 * [forum link](https://retropie.org.uk/forum/topic/10164/web-app-wip-please-give-it-a-name/18)
 
+WebtroPie is a website hosted on your raspberry pi so it can read and write game information directly on the pi.
 
-As it's web based it can be used by any device running a modern web browser in your home network without a need to install any files
+It can be used by any device running a modern web browser in your home or remote network without a need to install any additional files on the device.
 
-The app is served from the pi so it can read and write game information directly without the need to unplug, move, copy or share any files or folders
-
-Sometimes it can be more convenient to edit, cut and paste via a web page rather than on the pi itself if for example your retropie machine's inputs are primarily Joystick & gamepad and usually running emulationstation rather than a desktop environment
-
-
-Why does it look like EmulationStation ?
-
-EmulationStation does a great job of system/game selection, showing game listings with an excellent theming system, from a user experience point of view if you are connecting to a device that plays and displays games in a certain way then it seems sensible and fitting for a web interface to behave in a similar way.
-
-However, please not the web app does not perfectly replicate all themes in the same way that emulationstation does, if you find glitches please post a bug report.
-
-Note: the Themes available in the Themes drop down list are the themes installed on your pi
+WebtroPie uses the themes installed on your pi to show systems and gamelists similarly to EmulationStation.
 
 
 Controls
@@ -122,6 +112,30 @@ The LAUNCH button on the Game Editor launches the game remotely on the raspberry
 
 If the LAUNCH button is not present it means that the ENABLE_LAUNCH.sh script has not been executed, this script generates a runcommand.sh script that can be executed from the web server and also changes the user which the apache web server runs as, this is necessary as many emulators need to run as the 'pi' user for correct permissions and config file paths and also to ensure that all image and data files are readable by the web application. However, this is optional and if not run the web application should still mostly work without this launch functionality.
 
+Config and Settings
+-------------------
+
+Default options can be found in confg/settings.cfg. (TODO: user_settings.cfg a copy of settings.cfg with local changes that do not get overwritten after a WebtroPie update)
+
+- *LoadAllSystems* : Get all system's gamelists when page is first loaded or refreshed, if the gamelist has not been updated then this may be from client chache.
+- *ScanAtStartup* : Scan all systems's ROMS directories for new roms when page is firt loaded or refreshed.
+- *ShowEmptySystems* : (TODO) Show on the system carousel systems that have no games.
+- *ShowEmptyDirectories* : Show on the gamelist screen any directories that do not contain games
+- *ShowAddFields* : Show on the gamelist screen Helpbar the option to add additional fields to the game list
+- *ShowGameCounts* : Show on the gamelist screen Helpbar the total number of games for the current system and the number of filtered games.
+- *ShowThemeSelect* : Show of the Helpbar the Theme seletion
+- *ShowViewSelect* : Show on the gamelist screen helpbar the View selection
+- *LogSystemTotals* : Show in the browser console additional game count information including duplicate counts and lists.
+- *LogThemeStyles* : Show in the browser console theme element attributes and resulting css style.
+- *WanEditMode* : By default (false) all devices on 192.168.* network have write access, when true there is no restriction.
+- *ThemeSet* : The current theme
+- *Language* : Language
+- *DateFormat* : Date format
+- *ViewTransitions* : Slide, Fade or none
+- *ViewStyle* : Basic, Detailed, Video or none for automatic
+- *uploadImageDirectory* : Default absolute path or relative to the system rom directory of where images are uploaded, or where media is matched from. Default is 'images' but may be a path including the "$(system_name}" variable E.g. "~/medias/${system_name}/box front". Note: Directory must be under /home/pi
+- *uploadVideoDirectory* : Default absolute path or relative to the system rom directory of where videos are uploaded, or where media is matched from. Default is 'videos' but may be a path including the "$(system_name}" variable E.g. "~/medias/${system_name}/videos"
+- *uploadMarqueeDirectory* : Default absolute path or relative to the system rom directory of where marquees are uploaded, or where media is matched from. Default is 'marquees' but may be a path including the "$(system_name}" variable E.g. "~/medias/${system_name}/marquees"
 
 ### Thanks
 
@@ -131,6 +145,6 @@ If the LAUNCH button is not present it means that the ENABLE_LAUNCH.sh script ha
 * google for making allegrojs
 * php guys
 
-... it's a first draft readme!
+
 
 

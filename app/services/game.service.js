@@ -402,7 +402,7 @@
                     cache = true;
                 }
 
-                $http.get('svr/gamelist.php', {cache: cache, params: params})
+                $http.get('svr/game_list.php', {cache: cache, params: params})
                 .then(function onSuccess(response) {
 
                     if (!rescan)
@@ -716,8 +716,13 @@
         {
             game = game || self.game;
 
-            $http.get('svr/gamelist_edit.php', {cache: false, params:
-                                    {run: game.path, system: game.sys}})
+            $http.get('svr/game_launch.php',{
+                cache: false,
+                params: {
+                    game_path: game.path,
+                    system: game.sys
+                }
+            });
         }
 
         // record which metadata has changed and optionally save
@@ -745,7 +750,7 @@
             }
 
             // duplicate change to all selected games
-            if (selectedList.length && game.selected && changeSelected)
+            if (selectedList && selectedList.length && game.selected && changeSelected)
             {
                 angular.forEach(selectedList, function(selectedGame)
                 {
@@ -810,7 +815,7 @@
 
             $http({
                 method  : 'POST',
-                url     : 'svr/gamelist_edit.php',
+                url     : 'svr/game_save.php',
                 headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
                 data    : $httpParamSerializer(update)
             })
@@ -831,7 +836,7 @@
             {
                 return;
             }
-            if (self.subdir)
+            if (self.subdir && self.subdirs[self.subdir])
             {
                 self.subdirs[self.subdir].game_index = vm.game_index;
                 self.subdirs[self.subdir].buffer_index = vm.buffer_index;

@@ -64,7 +64,7 @@
             .bind('drop', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
-                vm.upload(e.dataTransfer.files);
+                upload(e.dataTransfer.files);
             });
         }
 
@@ -75,12 +75,12 @@
                 var formData = new FormData();
                 formData.append('upload', files[0]);
                 formData.append('system', GameService.game.sys);
-                formData.append('path', vm.md+'s');
+                formData.append('media', vm.md);
                 vm.progress = 0;
                 vm.uploading = true;
                 //formData.append('filename', files[0].name);
                 $http({
-                    url: 'svr/gamelist_edit.php',
+                    url: 'svr/game_media_upload.php',
                     method: "POST",
                     data: formData,
                     headers: {'Content-Type': undefined},
@@ -105,7 +105,8 @@
             if (response.data.success)
             {
                 // E.g. set game.video = "videos/filename"
-                GameService.game[vm.md] = vm.md+'s/' + files[0].name;
+                GameService.game[vm.md] = response.data.media_path;
+                GameService.game[vm.md+'_url'] = response.data.media_url;
                 // flag that the field has changed
                 GameService.mdChanged(vm.md);
                 // trigger digest cycle now so there's no visual delay
