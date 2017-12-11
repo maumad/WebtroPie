@@ -75,6 +75,7 @@
                 var formData = new FormData();
                 formData.append('upload', files[0]);
                 formData.append('system', GameService.game.sys);
+                formData.append('game_path', GameService.game.path);
                 formData.append('media', vm.md);
                 vm.progress = 0;
                 vm.uploading = true;
