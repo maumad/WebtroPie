@@ -28,7 +28,7 @@
                   '<icon svg="\'resources/upload.svg\'"></icon>'+
                   '<input class="uploadfile" type="file" accept="image/*"'+
                        ' ng-model="vm.files" file-selector id="{{::vm.md}}_files"'+
-                       ' ng-change="upload(vm.files)"/>'+
+                       ' ng-change="upload(vm.files)"/> '+
                   '<label for="{{::vm.md}}_files">'+
                        'Choose or drag a {{::vm.md}} file.</label>'+
               '</div>'+
@@ -87,7 +87,6 @@
                     uploadEventHandlers: { progress: uploading }
                 })
                 .then(uploaded);
-                
             }
         }
 

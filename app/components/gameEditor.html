@@ -19,10 +19,13 @@
     <tr>
         <th width="15%">{{app.config.lang.md_labels.image}}</th>
         <td class=narrow>
-            <input ng-model="vm.game.image"
+            <input ng-model="vm.game.image" ng-class="{fileclear: vm.game.image}"
                    ng-class="{found: vm.game.image_found, missing: vm.game.image_missing}"
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('image')">
+            <button ng-show="vm.game.image" class="clear"
+                   ng-keydown="vm.editorButtonKeyPress($event)"
+                   ng-click="vm.clearMedia('image')">Clear</button>
         </td>
     </tr>
     <tr>
@@ -115,10 +118,13 @@
     <tr>
         <th width="15%">{{app.config.lang.md_labels.marquee}}</th>
         <td class=narrow>
-            <input ng-model="vm.game.marquee"
+            <input ng-model="vm.game.marquee" ng-class="{fileclear: vm.game.marquee}"
                    ng-class="{found: vm.game.marquee_found, missing: vm.game.marquee_missing}"
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('marquee')">
+            <button ng-show="vm.game.marquee" class="clear"
+                   ng-keydown="vm.editorButtonKeyPress($event)"
+                   ng-click="vm.clearMedia('marquee')">Clear</button>
         </td>
         <td class=snap rowspan=2>
             <md-media-upload md="video" accept="video/mp4,video/x-m4v,video/*"></md-media-upload>
@@ -127,10 +133,13 @@
     <tr>
         <th width="15%">{{app.config.lang.md_labels.video}}</th>
         <td class=narrow>
-            <input ng-model="vm.game.video"
+            <input ng-model="vm.game.video" ng-class="{fileclear: vm.game.video}"
                    ng-class="{found: vm.game.video_found, missing: vm.game.video_missing}"
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('video')">
+            <button ng-show="vm.game.video" class="clear"
+                   ng-keydown="vm.editorButtonKeyPress($event)"
+                   ng-click="vm.clearMedia('video')">Clear</button>
         </td>
     </tr>
     <tr>

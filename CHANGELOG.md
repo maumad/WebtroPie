@@ -1,4 +1,5 @@
 <a name="0.2.2"></a>
+- Added rom 'modified' date field as optional game list field (2017-12-11)
 - Media upload fix and option to define media paths (https://github.com/gazpan/WebtroPie/issues/2) (2017-12-10)
 - Show video above all images if VideoOmxPlayer: true (https://github.com/gazpan/WebtroPie/issues/10) (2017-12-09)
 - Scan Fix [#1](https://github.com/gazpan/WebtroPie/issues/1) (2017-12-09)

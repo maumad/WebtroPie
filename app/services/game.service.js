@@ -87,7 +87,8 @@
                  kidgame:     "kidgame",
                  hidden:      "hidden",
                  marquee:     "marquee",
-                 video:       "video"
+                 video:       "video",
+                 modified:    "modified"
             }
 
             /* available columns for display in game list view, provides formatting
@@ -106,8 +107,9 @@
                  {name: 'publisher',  type: 'text',     width: 0.28, orderby: ['!publisher','publisher','name'] },
                  {name: 'genre',      type: 'text',     width: 0.16, orderby: ['!genre','genre','name'] },
                  {name: 'players',    type: 'text',     width: 0.03, orderby: ['players','name'], align: 'center' },
-                 {name: 'lastplayed', type: 'datetime', width: 0.12, orderby: 'lastplayed', reverse: true, align: 'right' },
+                 {name: 'lastplayed', type: 'datetime', width: 0.13, orderby: 'lastplayed', reverse: true, align: 'right' },
                  {name: 'playcount',  type: 'text',     width: 0.04, orderby: 'playcount', reverse: true, align: 'center' },
+                 {name: 'modified',   type: 'datetime', width: 0.13, orderby: 'mtime', reverse: true, align: 'right'}
             ]
 
             config.init()
@@ -490,6 +492,11 @@
                             game.rating = 1;
                         }
 
+                        if (game.mtime)
+                        {
+                            game.modified = util.timestampToString(game.mtime);
+                        }
+
                         // Add to list and auto lists
                         if (rescan)
                         {
@@ -806,7 +813,7 @@
         {
             var update = {update: 1,
                           system: game.sys,
-                            path: game.path};
+                       game_path: game.path};
 
             angular.forEach(game.changes, function(val, field)
             {

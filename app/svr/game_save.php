@@ -6,19 +6,16 @@ if (!$config['edit'])
     exit;
 }
 
-$system = $_POST['system'];
-$game_path = $_POST['game_path'];
+$gamelist_file = $config['systems'][$_POST['system']]['gamelist_file'];
 
-$gamelist_file = $config['systems'][$system]['gamelist_file'];
-
-$response = array();
+$response = array('success'=>false);
 
 $gamelist = simplexml_load_file($gamelist_file);
-
+$response['path'] = $_POST['game_path'];
 for ($i=0; $i<count($gamelist->game); $i++)
 {
-    $game = $gamelist->game[$i];
-    if ($game->path == $game_path)
+    $game = &$gamelist->game[$i];
+    if ($game->path == $_POST['game_path'])
     {
         // for all meta data posted...
         foreach (array(
@@ -61,6 +58,6 @@ for ($i=0; $i<count($gamelist->game); $i++)
     }
 }
 $gamelist->asXml($gamelist_file);
-echo json_encode($response);
 
+echo json_encode($response);
 ?>

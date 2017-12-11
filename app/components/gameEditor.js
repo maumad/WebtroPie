@@ -30,6 +30,7 @@
 
         // member functions
         vm.$onInit = onInit;
+        vm.clearMedia = clearMedia;
         vm.editorButtonKeyPress = editorButtonKeyPress;
         vm.editorKeyPress = editorKeyPress;
         vm.focusFirstButton = focusFirstButton;
@@ -39,6 +40,13 @@
         function onInit()
         {
             util.waitForRender($scope).then(focusFirstButton);
+        }
+
+        function clearMedia(md)
+        {
+            vm.game[md]='';
+            vm.game[md+'_url']='';
+            vm.mdChanged(md);
         }
 
         function editorButtonKeyPress($event)
@@ -101,6 +109,7 @@
         {
             GameService.mdChanged(field, false, vm.game, GameService.editAll, vm.selectedList)
         }
+
     }
 
 })();

@@ -19,6 +19,8 @@
 
         self.back = back; // return to page
         self.call = call; // generate history : to return
+        self.datepartsToString = datepartsToString;
+        self.dateToDateParts = dateToDateParts;
         self.defaultFocus = defaultFocus;
         self.focus = focus;
         self.go = go;     // replace current page : no history
@@ -38,6 +40,8 @@
         self.rgbToHSL = rgbToHSL;
         self.round = round;
         self.searchArrayByObjectField = searchArrayByObjectField;
+        self.timestampToDate = timestampToDate;
+        self.timestampToString = timestampToString;
         self.waitForRender = waitForRender;
 
         // return to page
@@ -63,6 +67,27 @@
         {
             self.history.push($location.path());
             $location.path(path);
+        }
+
+        function datepartsToString(dp)
+        {
+            return dp.yyyy + dp.mm + dp.dd + ' ' + dp.hh + dp.mi +dp.ss;
+        }
+
+        function dateToDateParts(d)
+        {
+            function twoDigits(i)
+            {
+                return i<10 ? '0'+i : '' + i;
+            }
+            return {
+                yyyy: d.getFullYear(),
+                mm: twoDigits(d.getMonth()+1),
+                dd: twoDigits(d.getDate()),
+                hh: twoDigits(d.getHours()),
+                mi: twoDigits(d.getMinutes()),
+                ss: twoDigits(d.getSeconds())
+            }
         }
 
         function defaultFocus()
@@ -98,7 +123,8 @@
                       .replace(/hh/i,    text.substring(9,11)) 
                       .replace(/mi/i,    text.substring(11,13)) 
                       .replace(/ss/i,    text.substring(13,15))
-                      .replace(/00\//g,'');
+                      .replace(/00\//g,'')
+                      .replace(/^\/+/g,'');
         }
 
         // replace current page : no history
@@ -369,6 +395,16 @@
             }
             if(ret == 'index')
                 return -1;
+        }
+
+        function timestampToDate(secs)
+        {
+            return new Date(secs * 1000);
+        }
+
+        function timestampToString(secs)
+        {
+            return datepartsToString(dateToDateParts(timestampToDate(secs)));
         }
 
         function waitForRender(scope)
