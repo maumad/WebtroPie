@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ERROR);
 $seconds_to_cache = 7 * 24 * 60 * 60; // cache for 1 week
 $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
 header("Expires: $ts");
@@ -100,7 +99,7 @@ function load_and_include($file, &$parent=null, $index=-1)
         // copy modified reference back to parent
         $parent['include'][$index] = $incfile;
         // if already included return
-        if ($response['includes'][$incfile])
+        if (isset($response['includes'][$incfile]))
             return;
     }
 
@@ -130,7 +129,7 @@ function load_and_include($file, &$parent=null, $index=-1)
     }
 
     // store include file in response
-    if(isset($index))
+    if($index!=-1)
     {
         $response['includes'][$incfile] = &$arr;
     }
@@ -163,10 +162,8 @@ if (file_exists(ROMSPATH))
     // (usable - having roms) system themes
     foreach ($config['systems'] as $system_name => $system)
     {
-        if ($_GET['all']  ||
-            file_exists($system['gamelist_file'])
-            //($scan && file_exists($system['gamelist_file'])) ||
-            //(!$scan && filesize($system['gamelist_file'] > 40))
+        if (isset($_GET['all']) ||
+            (isset($system['gamelist_file']) && file_exists($system['gamelist_file']))
         )
         {
             if (file_exists($themepath.'/'.$system['theme'].'/theme.xml'))

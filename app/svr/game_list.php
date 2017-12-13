@@ -24,8 +24,7 @@ if (!$config['edit'])
     $match_media = false;
 }
 
-chdir($SYSTEM_PATH = ROMSPATH.$system);
-
+$SYSTEM_PATH = ROMSPATH.$system;
 
 // scan for new files in the directory specified
 function scan_dir($subdir='')
@@ -85,7 +84,7 @@ function check_media(&$game, $media, $ext)
 
     if (!isset($game[$media]) && $match_media)
     {
-        $rom = preg_replace('|.*/(.*)\..*|','$1',$game['path']);
+        $rom = pathinfo($game['path'], PATHINFO_FILENAME);
         $mediafile = get_media_path($media, $system).'/'.$rom.'.'.$ext;
         if (file_exists($mediafile))
         {
@@ -93,6 +92,7 @@ function check_media(&$game, $media, $ext)
             $game[$media.'_found'] = 1;
         }
     }
+
     if (isset($game[$media]))
     {
         $response['has_'.$media] = true;
@@ -113,6 +113,7 @@ function check_media(&$game, $media, $ext)
 // GET A FULL GAMELIST
 
 $response = load_file_xml_as_array($config['systems'][$system]['gamelist_file'], false, false, ['game'=>true], ['game'=>1]);
+chdir($SYSTEM_PATH);
 
 $response['name'] = $system;
 $response['path'] = 'svr/roms/'.$system;
@@ -120,6 +121,7 @@ $response['has_image'] = false;
 $response['has_video'] = false;
 $response['has_marquee'] = false;
 
+if (isset($response['game']))
 foreach ($response['game'] as $index => &$game)
 {
     $game['shortpath'] = simplify_path($game['path'], HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
