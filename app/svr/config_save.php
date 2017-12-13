@@ -6,32 +6,40 @@ $response = array('changed'=>false);
 
 if ($config['edit'] && isset($_POST['file']))
 {
-   if ($_POST['file'] & APP)
-   {
-      $file = '../config/settings.cfg';
-   }
-   elseif ($_POST['file']  & THEMES)
-   {
-      $file = '../config/themes.cfg';
-   }
+    if ($_POST['file'] & APP)
+    {
+        $file = '../config/preferences.cfg';
+    }
+    elseif ($_POST['file']  & THEMES)
+    {
+        $file = '../config/themes.cfg';
+    }
 
-   $xml = simplexml_load_file_wrapped($file);
-   $exists = false;
+    $exists = false;
 
-   foreach ($xml->children() as $type => $xmlchild)
-   {
-      if ( (string) $xmlchild['name'] == $_POST['setting'] )
-      {
-         $exists = true;
-         // update
-         if ( (string) $xmlchild['value'] != $_POST['value'] )
-         {
-            $xmlchild['value'] = $_POST['value'];
-            $response['changed'] = true;
-         }
-         break;
-      }
-   }
+    if (file_exists($file))
+    {
+        $xml = simplexml_load_file_wrapped($file);
+        foreach ($xml->children() as $type => $xmlchild)
+        {
+            if ( (string) $xmlchild['name'] == $_POST['setting'] )
+            {
+                $exists = true;
+                // update
+                if ( (string) $xmlchild['value'] != $_POST['value'] )
+                {
+                    $xmlchild['value'] = $_POST['value'];
+                    $response['changed'] = true;
+                }
+                break;
+            }
+        }
+    }
+    else
+    {
+        $xml = new SimpleXMLElement("<wrapped></wrapped>");
+    }
+
    // insert
    if (!$exists)
    {

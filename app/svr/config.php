@@ -16,7 +16,22 @@ function getConfig($get)
 
     if ($get & APP)
     {
-        $config['app'] = load_file_xml_as_array('../config/settings.cfg', true);
+        if (file_exists('../config/preferences.cfg'))
+        {
+            $config['app'] = load_file_xml_as_array('../config/preferences.cfg', true);
+            $defaults      = load_file_xml_as_array('../config/settings.cfg', true);
+            // fill missing settings with defaults
+            foreach ($defaults as $setting => $value)
+            {
+                if(!isset($config['app'][$setting]))
+                    $config['app'][$setting] = $value;
+            }
+        }
+        else
+        {
+            $config['app'] = load_file_xml_as_array('../config/settings.cfg', true);
+        }
+
 
         // wide area network allowed to edit
         if (isset($config['app']['WanEditMode']) && $config['app']['WanEditMode'])
