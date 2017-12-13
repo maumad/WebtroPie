@@ -139,6 +139,21 @@ Default options can be found in confg/settings.cfg. (TODO: user_settings.cfg a c
 - *maxImageSize* : If smaller than the uploaded image size then scale down the image to the maximum size that the maxImageSize dimensions can contain. E.g. 400x400
 - *maxMarqueeSize* : If smaller than the uploaded marquee size then scale down the marquee to the maximum size that the maxMarqueeSize dimensions can contain. E.g. 400x400
 
+Themers - Making your theme WebtroPie freindly
+----------------------------------------------
+
+## Fonts ##
+
+The embedding level should be "installable embedding allowed" to allow IE 11 and below to load the theme fonts dynamically. There is a tool to adjust the embedding level [on this page] (https://stackoverflow.com/questions/5587956/make-adobe-fonts-work-with-css3-font-face-in-ie9) - (direct link)[http://sda1.eu/share/embed.exe]
+
+Some fonts with large head and tail space may not align vertically exactly the same as Emulation Station, this is being worked on and will improve.
+
+## SVG's ##
+
+Include a viewbox, otherwise the SVG may not fully be displayed
+
+----------
+
 ### Thanks
 
 * Darknior for lots of ideas, testing and patience. Many thanks
