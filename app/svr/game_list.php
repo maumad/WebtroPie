@@ -48,8 +48,8 @@ function scan_dir($subdir='')
         {
             array_push($response['game'],
                 array(
-                    'name' => preg_replace('/\\.[^\\.]{1-3}/','', substr($filename,strlen($path))),
-                    'path' => $filename,
+                    'name' => pathinfo($filename, PATHINFO_FILENAME),
+                    'path' => './'.$filename,
                     'shortpath' => $shortpath,
                     'size' => filesize($filename),
                     'human_size' => human_filesize($size),
@@ -147,9 +147,19 @@ foreach ($response['game'] as $index => &$game)
 }
 
 if ($scan && $extensions)
-{ 
+{
     scan_dir();
 }
+
+/*
+ TODO : Folders
+foreach ($response['folder'] as $index => &$game)
+{
+    $game['isDir'] = 1;    // flag as folder
+    $response['game'][] = $game;   // add to game array
+}
+unset($response['folder'])
+*/
 
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
 ?>

@@ -156,7 +156,7 @@
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.launch(vm.game)">{{app.config.lang.buttons.launch}}</button>
         <!-- button class="todo">{{app.config.lang.buttons.scrape}}</button -->
-        <button ng-show="vm.game.changes"
+        <button ng-show="vm.game.changes || vm.game.new"
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.save(vm.game); app.GameService.hideEditor()">{{app.config.lang.buttons.save}}</button>
         <button ng-keydown="vm.editorButtonKeyPress($event)"

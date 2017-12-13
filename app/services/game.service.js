@@ -67,7 +67,7 @@
 
             self.gamelists_loaded = 0; // increases as system game lists are loaded
 
-            /* map theme attribute to gamelist field,
+            /* map theme attribute (md) to gamelist field (tag),
                  and provides quick lookup of valid md fields */
             self.attrs = {
                  name:        "name",
@@ -811,23 +811,50 @@
         // save changed fields for a single game
         function save(game)
         {
-            var update = {update: 1,
-                          system: game.sys,
-                       game_path: game.path};
+            var post = { system: game.sys, game_path: game.path};
 
-            angular.forEach(game.changes, function(val, field)
+            // insert
+            if (game.new)
             {
-                update[field] = game[field];
-            });
+                post.insert = 1;
+                // send all fields for new game
+                angular.forEach(self.attrs, function(val, field)
+                {
+                    post[field] = game[field];
+                });
+            }
+            // update
+            else
+            {
+                post.update = 1;
+                // otherwise send only updated fields
+                angular.forEach(game.changes, function(val, field)
+                {
+                    post[field] = game[field];
+                });
+
+                if (game.reset)
+                {
+                    if (post.image && game.reset.image && post.image != game.reset.image)
+                    {
+                        post.delete_image = game.reset.image;
+                    }
+                    if (post.marquee && game.reset.marquee && post.marquee != game.reset.marquee)
+                    {
+                        post.delete_marquee = game.reset.marquee;
+                    }
+                }
+            }
 
             $http({
                 method  : 'POST',
                 url     : 'svr/game_save.php',
                 headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-                data    : $httpParamSerializer(update)
+                data    : $httpParamSerializer(post)
             })
             .then(function onSuccess(response) {
                 delete game.changes;
+                delete game.new;
             });
         }
 

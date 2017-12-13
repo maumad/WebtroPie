@@ -3,6 +3,7 @@ require_once("game.php");
 
 $response = array('success' => false);
 
+
 if ($config['edit'] && $_FILES['upload'])
 {
     $system = $_POST['system'];
@@ -18,7 +19,7 @@ if ($config['edit'] && $_FILES['upload'])
             $directory = get_media_path($media, $system);
 
             // The extension of the upload, E.g jpg
-            $ext = pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
+            $ext = strtolower( pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION) );
 
             // the filename of the ROM including ext, E.g PACMAN.jpg
             $filename = pathinfo($_POST['game_path'], PATHINFO_FILENAME).'.'.$ext;
@@ -36,14 +37,44 @@ if ($config['edit'] && $_FILES['upload'])
             // full real path
             $filename = $directory . '/' . $filename;
 
-            move_uploaded_file($_FILES['upload']['tmp_name'], $filename);
+            if ($media == 'image')
+            {
+                // is max image size set ?
+                if (isset($config['app']['uploadImageDirectory']))
+                {
+                    list($maxwidth, $maxheight) = preg_split("/x/", $config['app']['maxImageSize']);
+                }
+            }
+            elseif ($media == 'marquee')
+            {
+                // is max marquee size set ?
+                if (isset($config['app']['uploadMarqueeDirectory']))
+                {
+                    list($maxwidth, $maxheight) = preg_split("/x/", $config['app']['maxMarqueeSize']);
+                }
+            }
+
+            // Resize ?
+            $resized = false;
+            if (isset($maxwidth) && isset($maxheight) && $maxwidth && $maxheight)
+            {
+                $resized = resize_media($_FILES['upload']['tmp_name'], $filename, $maxwidth, $maxheight);
+            }
+
+            if (!$resized)
+            {
+                move_uploaded_file($_FILES['upload']['tmp_name'], $filename);
+            }
+            else
+            {
+                exec('rm '.$_FILES['upload']['tmp_name']);
+            }
+            chmod($filename, 0664);
 
             // create symlink if needed, find url
             $media_paths = get_media_paths_full_url($filename, $system);
-
-            chmod($filename, 0664);
-            $response['success'] = true;
             $response['media_url'] = $media_paths['url'];
+            $response['success'] = true;
         }
     }
     else

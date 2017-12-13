@@ -4,12 +4,12 @@ require_once("config.php");
 $config = getConfig( SYSTEMS | APP | ENV );
 $svr_dir = getcwd();
 
-function human_filesize($bytes, $decimals = 1)
-{
-    $sz = 'BKMGTP';
-    $factor = floor((strlen($bytes) - 1) / 3);
-    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
-}
+$GAME_FIELDS = array(
+    'name','desc','image','rating',
+    'releasedate','developer','publisher',
+    'genre','players','favorite','kidgame','hidden',
+    'marquee','video'
+);
 
 function get_media_path($media, $system)
 {
@@ -35,6 +35,7 @@ function get_media_path($media, $system)
         return $SYSTEM_PATH.'/'.$media.'s';  // E.g. images
     }
 }
+
 
 function get_media_paths_full_url($filename, $system)
 {
@@ -108,6 +109,84 @@ function get_media_paths_full_url($filename, $system)
     }
 
     return array('fullpath' => $fullpath, 'url' => $url);
+}
+
+
+function human_filesize($bytes, $decimals = 1)
+{
+    $sz = 'BKMGTP';
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+}
+
+
+function resize_media($source_filename, $destination_filename, $maxwidth, $maxheight)
+{
+    // uploaded image size
+    list($width, $height, $type, $attr) = getimagesize($source_filename);
+
+    if ($width && $height)
+    {
+        if ($width > $maxwidth || $height > $maxheight)
+        {
+            $ratio = $width / $height;
+            // resize to height or width
+            if ($maxwidth / $maxheight > $ratio)
+            {
+                $newwidth = $maxheight * $ratio;
+                $newheight = $maxheight;
+            }
+            else
+            {
+                $newheight = $maxwidth / $ratio;
+                $newwidth = $maxwidth;
+            }
+
+            // read the uploaded image
+            switch ($type)
+            {
+                case IMAGETYPE_JPEG:  $src_img = imagecreatefromjpeg($source_filename); break;
+                case IMAGETYPE_GIF:   $src_img = imagecreatefromgif($source_filename);  break;
+                case IMAGETYPE_PNG:   $src_img = imagecreatefrompng($source_filename);  break;
+            }
+
+            if (isset($src_img) && $src_img)
+            {
+                $dst_img = imagecreatetruecolor($newwidth, $newheight);
+                // Prevserve transparency : Credit http://www.nimrodstech.com/php-image-resize/
+                if ( $type == IMAGETYPE_GIF || $type == IMAGETYPE_PNG )
+                {
+                    $transparency = imagecolortransparent($src_img);
+                    $palletsize = imagecolorstotal($src_img);
+
+                    if ($transparency >= 0 && $transparency < $palletsize)
+                    {
+                        $transparent_color  = imagecolorsforindex($src_img, $transparency);
+                        $transparency       = imagecolorallocate($dst_img, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
+                        imagefill($dst_img, 0, 0, $transparency);
+                        imagecolortransparent($dst_img, $transparency);
+                    }
+                    elseif ($type == IMAGETYPE_PNG)
+                    {
+                        imagealphablending($dst_img, false);
+                        $color = imagecolorallocatealpha($dst_img, 0, 0, 0, 127);
+                        imagefill($dst_img, 0, 0, $color);
+                        imagesavealpha($dst_img, true);
+                    }
+                }
+
+                imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+                // Write resized image to media directory
+                switch ( $type )
+                {
+                    case IMAGETYPE_GIF:  return imagegif($dst_img, $destination_filename);
+                    case IMAGETYPE_JPEG: return imagejpeg($dst_img, $destination_filename, 100);
+                    case IMAGETYPE_PNG:  return imagepng($dst_img, $destination_filename, 0);
+                }
+            }
+        }
+    }
 }
 
 ?>

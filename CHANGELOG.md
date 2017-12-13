@@ -1,4 +1,7 @@
 <a name="0.2.2"></a>
+- Format gamelist whitespace (https://github.com/gazpan/WebtroPie/issues/3) (2017-12-12)
+- Upload media and resize settings maxImageSize and maxMarqueeSize (https://github.com/gazpan/WebtroPie/issues/2) (2017-12-12)
+- Save new/scanned rom fix (2017-12-12)
 - Added rom 'modified' date field as optional game list field (2017-12-11)
 - Media upload fix and option to define media paths (https://github.com/gazpan/WebtroPie/issues/2) (2017-12-10)
 - Show video above all images if VideoOmxPlayer: true (https://github.com/gazpan/WebtroPie/issues/10) (2017-12-09)

@@ -136,9 +136,12 @@ Default options can be found in confg/settings.cfg. (TODO: user_settings.cfg a c
 - *uploadImageDirectory* : Default absolute path or relative to the system rom directory of where images are uploaded, or where media is matched from. Default is 'images' but may be a path including the "$(system_name}" variable E.g. "~/medias/${system_name}/box front". Note: Directory must be under /home/pi
 - *uploadVideoDirectory* : Default absolute path or relative to the system rom directory of where videos are uploaded, or where media is matched from. Default is 'videos' but may be a path including the "$(system_name}" variable E.g. "~/medias/${system_name}/videos"
 - *uploadMarqueeDirectory* : Default absolute path or relative to the system rom directory of where marquees are uploaded, or where media is matched from. Default is 'marquees' but may be a path including the "$(system_name}" variable E.g. "~/medias/${system_name}/marquees"
+- *maxImageSize* : If smaller than the uploaded image size then scale down the image to the maximum size that the maxImageSize dimensions can contain. E.g. 400x400
+- *maxMarqueeSize* : If smaller than the uploaded marquee size then scale down the marquee to the maximum size that the maxMarqueeSize dimensions can contain. E.g. 400x400
 
 ### Thanks
 
+* Darknior for lots of ideas, testing and patience. Many thanks
 * creators of retropie, emulationstation and emulator creators
 * retropie community
 * theme makers for emulationstation, thanks for making WebtroPie look good
