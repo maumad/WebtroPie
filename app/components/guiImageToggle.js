@@ -26,7 +26,7 @@
             replace: true,
             scope: true,
             template: '<img class="icon click" '+
-                           'ng-click="vm.click($event)"a'+
+                           'ng-click="vm.click($event)" '+
                            'ng-src="{{vm.img_src}}">',
             controller: controller,
             controllerAs: 'vm',

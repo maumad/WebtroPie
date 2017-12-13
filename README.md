@@ -115,7 +115,7 @@ If the LAUNCH button is not present it means that the ENABLE_LAUNCH.sh script ha
 Config and Settings
 -------------------
 
-Default options can be found in confg/settings.cfg. (TODO: user_settings.cfg a copy of settings.cfg with local changes that do not get overwritten after a WebtroPie update)
+Default options can be found in confg/settings.cfg but please note that this file is overwritten after an update. Options can be changed in the web appication itself which writes changes to config/preferences.cfg, values in the preferences file overrides those in the settings file and are not overwritten after an update of WebtroPie.
 
 - *LoadAllSystems* : Get all system's gamelists when page is first loaded or refreshed, if the gamelist has not been updated then this may be from client chache.
 - *ScanAtStartup* : Scan all systems's ROMS directories for new roms when page is firt loaded or refreshed.
