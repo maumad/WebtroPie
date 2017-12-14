@@ -108,7 +108,7 @@
                 $scope.$watch('vm.obj', vm.updateImage);
 
                 // watch for current game change, update image using meta data value
-                $scope.$watch('vm.game.'+vm.md, vm.updateImage);
+                $scope.$watch('vm.game.'+vm.md+'_url', vm.updateImage);
             }
             else if(vm.obj.background_orig)
             {
