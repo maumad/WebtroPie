@@ -5,6 +5,8 @@ html, body {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     overflow: hidden;
 }
 
@@ -500,6 +502,11 @@ input, select, textarea {
     border: 1px solid #444;
     border-radius: 0.25em;
 }
+.game_editor input {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
 .game_editor input[type=number] {
     width: 15%;
     margin-right: 0.25vw;
@@ -548,7 +555,6 @@ input, select, textarea {
     background-color: #555;
     margin: 5px 0;
 }
-
 .progressbar {
     text-align: center;
     font-size: 2.5vmin;
@@ -558,7 +564,7 @@ input, select, textarea {
 .upload {
     position: relative;
     font-size: 2.5vmin;
-    padding: 1.5vh 2vw;
+    padding: 1.5vh 1vw;
     background-color: #f0f0f0;
     outline: 2px dashed #444;
     outline-offset: -1vmin;

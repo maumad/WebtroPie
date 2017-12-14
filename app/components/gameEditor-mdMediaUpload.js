@@ -19,13 +19,16 @@
             scope: true,
             template:
             '<div>'+
-                '<div ng-show="vm.uploading" class="progressbar"'+
-                    ' ng-style="{width: vm.progress+\'%\'}">{{vm.progress}}%'+
-                '</div>'+
                 '<form class="upload" novalidate'+
-                        ' ng-hide="app.GameService.game[vm.md] && '+
+                        ' ng-hide="!vm.dragover && !vm.uploading && '+
+                        ' app.GameService.game[vm.md] && '+
                         ' app.GameService.game[vm.md+\'_url\']">'+
-                    '<div ng-hide="vm.uploading">'+
+                    '<div ng-show="vm.uploading" class="progressbar"'+
+                        ' ng-style="{width: vm.progress}"'+
+                        ' ng-bind="vm.progress_text">'+
+                    '</div>'+
+                    '<span ng-show="vm.dragover">Drop to upload</span>'+
+                    '<div ng-hide="vm.uploading || vm.dragover">'+
                         '<icon svg="\'resources/upload.svg\'"></icon>'+
                         '<input class="uploadfile" type="file" accept="image/*"'+
                             ' ng-model="vm.files" file-selector id="{{::vm.md}}_files"'+
@@ -60,14 +63,33 @@
         {
             $element
             .parent()
-            .bind('dragover', function(e) {
+            .on('dragover', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
+                vm.dragover = true;
+                $scope.$evalAsync();
+                this.style['outline']='2px dashed #444';
+                this.style['outline-offset']='-1vmin';
+                this.style['background-color']='white';
             })
-            .bind('drop', function(e) {
+            .on('dragleave', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                vm.dragover = false;
+                $scope.$evalAsync();
+                this.style['outline']='';
+                this.style['outline-offset']='';
+                this.style['background-color']='';
+            })
+            .on('drop', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 upload(e.dataTransfer.files);
+                vm.dragover = false;
+                $scope.$evalAsync();
+                this.style['outline']='';
+                this.style['outline-offset']='';
+                this.style['background-color']='';
             });
         }
 
@@ -98,7 +120,8 @@
         {
             if (e.lengthComputable)
             {
-                vm.progress = (e.loaded / e.total) * 100;
+                vm.progress = util.round(100 * e.loaded / e.total, 2)+'%';
+                vm.progress_text = e.loaded == e.total ? 'Processing...' : vm.progress;
             }
         }
 
