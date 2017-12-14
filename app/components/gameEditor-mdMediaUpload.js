@@ -27,7 +27,7 @@
                         ' ng-style="{width: vm.progress}"'+
                         ' ng-bind="vm.progress_text">'+
                     '</div>'+
-                    '<span ng-show="vm.dragover">Drop to upload</span>'+
+                    '<span ng-show="vm.dragover">Drop to upload {{::vm.md}} file</span>'+
                     '<div ng-hide="vm.uploading || vm.dragover">'+
                         '<icon svg="\'resources/upload.svg\'"></icon>'+
                         '<input class="uploadfile" type="file" accept="image/*"'+
