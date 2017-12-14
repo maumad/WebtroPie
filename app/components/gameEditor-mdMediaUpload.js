@@ -18,21 +18,23 @@
             restrict: 'EA',
             scope: true,
             template:
-          '<form class="upload" novalidate'+
-                ' ng-hide="app.GameService.game[vm.md] && '+
-                ' app.GameService.game[vm.md+\'_url\']">'+
-              '<div ng-show="vm.uploading" class="progressbar"'+
-                  ' ng-style="{width: vm.progress+\'%\'}">{{vm.progress}}%'+
-              '</div>'+
-              '<div ng-hide="vm.uploading">'+
-                  '<icon svg="\'resources/upload.svg\'"></icon>'+
-                  '<input class="uploadfile" type="file" accept="image/*"'+
-                       ' ng-model="vm.files" file-selector id="{{::vm.md}}_files"'+
-                       ' ng-change="upload(vm.files)"/> '+
-                  '<label for="{{::vm.md}}_files">'+
-                       'Choose or drag a {{::vm.md}} file.</label>'+
-              '</div>'+
-          '</form>',
+            '<div>'+
+                '<div ng-show="vm.uploading" class="progressbar"'+
+                    ' ng-style="{width: vm.progress+\'%\'}">{{vm.progress}}%'+
+                '</div>'+
+                '<form class="upload" novalidate'+
+                        ' ng-hide="app.GameService.game[vm.md] && '+
+                        ' app.GameService.game[vm.md+\'_url\']">'+
+                    '<div ng-hide="vm.uploading">'+
+                        '<icon svg="\'resources/upload.svg\'"></icon>'+
+                        '<input class="uploadfile" type="file" accept="image/*"'+
+                            ' ng-model="vm.files" file-selector id="{{::vm.md}}_files"'+
+                            ' ng-change="upload(vm.files)"/> '+
+                        '<label for="{{::vm.md}}_files">'+
+                            'Choose or drag a {{::vm.md}} file.</label>'+
+                    '</div>'+
+                '</form>'+
+            '</div>',
             controller: controller,
             controllerAs: 'vm',
             bindToController: { md:'@', accept:'@' }
@@ -57,6 +59,7 @@
         function bindDropToUpload()
         {
             $element
+            .parent()
             .bind('dragover', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
