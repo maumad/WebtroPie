@@ -18,7 +18,7 @@ function getConfig($get)
     {
         if (file_exists('../config/preferences.cfg'))
         {
-            $config['app'] = load_file_xml_as_array('../config/preferences.cfg', true);
+            $config['app'] = load_file_xml_as_array(HOME.'/.webtropie/settings.cfg', true);
             $defaults      = load_file_xml_as_array('../config/settings.cfg', true);
             // fill missing settings with defaults
             foreach ($defaults as $setting => $value)
@@ -31,7 +31,6 @@ function getConfig($get)
         {
             $config['app'] = load_file_xml_as_array('../config/settings.cfg', true);
         }
-
 
         // wide area network allowed to edit
         if (isset($config['app']['WanEditMode']) && $config['app']['WanEditMode'])
@@ -69,7 +68,21 @@ function getConfig($get)
 
     if ($get & THEMES)
     {
-        $config['themes'] = load_file_xml_as_array('../config/themes.cfg', true);
+        if (file_exists(HOME.'/.webtropie/themes.cfg'))
+        {
+            $config['themes'] = load_file_xml_as_array(HOME.'/.webtropie/themes.cfg', true);
+            $defaults         = load_file_xml_as_array('../config/themes.cfg', true);
+            // fill missing settings with defaults
+            foreach ($defaults as $setting => $value)
+            {
+                if(!isset($config['themes'][$setting]))
+                    $config['themes'][$setting] = $value;
+            }
+        }
+        else
+        {
+            $config['themes'] = load_file_xml_as_array('../config/themes.cfg', true);
+        }    
     }
 
     if ($get & SYSTEMS)

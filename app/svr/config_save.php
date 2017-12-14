@@ -8,11 +8,11 @@ if ($config['edit'] && isset($_POST['file']))
 {
     if ($_POST['file'] & APP)
     {
-        $file = '../config/preferences.cfg';
+        $file = HOME.'/.webtropie/settings.cfg';
     }
     elseif ($_POST['file']  & THEMES)
     {
-        $file = '../config/themes.cfg';
+        $file = HOME.'/.webtropie/themes.cfg';
     }
 
     $exists = false;
@@ -37,6 +37,9 @@ if ($config['edit'] && isset($_POST['file']))
     }
     else
     {
+        if (!file_exists(HOME.'/.webtropie'))
+            mkdir(HOME.'/.webtropie', 0775);
+
         $xml = new SimpleXMLElement("<wrapped></wrapped>");
     }
 

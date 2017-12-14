@@ -108,7 +108,10 @@ function get_media_paths_full_url($filename, $system)
         $fullpath = $svr_dir.'/'.$url;
     }
 
-    $url .= '?'.filemtime($fullpath);
+    if (file_exists($fullpath))
+    {
+        $url .= '?'.filemtime($fullpath);
+    }
 
     return array('fullpath' => $fullpath, 'url' => $url);
 }
