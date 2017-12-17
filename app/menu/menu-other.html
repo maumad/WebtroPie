@@ -13,25 +13,29 @@
     </div>
     <div class="line"></div>
 
-    <div class="option" ng-if="app.config.edit">
-        {{app.config.lang.menu.ScanAtStartup}}
-        <image-toggle class="checkbox right"
-                ng-model="app.config.app.ScanAtStartup"
+    <span  ng-if="app.config.edit">
+        <div class="option">
+            {{app.config.lang.menu.ScanAtStartup}}
+            <image-toggle class="checkbox right"
+                    ng-model="app.config.app.ScanAtStartup"
+                    on-svg="resources/checkbox_checked.svg"
+                    off-svg="resources/checkbox_unchecked.svg">
+            </image-toggle>
+        </div>
+        <div class="line"></div>
+    </span>
+
+    <span ng-if="app.config.local">
+        <div class="option">
+            {{app.config.lang.menu.WanEditMode}}
+            <image-toggle class="checkbox right"
+                ng-model="app.config.app.WanEditMode"
                 on-svg="resources/checkbox_checked.svg"
                 off-svg="resources/checkbox_unchecked.svg">
-        </image-toggle>
-    </div>
-    <div class="line"></div>
-
-    <div class="option" ng-if="app.config.local">
-        {{app.config.lang.menu.WanEditMode}}
-        <image-toggle class="checkbox right"
-            ng-model="app.config.app.WanEditMode"
-            on-svg="resources/checkbox_checked.svg"
-            off-svg="resources/checkbox_unchecked.svg">
-        </image-toggle>
-    </div>
-    <div class="line"></div>
+            </image-toggle>
+        </div>
+        <div class="line"></div>
+    </span>
 
     <div class="option">
         {{app.config.lang.menu.ShowEmptySystems}}

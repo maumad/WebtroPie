@@ -110,6 +110,7 @@
                 if (bitmask & self.SYSTEMS) self.systems = response.data.systems;
                 if (bitmask & self.THEMES_LIST) self.themes_list = response.data.themes_list;
                 self.edit = self.edit || response.data.edit;
+                self.local = self.local || response.data.local;
 
                 delete self.systems.retropie;
 
