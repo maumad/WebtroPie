@@ -55,7 +55,7 @@
                     {text: 'Other',   type: 'menu', action: 'menu/menu-other.html'},
                     {text: 'Helpbar', type: 'menu', action: 'menu/menu-helpbar.html'}
                 ];
-                if (config.edit)
+                if (config.local)
                 {
                     app.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
                 }

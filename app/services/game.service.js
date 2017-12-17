@@ -501,12 +501,7 @@
                         {
                             game.rating = 1;
                         }
-/*
-                        if (game.mtime)
-                        {
-                            game.modified = util.timestampToString(game.mtime);
-                        }
-*/
+
                         // Add to list and auto lists
                         if (rescan)
                         {
