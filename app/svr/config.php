@@ -1,4 +1,6 @@
 <?php
+$session = session_start();
+
 require_once("xml_util.php");
 require_once("vars.php");
 
@@ -10,13 +12,28 @@ define("THEMES", 16);
 define("SYSTEMS", 32);
 define("THEMES_LIST", 64);
 
+// For multiple users (especially WAN users)
+// hold user preference fields below as session variables
+$USER_PREFERENCE_SETTINGS = array(
+    'ThemeSet','Language','DateFormat',
+    'ViewTransitions','ViewStyle',
+    'ShowEmptySystems','ShowEmptyDirectories',
+    'ShowAddFields','ShowGameCounts',
+    'ShowThemeSelect','ShowViewSelect',
+    'LogSystemTotals'
+);
+
 function getConfig($get)
 {
-    $config = array('edit' => false);
+    global $session, $USER_PREFERENCE_SETTINGS;
+
+    $local = preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? 1 : 0;
+
+    $config = array('edit' => false, 'local' => $local);
 
     if ($get & APP)
     {
-        if (file_exists('../config/preferences.cfg'))
+        if (file_exists(HOME.'/.webtropie/settings.cfg'))
         {
             $config['app'] = load_file_xml_as_array(HOME.'/.webtropie/settings.cfg', true);
             $defaults      = load_file_xml_as_array('../config/settings.cfg', true);
@@ -32,20 +49,34 @@ function getConfig($get)
             $config['app'] = load_file_xml_as_array('../config/settings.cfg', true);
         }
 
+        // For WAN users read preferences from session vars if set
+        if ($session)
+        {
+            foreach ($USER_PREFERENCE_SETTINGS as $setting)
+            {
+                if (isset($_SESSION[$setting]))
+                {
+                    $config['app'][$setting] = $_SESSION[$setting];
+                }
+            }
+        }
+
         // wide area network allowed to edit
         if (isset($config['app']['WanEditMode']) && $config['app']['WanEditMode'])
+        {
             $config['edit'] = true;
+        }
     }
 
     if ($get & ENV)
     {
         $config['env'] = array();
         $config['env']['has_gd'] = extension_loaded('gd') ? 1 : 0;
-        $config['env']['has_launch'] = file_exists("runcommand.sh") ? 1 : 0;
-
-        // local network
-        if (preg_match('/192.168/',$_SERVER['REMOTE_ADDR']))
+        if ($local)
+        {
+            $config['env']['has_launch'] = file_exists("runcommand.sh") ? 1 : 0;
             $config['edit'] = true;
+        }
     }
 
     if ($get & LANG)

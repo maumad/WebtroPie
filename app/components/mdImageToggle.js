@@ -97,7 +97,7 @@
             {
                 if (config.edit)
                 {
-                    vm.title = 'Click to turn '+config.lang.md_labels[vm.md]+' OFF';
+                    vm.title = 'Click to turn '+config.lang.md_label[vm.md]+' OFF';
                 }
                 vm.img_src = vm.imgUrlOn;
             }
@@ -105,7 +105,7 @@
             {
                 if (config.edit)
                 {
-                    vm.title = 'Click to turn '+config.lang.md_labels[vm.md]+' ON';
+                    vm.title = 'Click to turn '+config.lang.md_label[vm.md]+' ON';
                 }
                 vm.img_src = vm.imgUrlOff;
             }

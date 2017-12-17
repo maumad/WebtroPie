@@ -1,4 +1,8 @@
 <a name="0.2.2"></a>
+- Menu: WAN Edit mode, upload settings, more appropriate local/edit options (2017-12-16)
+- Multi user: Sessions allows users to have their own preferences retained (2017-12-16)
+- Language: more Lanuage strings, changes show without refresh (2017-12-16)
+- Drag and Drop media over existing media (https://github.com/gazpan/WebtroPie/issues/7) (2017-12-13)
 - Format gamelist whitespace (https://github.com/gazpan/WebtroPie/issues/3) (2017-12-12)
 - Upload media and resize settings maxImageSize and maxMarqueeSize (https://github.com/gazpan/WebtroPie/issues/2) (2017-12-12)
 - Save new/scanned rom fix (2017-12-12)

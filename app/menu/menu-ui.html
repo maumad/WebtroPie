@@ -1,13 +1,10 @@
 <div class="menu gui">
 
-    <div class="title"> UI SETTINGS </div>
+    <div class="title">{{app.config.lang.menu.UI}}</div>
     <div class="line"></div>
 
-    <div class="option"
-         ng-class="{hover: app.config.hover == 1}"
-         ng-mouseover="app.config.hover = 1"
-         ng-mouseout="app.config.hover = null">
-        THEME SET
+    <div class="option">
+        {{app.config.lang.menu.ThemeSet}}
         <select class="right"
              ng-model="app.config.app.ThemeSet"
              ng-change="app.themeChanged()"
@@ -17,11 +14,8 @@
     </div>
     <div class="line"></div>
 
-    <div class="option"
-         ng-class="{hover: app.config.hover == 2}"
-         ng-mouseover="app.config.hover = 2"
-         ng-mouseout="app.config.hover = null">
-        VIEW TRANSITIONS
+    <div class="option">
+        {{app.config.lang.menu.ViewTransitions}}
         <select class="right"
              ng-init="transitions = ['Fade','Slide']"
              ng-change="app.viewTransitionChanged()"
@@ -33,11 +27,8 @@
     </div>
     <div class="line"></div>
 
-    <div class="option"
-         ng-class="{hover: app.config.hover == 3}"
-         ng-mouseover="app.config.hover = 3"
-         ng-mouseout="app.config.hover = null">
-        GAMELIST VIEW STYLE
+    <div class="option">
+        {{app.config.lang.menu.ViewStyle}}
         <select class="right"
              ng-init="viewstyles = ['basic','detailed','video']"
              ng-change="app.viewStyleChanged()"
@@ -49,37 +40,28 @@
     </div>
     <div class="line"></div>
 
-    <span ng-if="app.config.edit">
-        <div class="option"
-             ng-class="{hover: app.config.hover == 4}"
-             ng-mouseover="app.config.hover = 4"
-             ng-mouseout="app.config.hover = null">
-            LANGUAGE
-            <select class="right"
-                 ng-model="app.config.app.Language"
-                 ng-change="app.languageChanged()"
-                 ng-keydown="app.menuKeyPress($event)"
-                 ng-options="key as value for (key, value) in app.config.lang.languages">
-            </select>
-        </div>
-        <div class="line"></div>
+    <div class="option">
+        {{app.config.lang.menu.Language}}
+        <select class="right"
+                ng-model="app.config.app.Language"
+                ng-change="app.languageChanged()"
+                ng-keydown="app.menuKeyPress($event)"
+                ng-options="key as value for (key, value) in app.config.lang.language">
+        </select>
+    </div>
+    <div class="line"></div>
 
-        <div class="option"
-             ng-class="{hover: app.config.hover == 5}"
-             ng-mouseover="app.config.hover = 5"
-             ng-mouseout="app.config.hover = null">
-            DATE FORMAT
-            <input class="right"
-                 ng-model="app.config.app.DateFormat"
-                 ng-keydown="app.menuKeyPress($event)"
-                 ng-blur="app.dateFormatChanged()">
-        </div>
-        <div class="line"></div>
-
-    </span>
+    <div class="option">
+        {{app.config.lang.menu.DateFormat}}
+        <input class="right small"
+                ng-model="app.config.app.DateFormat"
+                ng-keydown="app.menuKeyPress($event)"
+                ng-blur="app.appConfigChanged('DateFormat')">
+    </div>
+    <div class="line"></div>
 
     <div class="footer">
-         <button ng-click="app.exitMenu()">BACK</button>
+         <button ng-click="app.exitMenu()">{{app.config.lang.button.back}}</button>
     </div>
 
 </div>

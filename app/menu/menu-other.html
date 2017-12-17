@@ -1,66 +1,70 @@
 <div class="menu gui">
 
-    <div class="title"> OTHER SETTINGS </div>
+    <div class="title">{{app.config.lang.menu.Other}}</div>
     <div class="line"></div>
 
-    <span ng-if="app.config.edit">
+    <div class="option">
+        {{app.config.lang.menu.LoadAllSystems}}
+        <image-toggle class="checkbox right"
+             ng-model="app.config.app.LoadAllSystems"
+             on-svg="resources/checkbox_checked.svg"
+             off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
 
-        <!-- div class="option"
-             ng-class="{hover: app.config.hover == 1}"
-             ng-mouseover="app.config.hover = 1"
-             ng-mouseout="app.config.hover = null">
-            LOAD ALL SYSTEMS GAMELISTS AT START
-            <image-toggle class="checkbox right"
-                 ng-model="app.config.app.LoadAllSystems"
-                 on-svg="resources/checkbox_checked.svg"
-                 off-svg="resources/checkbox_unchecked.svg">
-            </image-toggle>
-        </div>
-        <div class="line"></div -->
+    <div class="option" ng-if="app.config.edit">
+        {{app.config.lang.menu.ScanAtStartup}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.ScanAtStartup"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
 
-        <div class="option"
-             ng-class="{hover: app.config.hover == 2}"
-             ng-mouseover="app.config.hover = 2"
-             ng-mouseout="app.config.hover = null">
-            SCAN FOR NEW GAMES AT START
-            <image-toggle class="checkbox right"
-                 ng-model="app.config.app.ScanAtStartup"
-                 on-svg="resources/checkbox_checked.svg"
-                 off-svg="resources/checkbox_unchecked.svg">
-            </image-toggle>
-        </div>
-        <div class="line"></div>
+    <div class="option" ng-if="app.config.local">
+        {{app.config.lang.menu.WanEditMode}}
+        <image-toggle class="checkbox right"
+            ng-model="app.config.app.WanEditMode"
+            on-svg="resources/checkbox_checked.svg"
+            off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
 
-        <div class="option"
-             ng-class="{hover: app.config.hover == 3}"
-             ng-mouseover="app.config.hover = 3"
-             ng-mouseout="app.config.hover = null">
-            SHOW EMPTY SYSTEMS
-            <image-toggle class="checkbox right"
-                 ng-model="app.config.app.ShowEmptySystems"
-                 on-svg="resources/checkbox_checked.svg"
-                 off-svg="resources/checkbox_unchecked.svg">
-            </image-toggle>
-        </div>
-        <div class="line"></div>
+    <div class="option">
+        {{app.config.lang.menu.ShowEmptySystems}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.ShowEmptySystems"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
 
-        <div class="option"
-             ng-class="{hover: app.config.hover == 4}"
-             ng-mouseover="app.config.hover = 4"
-             ng-mouseout="app.config.hover = null">
-            SHOW EMPTY NEW DIRECTORIES
-            <image-toggle class="checkbox right"
-                 ng-model="app.config.app.ShowEmptyDirectories"
-                 on-svg="resources/checkbox_checked.svg"
-                 off-svg="resources/checkbox_unchecked.svg">
-            </image-toggle>
-        </div>
-        <div class="line"></div>
+    <div class="option">
+        {{app.config.lang.menu.ShowEmptyDirectories}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.ShowEmptyDirectories"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
 
-    </span>
+    <div class="option">
+        {{app.config.lang.menu.LogSystemTotals}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.LogSystemTotals"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
 
     <div class="footer">
-         <button ng-click="app.exitMenu()">BACK</button>
+         <button ng-click="app.exitMenu()">{{app.config.lang.button.back}}</button>
     </div>
 
 </div>

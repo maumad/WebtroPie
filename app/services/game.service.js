@@ -235,7 +235,7 @@
 
             if (name && name.substring(0,7)=="md_lbl_")
             {
-                return config.lang.md_labels[name.substring(7)] + ":";
+                return config.lang.md_label[name.substring(7)] + ":";
             }
             else if (name && name.substring(0,3)=="md_")
             {
@@ -889,10 +889,10 @@
         {
             angular.forEach(self.list_fields, function(field, index)
             {
-                field.text = config.lang.md_labels[field.name];
+                field.text = config.lang.md_label[field.name];
                 if (field.name == 'releasedate' && field.format == 'yyyy')
                 {
-                    field.text = config.lang.md_labels['year'];
+                    field.text = config.lang.md_label['year'];
                 }
                 field.order = index;
             });

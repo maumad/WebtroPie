@@ -55,15 +55,15 @@
     <div ng-if="app.styler.systemInfo.div"
         ng-style="app.styler.systemInfo.div" class="text fade-in-out ng-hide"
         ng-show="!page.animating && !page.systembar.dragging">
-        <div ng-style="app.styler.systemInfo.style" class="text_inner"
+        <div ng-style="app.styler.systemInfo.style" class="text_inner uppercase"
             ng-show="app.GameService.systems[app.CarouselService.getCurrentCarouselSystemName()].total">
             {{app.GameService.systems[app.CarouselService.getCurrentCarouselSystemName()].total}}
-            GAMES AVAILABLE
+            {{app.config.lang.systemView.GamesAvailable}}
         </div>
     </div>
 
     <!-- help bar -->
-    <help-menu ng-if="app.styler.help" list="page.helpmenu" obj="app.styler.help" >
+    <help-menu ng-if="app.styler.help" list="page.helpmenu" obj="app.styler.help" view="systemView" >
 
         <span class="dropdown" 
             ng-show="app.config.app.ShowThemeSelect"
@@ -71,7 +71,7 @@
             ng-mouseout="app.config.themehover=false" >
             <div class="filters" help-inverter
                  ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" >
-                Theme
+                 {{app.config.lang.systemView.Theme}}
             </div>
             <div ng-style="app.styler.helpTextColorBorder"
                 ng-class="app.styler.helpMenuOptionClasses+' '+(app.config.themes_list.length>=40?'treble':(app.config.themes_list.length>=20?'double':''))"

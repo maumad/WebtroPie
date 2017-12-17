@@ -4,7 +4,16 @@ require_once("config.php");
 $config = getConfig( APP | ENV );
 $response = array('changed'=>false);
 
-if ($config['edit'] && isset($_POST['file']))
+// Is it a user preference setting? yes, then save in session
+// (multiple LAN or WAN users may have difference preferences)
+if (array_search($_POST['setting'], $USER_PREFERENCE_SETTINGS) !== FALSE)
+{
+    $_SESSION[$_POST['setting']] = $_POST['value'];
+    $response['session_'.$_POST['setting']] = $_POST['value'];
+}
+
+// If client is local then also save as setting on pi (most cases)
+if ($config['local'] && isset($_POST['file']))
 {
     if ($_POST['file'] & APP)
     {

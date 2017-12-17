@@ -24,7 +24,7 @@
                 selected-list="page.selectedList"></game-editor>
 
    <!-- help bar -->
-   <help-menu list="page.helpmenu" obj="app.styler.help"
+   <help-menu list="page.helpmenu" obj="app.styler.help" view="gamelistView"
               ng-if="page.view.styled">
 
       <input type=text class="filters"
@@ -32,16 +32,16 @@
              ng-model="app.GameService.filter"
              ng-keydown="page.keyPress($event)"
              ng-style="app.styler.helpTextColorBorder">
-      <span class="filters" 
+      <span class="filters uppercase"
              ng-if="app.config.app.ShowGameCounts && page.gamelist.length">
          {{page.filtered.length}}/{{page.gamelist.length}}
          <span ng-if="app.GameService.selectedList.length">
-          {{page.selectedList.length}} GAMES SELECTED</span>
+          {{page.selectedList.length}} {{app.config.lang.gamelistView.GamesSelected}}</span>
       </span>
 
       <!-- span class="filters" ng-bind="page.game.name"></span -->
 
-      <span class="dropdown" 
+      <span class="dropdown uppercase"
             ng-if="app.config.app.ShowAddFields"
             ng-mouseover="colhover=true"
             ng-mouseout="colhover=false"
@@ -69,19 +69,19 @@
                 on-svg="resources/checkbox_checked.svg" on-color="help"
                 off-svg="resources/checkbox_unchecked.svg" off-color="help">
              </image-toggle>
-             STRETCH
+             {{app.config.lang.gamelistView.Stretch}}
          </a>
             <a help-inverter
-               ng-click="page.resetFields()"> RESET </a>
+               ng-click="page.resetFields()">{{app.config.lang.gamelistView.Reset}}</a>
          </div>
       </span>
 
-      <span class="dropdown" 
+      <span class="dropdown"
             ng-if="app.config.app.ShowThemeSelect"
             ng-mouseover="app.config.themehover=true"
             ng-mouseout="app.config.themehover=false" >
          <div class="filters" help-inverter
-            ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" > Theme </div>
+            ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" >{{app.config.lang.systemView.Theme}}</div>
          <div ng-style="app.styler.helpTextColorBorder"
               ng-class="app.styler.helpMenuOptionClasses+' '+(app.config.themes_list.length>=40?'treble':(app.config.themes_list.length>=20?'double':''))"
               ng-show="app.config.themehover" >
@@ -94,7 +94,7 @@
          </div>
       </span>
 
-      <span class="dropdown" 
+      <span class="dropdown"
             ng-if="app.config.app.ShowViewSelect"
             ng-mouseover="viewhover=true"
             ng-mouseout="viewhover=false">

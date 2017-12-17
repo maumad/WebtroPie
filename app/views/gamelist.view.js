@@ -38,10 +38,8 @@
 
         page.helpmenu = 
            [{langButton: 'options', svg: 'resources/button_select.svg',
-                   menu: [{text: 'Scan',          click: scan},
-                          {text: 'Match Media', click: matchMedia},
-                          {text: 'New Folder'},
-                          {text: 'Upload Roms'}]}
+                   menu: [{text: 'Scan',       click: scan},
+                          {text: 'MatchMedia', click: matchMedia}]}
            ,{langButton: 'menu',  click: $scope.app.toggleMenu,  svg: 'resources/button_start.svg'}
            ,{langButton: 'back',  click: goBack,                      svg: 'resources/button_b.svg'}
 

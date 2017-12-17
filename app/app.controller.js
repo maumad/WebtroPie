@@ -16,7 +16,7 @@
         var app = this;
 
         // methods
-        app.dateFormatChanged = dateFormatChanged;
+        app.appConfigChanged = appConfigChanged;
         app.exitMenu = exitMenu;
         app.goMenu = goMenu;
         app.hideMenu = hideMenu;
@@ -43,20 +43,28 @@
 
             // app global data
             app.menu = {};
-            app.menu.main = [
-                {text: 'UI SETTINGS',        type: 'menu', action: 'menu/menu-ui.html'},
-                {text: 'OTHER SETTINGS',    type: 'menu', action: 'menu/menu-other.html'},
-                {text: 'HELPBAR SETTINGS', type: 'menu', action: 'menu/menu-helpbar.html'},
-            ];
-
             app.menu.history = [];
 
-            config.init();
+            config.init()
+            .then(initConfigFetched);
+
+            function initConfigFetched()
+            {
+                app.menu.main = [
+                    {text: 'UI',      type: 'menu', action: 'menu/menu-ui.html'},
+                    {text: 'Other',   type: 'menu', action: 'menu/menu-other.html'},
+                    {text: 'Helpbar', type: 'menu', action: 'menu/menu-helpbar.html'}
+                ];
+                if (config.edit)
+                {
+                    app.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
+                }
+            }
         }
 
-        function dateFormatChanged()
+        function appConfigChanged(field)
         {
-            config.save('DateFormat', config.app.DateFormat, 'string', config.APP);
+            config.save(field, config.app[field], 'string', config.APP);
         }
 
         function exitMenu()
@@ -103,10 +111,9 @@
         function languageChanged()
         {
             config.save('Language', config.app.Language, 'string', config.APP);
-            config.load(LANG, config.app.Language, true)
+            config.load(config.LANG, config.app.Language, true)
             .then(function() {
                 GameService.setFieldText();
-                hideMenu();
             });
         }
 

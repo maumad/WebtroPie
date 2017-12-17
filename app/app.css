@@ -238,16 +238,9 @@ input, select, textarea {
     margin: 0;
 }
  
-.systeminfo {
-    top: 90%;
-    -webkit-transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
-    position: absolute;
-    text-align: center;
-    vertical-align: center;
+.uppercase {
+    text-transform: uppercase;
 }
- 
 
 .helpsystembar {
     position: absolute;
@@ -355,7 +348,7 @@ input, select, textarea {
     background-color: #ddd;
     position: absolute;
     top: 15.5vh; /* height: 56vh; */
-    left: 30vw; width: 40vw;
+    left: 25vw; width: 50vw;
     z-index: 5020;
     -webkit-border-radius: 0.25em;
     -moz-border-radius: 0.25em;
@@ -380,10 +373,17 @@ input, select, textarea {
     padding: 0.75% 2%;
     font-size: 4vmin;
     /* width: 100%; */
+    text-transform: uppercase;
 }
-.menu .option.hover {
+.menu .option:hover {
     color: #ddd;
     background-color: #999;
+}
+.menu .option .arrow {
+    content: url('svr/resources/arrow.svg');
+}
+.menu .option:hover .arrow {
+    content: url('svr/color_img.php?file=resources/arrow.svg&color=DDDDDD');
 }
 .menu .line {
     width: 100%;
@@ -405,7 +405,16 @@ input, select, textarea {
 .menu .option select {
     background-color: #f0f0f0;
 }
-
+.menu .option input.tiny {
+    width: 11%;
+    text-align: center;
+ }
+.menu .option input.small {
+    width: 19%;
+ }
+ .menu .option input.large {
+    width: 40%;
+ }
 
 .game_editor {
     color: #777777;

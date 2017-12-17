@@ -1153,7 +1153,7 @@
 
                 // if text or date anchored to label float label left
                 if (view.text)
-                angular.forEach(config.lang.md_labels, function(label_text, md) {
+                angular.forEach(config.lang.md_label, function(label_text, md) {
                     var label = view.text['md_lbl_'+md];
                     var text = view.text['md_'+md];
                     if (!text && view.datetime)

@@ -97,7 +97,12 @@
             $http.get('svr/config_ini.php', {cache: false, params: {get: bitmask, lang: lang}})
             .then(function onSuccess(response)
             {
-                if (bitmask & self.APP)     self.app = response.data.app;
+                if (bitmask & self.APP)
+                {
+                    self.app = response.data.app;
+                    self.app.ViewStyle = self.app.ViewStyle || undefined;
+                    self.app.ViewTransitions = self.app.ViewTransitions || undefined;
+                }
                 if (bitmask & self.ENV)     self.env = response.data.env;
                 if (bitmask & self.LANG)    self.lang = response.data.lang;
                 if (bitmask & self.ES)      self.es = response.data.es;
