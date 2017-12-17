@@ -66,6 +66,11 @@ function getConfig($get)
         {
             $config['edit'] = true;
         }
+
+        if (!$local)
+        {
+            $config['app']['LoadAllSystems'] = false;
+        }
     }
 
     if ($get & ENV)
