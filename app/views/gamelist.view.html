@@ -99,7 +99,7 @@
             ng-mouseover="viewhover=true"
             ng-mouseout="viewhover=false">
          <div class="filters" help-inverter
-             ng-click="viewhover=!viewhover; app.util.defaultFocus()" > View </div>
+             ng-click="viewhover=!viewhover; app.util.defaultFocus()" >{{app.config.lang.gamelistView.View}}</div>
          <div ng-class="app.styler.helpMenuOptionClasses"
               ng-style="app.styler.helpTextColorBorder"
               ng-show="viewhover">
