@@ -89,7 +89,7 @@
             if (el)
             for (var i = 0; i<el.length; i++)
             {
-                if (el[i].className != 'ng-hide')
+                if(!el[i].className)
                 {
                     el[i].focus();
                     break;

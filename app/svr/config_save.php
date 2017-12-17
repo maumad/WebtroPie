@@ -8,7 +8,7 @@ $response = array('changed'=>false);
 // (multiple LAN or WAN users may have difference preferences)
 if (array_search($_POST['setting'], $USER_PREFERENCE_SETTINGS) !== FALSE)
 {
-    $_SESSION[$_POST['setting']] = $_POST['value'];
+    $_SESSION[$_POST['setting']] = $_POST['value']=='false' ? false : $_POST['value'];
     $response['session_'.$_POST['setting']] = $_POST['value'];
 }
 
