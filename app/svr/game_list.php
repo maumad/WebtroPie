@@ -138,6 +138,12 @@ foreach ($response['game'] as $index => &$game)
         $game['size'] = 0;
     }
 
+    if (isset($game['lastplayed']))
+    {
+        $game['lptime'] = strtotime($game['lastplayed']);
+        unset($game['lastplayed']);
+    }
+
     if ($scan)
     {
         $games[strtolower($game['shortpath'])] = 1;

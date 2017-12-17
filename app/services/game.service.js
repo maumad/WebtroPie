@@ -107,9 +107,9 @@
                  {name: 'publisher',  type: 'text',     width: 0.28, orderby: ['!publisher','publisher','name'] },
                  {name: 'genre',      type: 'text',     width: 0.16, orderby: ['!genre','genre','name'] },
                  {name: 'players',    type: 'text',     width: 0.03, orderby: ['players','name'], align: 'center' },
-                 {name: 'lastplayed', type: 'datetime', width: 0.13, orderby: 'lastplayed', reverse: true, align: 'right' },
+                 {name: 'lastplayed', type: 'datetime', width: 0.13, orderby: 'lastplayed', format: 'ago', reverse: true, align: 'right' },
                  {name: 'playcount',  type: 'text',     width: 0.04, orderby: 'playcount', reverse: true, align: 'center' },
-                 {name: 'modified',   type: 'datetime', width: 0.13, orderby: 'mtime', reverse: true, align: 'right'}
+                 {name: 'modified',   type: 'datetime', width: 0.13, orderby: 'mtime', format: 'ago', reverse: true, align: 'right'}
             ]
 
             config.init()
@@ -462,6 +462,16 @@
 
                         game.sys = system_name;
 
+                        if (game.lptime)
+                        {
+                            game.lastplayed = util.timestampToDate(game.lptime);
+                        }
+
+                        if (game.mtime)
+                        {
+                            game.modified = util.timestampToDate(game.mtime);
+                        }
+
                         // extra year
                         if (game.releasedate &&
                              game.releasedate.substring(0,8)!= '00000000')
@@ -491,12 +501,12 @@
                         {
                             game.rating = 1;
                         }
-
+/*
                         if (game.mtime)
                         {
                             game.modified = util.timestampToString(game.mtime);
                         }
-
+*/
                         // Add to list and auto lists
                         if (rescan)
                         {

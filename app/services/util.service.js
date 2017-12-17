@@ -110,21 +110,87 @@
             });
         }
 
-        function formatDate(text, format)
+        function datetimeAgo(date)
+        {
+            function unitsAgo(n, unit)
+            {
+                return config.lang.time.pre_ago +
+                       n + ' ' + config.lang.time[unit+(n==1?'':'s')] +
+                       config.lang.time.post_ago;
+            }
+
+            function monthDiff(d1, d2)
+            {
+                var months;
+                months = (d2.getFullYear() - d1.getFullYear()) * 12;
+                months -= d1.getMonth() + 1;
+                months += d2.getMonth();
+                return months <= 0 ? 0 : months;
+            }
+
+            var now = new Date();
+
+            var secs = Math.floor((now - date) / 1000);
+            if (secs < 60)
+                return unitsAgo(secs, 'second');
+
+            var mins = Math.floor(secs / 60);
+            if (mins < 60)
+                return unitsAgo(mins, 'minute');
+
+            var hours = Math.floor(mins / 60);
+            if (hours < 24)
+                return unitsAgo(hours, 'hour');
+
+            var days = Math.floor(hours / 24);
+            if (days < 14)
+                return unitsAgo(days, 'day');
+
+            var weeks = Math.floor(days / 7);
+            var months = monthDiff(date, now);
+
+            if (months<2)
+                return unitsAgo(weeks, 'week');
+
+            if (months<12)
+                return unitsAgo(months, 'month');
+
+            var years = Math.floor(months / 12);
+            return unitsAgo(years, 'year');
+        }
+
+        function formatDate(date, format)
         {
             if (!format)
             {
                 format = config.app.DateFormat || 'dd/mm/yyyy';
             }
+
+            // released date kept as string as it may be E.g. 00/00/1985
+            if (typeof date == 'string')
+                return format
+                    .replace(/yyyy/i, date.substring(0,4))
+                    .replace(/mm/i,   date.substring(4,6))
+                    .replace(/dd/i,   date.substring(6,8))
+                    .replace(/hh/i,   date.substring(9,11))
+                    .replace(/mi/i,   date.substring(11,13))
+                    .replace(/ss/i,   date.substring(13,15))
+                    .replace(/00\//g,'')
+                    .replace(/^\/+/g,'');
+
+            if (format == 'ago')
+            {
+                return datetimeAgo(date);
+            }
+
+            var dp = dateToDateParts(date);
             return format
-                      .replace(/yyyy/i, text.substring(0,4))
-                      .replace(/mm/i,    text.substring(4,6))
-                      .replace(/dd/i,    text.substring(6,8)) 
-                      .replace(/hh/i,    text.substring(9,11)) 
-                      .replace(/mi/i,    text.substring(11,13)) 
-                      .replace(/ss/i,    text.substring(13,15))
-                      .replace(/00\//g,'')
-                      .replace(/^\/+/g,'');
+                    .replace(/yyyy/i, dp.yyyy)
+                    .replace(/mm/i,   dp.mm)
+                    .replace(/dd/i,   dp.dd)
+                    .replace(/hh/i,   dp.hh)
+                    .replace(/mi/i,   dp.mi)
+                    .replace(/ss/i,   dp.ss);
         }
 
         // replace current page : no history
