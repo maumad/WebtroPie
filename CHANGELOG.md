@@ -1,4 +1,5 @@
 <a name="0.2.2"></a>
+- Cache improvement client, reintroduce serve cache with option, last played time ago (2017-12-23)
 - Menu: WAN Edit mode, upload settings, more appropriate local/edit options (2017-12-16)
 - Multi user: Sessions allows users to have their own preferences retained (2017-12-16)
 - Language: more Lanuage strings, changes show without refresh (2017-12-16)

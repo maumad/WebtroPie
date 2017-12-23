@@ -28,7 +28,7 @@
                       '</div>',
             controller: controller,
             controllerAs: 'vm',
-            bindToController: { obj:'=', game:'=', format:'@', blank: '@' }
+            bindToController: { obj:'=', game:'=', blank: '@' }
         }
         return directive;
     }
@@ -69,7 +69,7 @@
             }
             else
             {
-                vm.date = util.formatDate(text, vm.format);
+                vm.date = util.formatDate(text, vm.obj.format);
             }
         }
     }

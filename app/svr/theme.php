@@ -1,14 +1,8 @@
 <?php
-$seconds_to_cache = 7 * 24 * 60 * 60; // cache for 1 week
-$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
-header("Expires: $ts");
-header("Pragma: cache");
-header("Cache-Control: max-age=$seconds_to_cache");
-
+require_once("cache.php");
 require("config.php");
 
 $theme  = isset($_GET['theme']) ? $_GET['theme'] : false;
-//$scan   = isset($_GET['scan'])  ? $_GET['scan']  : false;
 
 if ($theme)
 {
@@ -23,9 +17,13 @@ else
              DEFAULT_THEME;
 }
 
-$response = array();
-
 $themepath = "themes/".$theme;
+
+// cache theme last updated to last git pull
+if(file_exists($themepath.'/.git/FETCH_HEAD'))
+{
+    caching_headers($themepath, filemtime($themepath.'/.git/FETCH_HEAD'));
+}
 
 $response = array();
 $response['name'] = $theme;

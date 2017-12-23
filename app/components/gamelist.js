@@ -215,6 +215,7 @@
                vm.liststyle.height = util.pct(gl.size.h,'vh');
 
             vm.liststyle['font-size']  = util.pct(fontsize,'vh');
+            vm.liststyle['line-height']  = util.pct(fontsize,'vh');
             vm.liststyle['font-family']  = gl.fontFamily;
             vm.liststyle['text-transform']  = gl.div['text-transform']
 

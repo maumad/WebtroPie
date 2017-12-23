@@ -1,13 +1,5 @@
 <?php
-// allow client cache
-if (isset($_GET['mtime']))
-{
-    $seconds_to_cache = 7 * 24 * 60 * 60; // cache for 1 week
-    $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
-    header("Expires: $ts");
-    header("Pragma: cache");
-    header("Cache-Control: max-age=$seconds_to_cache");
-}
+require_once("cache.php");
 require_once("game.php");
 
 $system      = isset($_GET['system'])      ? $_GET['system']      : false;
@@ -22,6 +14,22 @@ if (!$config['edit'])
 {
     $scan = false;
     $match_media = false;
+}
+
+$gamelist_file = $config['systems'][$system]['gamelist_file'];
+
+if(!$scan && !$match_media)
+{
+    caching_headers($gamelist_file, filemtime($gamelist_file));
+}
+
+$gamelist_cache = preg_replace('/\.xml/', '.cache', $gamelist_file);
+
+if(file_exists($gamelist_cache) &&
+    filemtime($gamelist_cache) > filemtime($gamelist_file))
+{
+   echo file_get_contents($gamelist_cache);
+   exit;
 }
 
 $SYSTEM_PATH = ROMSPATH.$system;
@@ -97,14 +105,13 @@ function check_media(&$game, $media, $ext)
     {
         $response['has_'.$media] = true;
 
-        $media_paths = get_media_paths_full_url($game[$media], $system);
-        if (!file_exists($media_paths['fullpath']))
+        $media_paths = get_media_paths_full_url($game[$media], $system, true);
+        if (file_exists($media_paths['fullpath']))
         {
-            $game[$media.'_missing'] = true;
-        }
-        if ($media_paths['url'])
-        {
-            $game[$media.'_url'] = $media_paths['url'];
+            if ($media_paths['url'])
+            {
+                $game[$media.'_url'] = $media_paths['url'];
+            }
         }
     }
 }
@@ -168,6 +175,12 @@ foreach ($response['folder'] as $index => &$game)
 }
 unset($response['folder'])
 */
+
+if($config['app']['CacheGamelists'])
+{
+    chdir($svr_dir);
+    file_put_contents($gamelist_cache, json_encode($response, JSON_UNESCAPED_UNICODE));
+}
 
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
 ?>

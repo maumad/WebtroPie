@@ -20,7 +20,7 @@
         <th width="15%">{{app.config.lang.md_label.image}}</th>
         <td class=narrow>
             <input ng-model="vm.game.image" ng-class="{fileclear: vm.game.image}"
-                   ng-class="{found: vm.game.image_found, missing: vm.game.image_missing}"
+                   ng-class="{found: vm.game.image_found, missing: !vm.game.image_url}"
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('image')">
             <button ng-show="vm.game.image" class="clear"
@@ -119,7 +119,7 @@
         <th width="15%">{{app.config.lang.md_label.marquee}}</th>
         <td class=narrow>
             <input ng-model="vm.game.marquee" ng-class="{fileclear: vm.game.marquee}"
-                   ng-class="{found: vm.game.marquee_found, missing: vm.game.marquee_missing}"
+                   ng-class="{found: vm.game.marquee_found, missing: !vm.game.marquee_url}"
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('marquee')">
             <button ng-show="vm.game.marquee" class="clear"
@@ -134,7 +134,7 @@
         <th width="15%">{{app.config.lang.md_label.video}}</th>
         <td class=narrow>
             <input ng-model="vm.game.video" ng-class="{fileclear: vm.game.video}"
-                   ng-class="{found: vm.game.video_found, missing: vm.game.video_missing}"
+                   ng-class="{found: vm.game.video_found, missing: !vm.game.video_url}"
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('video')">
             <button ng-show="vm.game.video" class="clear"

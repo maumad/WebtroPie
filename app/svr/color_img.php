@@ -1,9 +1,5 @@
 <?php
-$seconds_to_cache = 7 * 24 * 60 * 60; // cache for 1 week
-$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
-header("Expires: $ts");
-header("Pragma: cache");
-header("Cache-Control: max-age=$seconds_to_cache");
+require_once("cache.php");
 
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 $color = isset($_GET['color']) ? $_GET['color'] : 'ffffff';
@@ -32,6 +28,8 @@ if(!file_exists($file)) {
    print "file $file does not exist\n";
    exit;
 }
+
+caching_headers($file.$color, filemtime($file));
 
 list($basename, $extension) = preg_split('/\./',$file);
 

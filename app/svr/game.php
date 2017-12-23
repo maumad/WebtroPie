@@ -15,8 +15,6 @@ function get_media_path($media, $system)
 {
     global $config, $svr_dir;
 
-    $SYSTEM_PATH = ROMSPATH.$system;
-
     // use either config directories or roms path / images, videos or marquees
     if ($media == 'image' && isset($config['app']['uploadImageDirectory']))
     {
@@ -32,12 +30,12 @@ function get_media_path($media, $system)
     }
     else
     {
-        return $SYSTEM_PATH.'/'.$media.'s';  // E.g. images
+        return ROMSPATH.$system.'/'.$media.'s';  // E.g. images
     }
 }
 
 
-function get_media_paths_full_url($filename, $system)
+function get_media_paths_full_url($filename, $system, $check_dirs)
 {
     global $svr_dir;
 
@@ -64,10 +62,10 @@ function get_media_paths_full_url($filename, $system)
     if ($fullpath)
     {
         $fullpath = simplify_path($fullpath);
-        if (substr($fullpath, 0, $l= strlen('/home/pi/RetroPie/')) === '/home/pi/RetroPie/')
+        if (substr($fullpath, 0, $l=18) === '/home/pi/RetroPie/')
         {
             $url = substr($fullpath, $l);
-            if (!file_exists($url))
+            if ($check_dirs && !file_exists($url))
             {
                 $p = strpos($url, '/'.$system.'/');
                 if ($p !== false)
@@ -83,10 +81,10 @@ function get_media_paths_full_url($filename, $system)
                 }
             }
         }
-        elseif (substr($fullpath, 0, $l= strlen('/home/pi/')) === '/home/pi/')
+        elseif (substr($fullpath, 0, $l=9) === '/home/pi/')
         {
             $url = 'home_'.substr($fullpath, $l);
-            if (!file_exists($url))
+            if ($check_dirs && !file_exists($url))
             {
                 $p = strpos($url, '/'.$system.'/');
                 if ($p !== false)

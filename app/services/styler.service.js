@@ -333,6 +333,11 @@
         function createDatetimeStyle(text)
         {
             createTextStyle(text);
+
+            if (text.name == 'md_lastplayed')
+            {
+                text.format = 'ago';
+            }
             //delete text.div.height;
         }
 
@@ -897,7 +902,7 @@
 
             text.style['font-size'] = util.pct(text.fontSize,'vh');
 
-            text.style['line-height'] = 'normal';
+            text.style['line-height'] = util.pct(text.fontSize,'vh'); //'normal';
 
             if (text.size)
             {
