@@ -7,7 +7,7 @@
     <!-- all animatable images for current theme + prev/current/next system's "system" view -->
     <div ng-repeat="sysname in app.ThemeService.theme.carousel_systems_list"
         id="sys-imgs-{{sysname}}"
-        ng-if="page.systembar.dragging || (app.CarouselService.centerOffset($index) >= -1 && app.CarouselService.centerOffset($index) <= 1)"
+        ng-if="page.systembar.dragging || app.CarouselService.centerOffset($index)==0 || (page.loaded && app.CarouselService.centerOffset($index) >= -1 && app.CarouselService.centerOffset($index) <= 1)"
         ng-style="page.systembar.dragging?app.styler.carousel.backgrounds[app.CarouselService.centerOffset($index)+app.styler.carousel.hiIndex]:{}"
         ng-class="'system_images'+app.CarouselService.centerOffset($index)+(page.loaded && page.animating?' systemtransition':'')">
         <div class="system_images_inner">

@@ -772,6 +772,15 @@
             text.div = {};
             text.style = {};
 
+            if (text.fontSize)
+            {
+                text.fontSize = util.round(text.fontSize,6);
+            }
+            else
+            {
+                text.fontSize = 0.035;
+            }
+
             if (text.name == "help")
             {
                 if (!text.textColor)
@@ -784,32 +793,25 @@
                 }
                 text.div.color = '#'+text.textColor.substring(0,6);
             }
+            else if (text.anchor_label)
+            {
+                text.div.left = '100%';
+                text.div.top = '0';
+                text.style['margin-left'] = util.pct(text.fontSize * 0.75,'vmin');
+                if (!text.fontFamily)
+                {
+                    text.div['font-family'] = 'ohc_regular';
+                }
+            }
             else if (!text.pos)
             {
-                // anchored to label so position inside label
-                if (text.name && text.name.substring(0,3)=='md_')
+                text.div.display = 'none';
+                if (config.app.LogThemeStyles)
                 {
-                    text.anchor_label = true;
-
-                    text.style.floar = 'left';
-                    text.div.display = 'inline';
-                    text.div.position = 'relative';
-                    if (!text.fontFamily)
-                    {
-                        text.div['font-family'] = 'ohc_regular';
-                    }
-                    text.style['margin-left'] = '0.5vw';
+                    console.log('no position - hidden');
+                    console.groupEnd('styler.createTextStyle('+text.name+')');
                 }
-                else
-                {
-                    text.div.display = 'none';
-                    if (config.app.LogThemeStyles)
-                    {
-                        console.log('no position - hidden');
-                        console.groupEnd('styler.createTextStyle('+text.name+')');
-                    }
-                    return;
-                }
+                return;
             }
 
             if (text.pos)
@@ -830,15 +832,6 @@
 
                 text.div.left = util.pct(text.pos.x,'vw');
                 text.div.top = util.pct(text.pos.y,'vh');
-            }
-
-            if (text.fontSize)
-            {
-                text.fontSize = util.round(text.fontSize,6);
-            }
-            else
-            {
-                text.fontSize = 0.035;
             }
 
             // default size for helpsystembar
@@ -902,21 +895,7 @@
 
             text.style['font-size'] = util.pct(text.fontSize,'vh');
 
-            text.style['line-height'] = util.pct(text.fontSize,'vh'); //'normal';
-
-            if (text.size)
-            {
-                    text.rows = Math.floor(text.size.h /
-                                    (text.fontSize + text.lineSpacing/100));
-                if (!text.rows)
-                    text.rows=1;
-            }
-            else
-            {
-                text.rows = 1;
-            }
-
-
+            text.rows = Math.floor(height / text.fontSize) || 1;
             if (text.multiline && text.lineSpacing)
             {
                 if (text.name != 'gamelist')
@@ -1005,7 +984,7 @@
                 });
             }
 
-            var style = {};
+            var style = {'object-fit': 'fill'};
 
             if (video.showSnapshotNoVideo == 'true') {
                 style['background-size'] = 'contain';

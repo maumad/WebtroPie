@@ -83,6 +83,9 @@ input, select, textarea {
     overflow: hidden;
     white-space: nowrap;
     position: relative;
+    top: 0%;
+}
+.text_inner.vcenter {
     top: 50%;
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);

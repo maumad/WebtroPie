@@ -1,4 +1,6 @@
 <a name="0.2.2"></a>
+- Fix anchor datefield to label (quirk) (https://github.com/gazpan/WebtroPie/issues/5) (2017-12-26)
+- some style improvements, option to wait for animation (2017-12-26)
 - Cache improvement client, reintroduce serve cache with option, last played time ago (2017-12-23)
 - Menu: WAN Edit mode, upload settings, more appropriate local/edit options (2017-12-16)
 - Multi user: Sessions allows users to have their own preferences retained (2017-12-16)

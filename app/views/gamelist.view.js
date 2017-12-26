@@ -83,18 +83,28 @@
             .then(function(response)
             {
                 var default_view = GameService.getDefaultGamelistViewName(page.system);
-
                 return ThemeService.themeInit(page.system, default_view, !!config.app.ScanAtStartup);
             })
             .then(function(theme_output)
             {
-                page.loaded = true;
-                util.focus('#filter');
-
                 CarouselService.setCarouselSystemIndexByName(page.system);
 
+                if (config.app.WaitForAnimations &&
+                    $scope.app.animate_view_class &&
+                    $scope.app.animate_view_class.substring(0,5) == 'slide')
+                {
+                    $timeout(function() {
+                        page.loaded = true;
+                        util.focus('#filter');
+                    }, 600)
+                }
+                else
+                {
+                    page.loaded = true;
+                    util.focus('#filter');
+                }
+
                 util.register_keyPressCallback(keyPress);
-                //console.log('TODO: filtered from system screen?');
 
                 $scope.$watch('app.GameService.show_favorite', filterChange);
                 $scope.$watch('app.GameService.show_nested', filterChange);

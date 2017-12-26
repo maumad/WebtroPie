@@ -47,6 +47,19 @@
 
         // themes is a list of all themes (for selection and to cache)
         self.themes = {};
+        self.text_fields = {
+            name:        "name",
+            description: "desc",
+            developer:   "developer",
+            publisher:   "publisher",
+            genre:       "genre",
+            players:     "players",
+            playcount:   "playcount"
+        }
+        self.datetime_fields = {
+            releasedate: "releasedate",
+            lastplayed:  "lastplayed"
+        }
 
         // convert theme object images attributes to style
         function correctThemeErrors(systheme)
@@ -63,40 +76,86 @@
                 // releasedate should be datetime
                 if (view.text)
                 {
-                    if (view.text.md_releasedate)
+                    angular.forEach(self.text_fields, function(field)
                     {
-                        if (!view.datetime) view.datetime = {};
-                        if (!view.datetime.md_releasedate) view.datetime.md_releasedate = {};
-                        mergeObjects(view.datetime.md_releasedate, view.text.md_releasedate);
-                        delete view.text.md_releasedate;
-                    }
-                    // lastplayed should be datetime
-                    if (view.text.md_lastplayed)
+                        if (view.text['md_lbl_'+field] &&
+                            view.text['md_lbl_'+field].pos &&
+                            view.text['md_'+field] &&
+                            !view.text['md_'+field].pos)
+                        {
+                            view.text['md_'+field].anchor_label = true;
+                            delete view.text['md_'+field].pos;
+                            delete view.text['md_'+field].size;
+                        }
+                    });
+                    // if no datefield[thing].pos then anchor label
+                    // even if there is a text[thing].pos
+                    angular.forEach(self.datetime_fields, function(field)
                     {
-                        if (!view.datetime) view.datetime = {};
-                        if (!view.datetime.md_lastplayed) view.datetime.md_lastplayed = {};
-                        mergeObjects(view.datetime.md_lastplayed, view.text.md_lastplayed);
-                        delete view.text.md_lastplayed;
+                        var anchor_label = view.text['md_lbl_'+field] &&
+                                           view.text['md_lbl_'+field].pos &&
+                                            !(view.datetime &&
+                                              view.datetime['md_'+field] &&
+                                              view.datetime['md_'+field].pos);
+
+                        if (view.datetime && view.datetime['md_'+field])
+                        {
+                            if (anchor_label)
+                            {
+                                view.datetime['md_'+field].anchor_label = anchor_label;
+                                view.datetime['md_'+field].size = view.text['md_lbl_'+field].size;
+                                view.datetime['md_'+field].alignment = 'left';
+                                delete view.datetime['md_'+field].pos;
+                            }
+                        }
+                        if (view.text['md_'+field])
+                        {
+                            if (anchor_label)
+                            {
+                                view.text['md_'+field].anchor_label = anchor_label;
+                                view.text['md_'+field].size = view.text['md_lbl_'+field].size;
+                                view.text['md_'+field].alignment = 'left';
+                                delete view.text['md_'+field].pos;
+                            }
+                        }
+
+                        if (view.text['md_'+field])
+                        {
+                            if (!view.datetime) view.datetime = {};
+                            if (!view.datetime['md_'+field]) view.datetime['md_'+field] = {};
+                            if (view.text['md_'+field].pos == '1 1')
+                                delete view.text['md_'+field].pos;
+                            mergeObjects(view.datetime['md_'+field], view.text['md_'+field], true);
+                            delete view.text['md_'+field];
+                        }
+                    });
+                    /*
+                    if (view.text.md_lbl_rating &&
+                        view.text.md_lbl_rating.pos &&
+                        !(view.rating &&
+                          view.rating.md_rating &&
+                          view.rating.md_rating.pos))
+                    {
+                        if (view.rating && view.rating.md_rating)
+                        {
+                            view.rating.md_rating.anchor_label = true;
+                            delete view.rating.md_rating.pos;
+                        }
+                        if (view.text.md_rating)
+                        {
+                            view.text.md_rating.anchor_label = true;
+                            delete view.text.md_rating.pos;
+                        }
                     }
+                    */
                     // rating should be rating
                     if (view.text && view.text.md_rating)
                     {
                         if (!view.rating) view.rating = {};
                         if (!view.rating.md_rating) view.rating.md_rating = {};
-                        mergeObjects(view.rating.md_rating, view.text.md_rating);
+                        mergeObjects(view.rating.md_rating, view.text.md_rating, false);
                         delete view.text.md_rating;
                     }
-                    // let missing text size (width) equal label size
-                    angular.forEach(view.datetime, function (text)
-                    {
-                        if (text.name &&
-                            view.text['md_lbl_' + text.name.substring(3)] &&
-                            view.text['md_lbl_' + text.name.substring(3)].size &&
-                            (!text.size || text.size.substring(0, 1) == '0'))
-                        {
-                            text.size = view.text['md_lbl_' + text.name.substring(3)].size;
-                        }
-                    })
                 }
             });
         }

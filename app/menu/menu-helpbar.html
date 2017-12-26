@@ -43,6 +43,26 @@
     </div>
     <div class="line"></div>
 
+    <div class="option">
+        {{app.config.lang.menu.ShowEmptySystems}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.ShowEmptySystems"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
+
+    <div class="option">
+        {{app.config.lang.menu.ShowEmptyDirectories}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.ShowEmptyDirectories"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
+
     <div class="footer">
          <button ng-click="app.exitMenu()">{{app.config.lang.button.back}}</button>
     </div>

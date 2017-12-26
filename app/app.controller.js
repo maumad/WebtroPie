@@ -51,12 +51,12 @@
             function initConfigFetched()
             {
                 app.menu.main = [
-                    {text: 'UI',      type: 'menu', action: 'menu/menu-ui.html'},
-                    {text: 'Other',   type: 'menu', action: 'menu/menu-other.html'},
-                    {text: 'Helpbar', type: 'menu', action: 'menu/menu-helpbar.html'}
+                    {text: 'UI',          type: 'menu', action: 'menu/menu-ui.html'},
+                    {text: 'Helpbar',     type: 'menu', action: 'menu/menu-helpbar.html'}
                 ];
                 if (config.local)
                 {
+                    app.menu.main.push({text: 'Other',   type: 'menu', action: 'menu/menu-other.html'});
                     app.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
                 }
             }
@@ -138,17 +138,12 @@
                 if (c != anim_class )
                 {
                     view_el.removeClass(c);
-                    //view_el.removeClass(c+'.ng-enter');
-                    //view_el.removeClass(c+'.ng-leave');
                 }
             });
             if (anim_class)
             {
                 app.animate_view_class = anim_class;
                 view_el.addClass(anim_class);
-                //view_el.addClass('anim_class.ng-enter');
-                //view_el.addClass('anim_class.ng-leave');
-                
             }
             else
             {

@@ -63,21 +63,9 @@
 
             page.loaded = false;
 
-            if ($scope.app.animate_view_class &&
-                 $scope.app.animate_view_class.substring(0,5)=='slide')
-            {
-                $timeout(function() {
-                    page.loaded = true;
-                }, 600)
-            }
-            else
-            {
-                page.loaded = true;
-            }
-
             page.initSystembar(); // ???
             
-            page.animating = false;  // just used for animation -1, 0 or +1
+            page.animating = false;  // just used for carousel animation -1, 0 or +1
 
             // focus on center logo (so that input events are listened to)
             util.register_defaultFocus('#logo0');
@@ -94,6 +82,19 @@
             {
                 ThemeService.setSystem(ThemeService.system_name, 'system');
                 ThemeService.playSound('bgsound');
+
+                if (config.app.WaitForAnimations &&
+                    $scope.app.animate_view_class &&
+                    $scope.app.animate_view_class.substring(0,5)=='slide')
+                {
+                    $timeout(function() {
+                        page.loaded = true;
+                    }, 600)
+                }
+                else
+                {
+                    page.loaded = true;
+                }
 
                 // get the current system gamelist
                 // (to show games total and get list ahead of navigation)
@@ -158,23 +159,6 @@
             var system_name = CarouselService.getCurrentCarouselSystemName();
             var default_view = GameService.getDefaultGamelistViewName(system_name);
             styler.createViewStyles(ThemeService.system.view[default_view], true);
-        }
-
-        function setGoDetailAnimation()
-        {
-          page.loaded = false;
-
-            if ( config.app.ViewTransitions=='Fade' )
-            {
-                $scope.app.setViewAnimation('fade');
-            }
-            else if ( config.app.ViewTransitions=='Slide' )
-            {
-                $scope.app.setViewAnimation('slideup');
-            }
-
-            delete ThemeService.system;
-            delete ThemeService.view;
         }
 
         function goFavorites()
@@ -453,14 +437,39 @@
 
         function nextSystem()
         {
+            if (config.app.WaitForAnimations && page.animating)
+            {
+                return;
+            }
             page.animating = true;
             CarouselService.nextCarouselSystem();
         }
 
         function previousSystem()
         {
+            if (config.app.WaitForAnimations && page.animating)
+            {
+                return;
+            }
             page.animating = true;
             CarouselService.previousCarouselSystem();  
+        }
+
+        function setGoDetailAnimation()
+        {
+            page.loaded = false;
+
+            if ( config.app.ViewTransitions=='Fade' )
+            {
+                $scope.app.setViewAnimation('fade');
+            }
+            else if ( config.app.ViewTransitions=='Slide' )
+            {
+                $scope.app.setViewAnimation('slideup');
+            }
+
+            delete ThemeService.system;
+            delete ThemeService.view;
         }
 
         // reindex and recenter, clear everything
