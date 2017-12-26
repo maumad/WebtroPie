@@ -1,4 +1,5 @@
 <a name="0.2.2"></a>
+- Redirect script to auto redirect web root to WebtroPie: LinuxArcadeGuy (2017-12-26)
 - Fix anchor datefield to label (quirk) (https://github.com/gazpan/WebtroPie/issues/5) (2017-12-26)
 - some style improvements, option to wait for animation (2017-12-26)
 - Cache improvement client, reintroduce serve cache with option, last played time ago (2017-12-23)
