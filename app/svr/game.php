@@ -35,7 +35,7 @@ function get_media_path($media, $system)
 }
 
 
-function get_media_paths_full_url($filename, $system, $check_dirs)
+function get_media_paths_full_url($filename, $system)
 {
     global $svr_dir;
 
@@ -65,7 +65,7 @@ function get_media_paths_full_url($filename, $system, $check_dirs)
         if (substr($fullpath, 0, $l=18) === '/home/pi/RetroPie/')
         {
             $url = substr($fullpath, $l);
-            if ($check_dirs && !file_exists($url))
+            if (!file_exists($url))
             {
                 $p = strpos($url, '/'.$system.'/');
                 if ($p !== false)
@@ -84,7 +84,7 @@ function get_media_paths_full_url($filename, $system, $check_dirs)
         elseif (substr($fullpath, 0, $l=9) === '/home/pi/')
         {
             $url = 'home_'.substr($fullpath, $l);
-            if ($check_dirs && !file_exists($url))
+            if (!file_exists($url))
             {
                 $p = strpos($url, '/'.$system.'/');
                 if ($p !== false)
