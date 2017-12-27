@@ -19,10 +19,10 @@ else
 
 $themepath = "themes/".$theme;
 
-// cache theme last updated to last git pull
+// cache theme last updated to last git pull or this file last changed
 if(file_exists($themepath.'/.git/FETCH_HEAD'))
 {
-    caching_headers($themepath, filemtime($themepath.'/.git/FETCH_HEAD'));
+    caching_headers($themepath, max(filemtime('theme.php'),filemtime($themepath.'/.git/FETCH_HEAD')));
 }
 
 $response = array();
@@ -55,9 +55,23 @@ function get_font(&$text, $path)
 
     if(!isset($response['fonts'][$family]))
     {
+        $vcenter = -50;
+        // get baseline, '.' should always be on baseline
+        $dims = @imagettfbbox(1000, 0, $fullpath, '.');
+        if ($dims)
+        {
+            $baseline = $dims[1];
+            // upper/lower + left/right
+            $dims = imagettfbbox(1000, 0, $fullpath, "MASTERyjgpq");
+            $height = $dims[1] - $dims[7];
+            if ($height)
+                $vcenter = -50 -(40 * $baseline / $height);
+        }
+
         $response['fonts'][$family] = array(
             'fullpath' => 'svr/'.$fullpath,
-            'family' => $family
+            'family' => $family,
+            'vcenter' => $vcenter
         );
    }
 }

@@ -1,4 +1,6 @@
 <a name="0.2.2"></a>
+- Improve text vertical positioning for some fonts (2017-12-27)
+- Increase upload limit (2017-12-27)
 - Redirect script to auto redirect web root to WebtroPie: LinuxArcadeGuy (2017-12-26)
 - Fix anchor datefield to label (quirk) (https://github.com/gazpan/WebtroPie/issues/5) (2017-12-26)
 - some style improvements, option to wait for animation (2017-12-26)

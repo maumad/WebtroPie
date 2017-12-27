@@ -254,9 +254,14 @@
 
                 f.vw = (gl_width * f.width / width) - spacing;
 
-                f.style = { left:  util.pct(x,'vw'),
-                              width:  util.pct(f.vw,'vw'),
-                      'max-width':  util.pct(f.vw,'vw')};
+                var vcenter = styler.fonts[gl.fontFamily].vcenter || -50;
+                f.style = { left: util.pct(x,'vw'),
+                            width: util.pct(f.vw,'vw'),
+                            'max-width': util.pct(f.vw,'vw'),
+                            top: '50%',
+                            '-webkit-transform': 'translateY('+vcenter+'%)',
+                            '-ms-transform': 'translateY('+vcenter+'%)',
+                            'transform': 'translateY('+vcenter+'%)'};
 
                 x += f.vw + spacing;
 

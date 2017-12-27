@@ -20,8 +20,6 @@
             template: '<div id="{{vm.obj.name}}" ng-show="vm.obj.div" ng-style="vm.obj.div" '+
                              ' class="{{vm.obj.multiline?\'text_multiline\':\'text\'}}">'+
                           '<div ng-style="vm.obj.style"'+
-                             //' ng-class="{vcenter: vm.obj.rows>=2 && !vm.obj.multiline}" '+
-                             ' ng-class="{vcenter: !vm.obj.multiline}" '+
                              ' class="text_{{vm.obj.multiline?\'multiline_\':\'\'}}inner">{{vm.text}}</div>'+
                           '<theme-text ng-if="vm.text_obj" obj="vm.text_obj"></theme-text>'+
                           '<theme-date ng-if="vm.date_obj" obj="vm.date_obj" text="vm.date_text"></theme-date>'+

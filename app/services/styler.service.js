@@ -919,6 +919,14 @@
             {
                 text.style['font-family'] = text.fontFamily;
                 text.div['font-family'] = text.fontFamily;
+                if (!text.multiline)
+                {
+                    var vcenter = self.fonts[text.fontFamily].vcenter || -50;
+                    text.style['top'] = '50%';
+                    text.style['-webkit-transform'] = 'translateY('+vcenter+'%)';
+                    text.style['-ms-transform'] = 'translateY('+vcenter+'%)';
+                    text.style['transform'] = 'translateY('+vcenter+'%)';
+                }
             }
 
             if (parseInt(text.forceUppercase))
