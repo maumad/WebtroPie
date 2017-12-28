@@ -1006,6 +1006,12 @@
                 style.top = util.pct(video.pos.y,'vh');
             }
 
+            // default video origin center
+            if (!video.origin)
+            {
+                video.origin = '0.5 0.5';
+            }
+
             if (video.origin)
             {
                 video.origin = denormalize('pos',video.origin);
