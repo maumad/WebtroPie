@@ -9,20 +9,29 @@ WebtroPie=`pwd`              # this (script) directory (full)
 SVR=$WebtroPie/app/svr       # external content (images etc) to web serve
 LIB=$WebtroPie/app/lib       # external libs
 
-echo "WebtroPie can either run under apache or standalone"
+echo "WebtroPie can either run under Apache or standalone"
 echo
 echo "To access Emulationstation files and write to gamelist file WebtroPie must run as 'pi' user"
-echo "Under apache, the apache webserver process itself must run as pi user for WebtroPie to have"
-echo "the same permissions, choosing 'y' will change the apache runas user from www-data to pi"
-echo "and also increase to php upload limits in php.ini"
+echo "Under Apache, the Apache webserver process itself must run as pi user for WebtroPie to have"
+echo "the same permissions, choosing 'y' will change the Apache RUN_USER from www-data to pi"
+echo "and also increase to PHP upload limits in php.ini"
 echo
-echo "Running standalone runs in a single thread, no changes are made to apache but WebtroPie may"
-echo "not run as reponsively as under apache"
+echo "Running standalone runs in a single thread, no changes are made to Apache or PHP but"
+echo "WebtroPie may not run as reponsively as under Apache"
 echo
-read -p "Install to apache? [y/n]: " key
+read -p "Install to Apache? [y/n]: " apache
 
 # Make sure you have the packages below :-
-if [ $key == "y" ]; then
+if [ $apache == "y" ]; then
+    IP=`ifconfig | sed '/inet addr:.*255.255/!d;s|.*addr:|http://|;s|\s.*||'`
+    echo
+    read -p "Redirect ${IP} to ${IP}/app ? [y/n]: " redirect
+    if [ $redirect == "y" ]; then
+        cp "$WebtroPie/redirect.html" /var/www/html/index.html
+    fi
+    echo
+    echo "Installing..."
+    echo
     sudo apt-get install apache2 php5 libapache2-mod-php5 php5-gd -y
 else
     sudo apt-get install php5 php5-gd -y
@@ -30,8 +39,8 @@ fi
 
 #  fix permissions ?
 sudo chown -R pi:www-data app
-chown pi:www-data /dev/shm/runcommand.log
-chown pi:www-data /dev/shm/retroarch.cfg
+chown -f pi:www-data /dev/shm/runcommand.log
+chown -f pi:www-data /dev/shm/retroarch.cfg
 sudo find app -type f -exec chmod 664 {} \;
 sudo find app -type d -exec chmod 775 {} \;
 
@@ -64,19 +73,19 @@ sed -f - $WebtroPie/php.ini > $WebtroPie/phpserver.ini << SED_SCRIPT
   s|^;*\s*\(session.save_path\s*=\).*$|\1 $WebtroPie/sessions|gi
 SED_SCRIPT
 
-if [ $key == "y" ]; then
+if [ $apache == "y" ]; then
     # APACHE
 
     # quick and dirty way to serve from apache http://192.168.?.?/app
-    sudo ln -sf $WebtroPie/app /var/www/html/app
+    sudo ln -sf "$WebtroPie/app" /var/www/html/app
 
-    # Make a backup envvars (once)
+    # Make a backup php.ini (once)
     if [ ! -s /etc/php5/apache2/php.ini.orig ] ; then
         sudo cp /etc/php5/apache2/php.ini /etc/php5/apache2/php.ini.orig
     fi
 
     # copy altered php.ini
-    sudo cp $WebtroPie/php.ini /etc/php5/apache2/php.ini
+    sudo cp "$WebtroPie/php.ini" /etc/php5/apache2/php.ini
 
     # Make a backup envvars (once)
     if [ ! -s /etc/apache2/envvars.orig ] ; then
@@ -90,15 +99,14 @@ if [ $key == "y" ]; then
     # try to restart apache but may need a reboot if pid not found
     sudo apachectl restart
 
-    IP=`ifconfig | sed '/inet addr:.*255.255/!d;s|.*addr:|http://|;s|\s.*||'`
-    echo "------------------------------------------------"
-    echo "WebtroPie serving by apache from ${IP}/app"
-    echo "------------------------------------------------"
+    echo "--------------------------------------------------------"
+    echo "WebtroPie serving by Apache from ${IP}/app"
+    echo "--------------------------------------------------------"
 
 else
     # STAND ALONE PHP WEBSERVER
 
-    cd $WebtroPie
+    cd "$WebtroPie"
 
     # Create local session directory owned by pi
     if [ ! -d "$WebtroPie/sessions" ] ; then
