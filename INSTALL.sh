@@ -53,9 +53,9 @@ chmod 755 $SVR/runcommand.sh
 
 # create a php.ini with bigger upload limits
 sed -f - /etc/php5/apache2/php.ini > $WebtroPie/php.ini << SED_SCRIPT
-  s|^;*\s*\(upload_max_filesize\s*=\).*$|\1 32M|gi
-  s|^;*\s*\(post_max_size\s*=\).*$|\1 32M|gi
-  s|^;*\s*\(memory_limit\s*=\).*$|\1 32M|gi
+  s|^;*\s*\(upload_max_filesize\s*=\).*$|\1 128M|gi
+  s|^;*\s*\(post_max_size\s*=\).*$|\1 128M|gi
+  s|^;*\s*\(memory_limit\s*=\).*$|\1 128M|gi
 SED_SCRIPT
 
 # create a php.ini for stand alone webserver with altered session settings
