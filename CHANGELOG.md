@@ -1,4 +1,5 @@
 <a name="0.2.2"></a>
+- Fix game launch, INSTALL.sh improvements, stand alone web server option (2017-12-27)
 - Improve text vertical positioning for some fonts (2017-12-27)
 - Increase upload limit (2017-12-27)
 - Redirect script to auto redirect web root to WebtroPie: LinuxArcadeGuy (2017-12-26)
