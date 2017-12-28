@@ -20,9 +20,7 @@
             title="{{vm.image_w ? vm.image_w + ' x ' + vm.image_h : ''}}">
             <md-media-upload md="image" accept="image/*"></md-media-upload>
             <div ng-show="vm.image_preview && vm.image_w && !app.dragover" class="preview"
-                 ng-style="{'background-image': 'url(svr/'+vm.game.image_url+')',
-                            width: vm.image_w+'px',
-                            height: vm.image_h+'px'}">
+                 ng-style="vm.gamePreviewStyle('image')">
                 {{vm.image_w}} x {{vm.image_h}}
             </div>
         </td>
@@ -84,9 +82,7 @@
             ng-mouseleave="vm.marquee_preview=false">
             <md-media-upload md="marquee" accept="image/*"></md-media-upload>
             <div ng-show="vm.marquee_preview && vm.marquee_w && !app.dragover" class="preview"
-                 ng-style="{'background-image': 'url(svr/'+vm.game.marquee_url+')',
-                            width: vm.marquee_w+'px',
-                            height: vm.marquee_h+'px'}">
+                 ng-style="vm.gamePreviewStyle('marquee')">
                 {{vm.marquee_w}} x {{vm.marquee_h}}
             </div>
         </td>

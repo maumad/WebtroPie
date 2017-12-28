@@ -35,6 +35,7 @@
         vm.editorKeyPress = editorKeyPress;
         vm.focusFirstButton = focusFirstButton;
         vm.gameImageStyle = gameImageStyle;
+        vm.gamePreviewStyle = gamePreviewStyle;
         vm.mdChanged = mdChanged;
 
         function onInit()
@@ -128,6 +129,16 @@
             if (vm.game[md+'_url'])
             {
                 return { 'background-image': 'url("svr/'+vm.game[md+'_url']+'")' }
+            }
+        }
+
+        function gamePreviewStyle(md)
+        {
+            if (vm.game[md+'_url'])
+            {
+                return { 'background-image': 'url("svr/'+vm.game[md+'_url']+'")',
+                            width: vm[md+'_w']+'px',
+                            height: vm[md+'_h']+'px' }
             }
         }
 
