@@ -1196,9 +1196,9 @@
                 return str;
             }
 
-            if (str.match(/-*[0-9\.][0-9\.]*  *-*[0-9\.][0-9\.]*/))
+            if (str.match(/-*[0-9\.][0-9\.]*[, ]+-*[0-9\.][0-9\.]*/))
             {
-                var arr = str.split(" ");
+                var arr = str.split(/[, ]+/);
                 if (type=='pos')
                 {
                     return { x : parseFloat(arr[0]), y : parseFloat(arr[1])};
