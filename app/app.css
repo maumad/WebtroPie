@@ -561,6 +561,24 @@ input, select, textarea {
     width: 45%;
 }
 
+.preview {
+    position: absolute;
+    top: 10vh;
+    left: 15vw;
+    z-index: 5050;
+    border: 1px solid #444;
+    box-shadow: 15px 15px 10px rgba(0,0,0,0.4);
+    padding: 0 3% 0 2%;
+    color: yellow;
+    font-weight: bold;
+    font-size: 150%;
+    text-shadow: 2px 2px 3px black,
+                -1px -1px 0 black,
+                 1px -1px 0 black,
+                -1px 1px 0 black,
+                 1px 1px 0 black;
+}
+
 .hr {
     width: 98%;
     height: 1px;

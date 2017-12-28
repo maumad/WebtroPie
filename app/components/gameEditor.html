@@ -4,7 +4,8 @@
          - missing
          </span>
     </div>
-    <table style="width: 100%" cellspacing=0 >
+
+    <table style="width: 100%" cellspacing=0>
     <tr>
         <th width="15%">{{app.config.lang.md_label.name}}</th>
         <td class=narrow>
@@ -12,8 +13,18 @@
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('name')">
         </td>
-        <td class=snap rowspan=5 ng-style="vm.gameImageStyle('image')">
+        <td class=snap rowspan=5
+            ng-style="vm.gameImageStyle('image')"
+            ng-mouseover="vm.image_preview=true"
+            ng-mouseleave="vm.image_preview=false"
+            title="{{vm.image_w ? vm.image_w + ' x ' + vm.image_h : ''}}">
             <md-media-upload md="image" accept="image/*"></md-media-upload>
+            <div ng-show="vm.image_preview && vm.image_w && !app.dragover" class="preview"
+                 ng-style="{'background-image': 'url(svr/'+vm.game.image_url+')',
+                            width: vm.image_w+'px',
+                            height: vm.image_h+'px'}">
+                {{vm.image_w}} x {{vm.image_h}} {{app.dragover}}
+            </div>
         </td>
     </tr>
     <tr>
@@ -67,8 +78,17 @@
                        size-units="vmin"></md-image-toggle>
             </small>
         </td>
-        <td class=snap rowspan=3 ng-style="vm.gameImageStyle('marquee')">
+        <td class=snap rowspan=3
+            ng-style="vm.gameImageStyle('marquee')"
+            ng-mouseover="vm.marquee_preview=true"
+            ng-mouseleave="vm.marquee_preview=false">
             <md-media-upload md="marquee" accept="image/*"></md-media-upload>
+            <div ng-show="vm.marquee_preview && vm.marquee_w && !app.dragover" class="preview"
+                 ng-style="{'background-image': 'url(svr/'+vm.game.marquee_url+')',
+                            width: vm.marquee_w+'px',
+                            height: vm.marquee_h+'px'}">
+                {{vm.marquee_w}} x {{vm.marquee_h}}
+            </div>
         </td>
     </tr>
     <tr>

@@ -40,6 +40,32 @@
         function onInit()
         {
             util.waitForRender($scope).then(focusFirstButton);
+            getImageStats();
+        }
+
+        // get images (does not cause a second http request)
+        function getImageStats()
+        {
+            if(vm.game['image_url'])
+            {
+                angular.element('<img/>')
+                .attr('src', 'svr/'+vm.game['image_url'])
+                .on('load', function() {
+                    vm.image_w = this.width;
+                    vm.image_h = this.height;
+                    this.remove(); // prevent memory leaks
+                });
+            }
+            if(vm.game['marquee_url'])
+            {
+                angular.element('<img/>')
+                .attr('src', 'svr/'+vm.game['marquee_url'])
+                .on('load', function() {
+                    vm.marquee_w = this.width;
+                    vm.marquee_h = this.height;
+                    this.remove(); // prevent memory leaks
+                });
+            }
         }
 
         function clearMedia(md)

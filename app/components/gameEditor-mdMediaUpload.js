@@ -67,6 +67,7 @@
                 e.stopPropagation();
                 e.preventDefault();
                 vm.dragover = true;
+                $scope.app.dragover = true;
                 $scope.$evalAsync();
                 this.style['outline']='2px dashed #444';
                 this.style['outline-offset']='-1vmin';
@@ -76,6 +77,7 @@
                 e.stopPropagation();
                 e.preventDefault();
                 vm.dragover = false;
+                $scope.app.dragover = false;
                 $scope.$evalAsync();
                 this.style['outline']='';
                 this.style['outline-offset']='';
@@ -86,6 +88,7 @@
                 e.preventDefault();
                 upload(e.dataTransfer.files);
                 vm.dragover = false;
+                $scope.app.dragover = false;
                 $scope.$evalAsync();
                 this.style['outline']='';
                 this.style['outline-offset']='';
