@@ -604,21 +604,13 @@
                 image.img = style;
             }
 
-            if (image.name == 'background')
+            if (image.zIndex)
+            {
+                style['z-index'] = parseInt(image.zIndex);
+            }
+            else if (image.name == 'background')
             {
                 style['z-index'] = 1;
-            }
-            else if (image.zIndex)
-            {
-                style['z-index'] = parseInt(image.zIndex)+1;
-            }
-            else if (image.fullscreen)
-            {
-                style['z-index'] = 3;
-            }
-            else if (image.banner)
-            {
-                style['z-index'] = 6;
             }
             else if(image.extra)
             {
@@ -727,13 +719,13 @@
                     //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
 
-                if (rating.name && rating.name.substring(0,3)=='md_')
-                {
-                    style['z-index'] = 30;
-                }
-                else if (rating.zIndex)
+                if (rating.zIndex)
                 {
                     style['z-index'] = parseInt(rating.zIndex)+1;
+                }
+                else if (rating.name && rating.name.substring(0,3)=='md_')
+                {
+                    style['z-index'] = 30;
                 }
                 else
                 {
@@ -940,7 +932,7 @@
                 text.div['text-align'] = text.alignment;
             }
 
-            if (text.zIndex)
+            if (text.zIndex) // && parseInt(text.zIndex)>=0)
             {
                 text.div['z-index'] = parseInt(text.zIndex)+1;
             }
@@ -992,18 +984,37 @@
                 });
             }
 
-            var style = {'object-fit': 'fill'};
+            var style = {};
 
-            if (video.showSnapshotNoVideo == 'true') {
-                style['background-size'] = 'contain';
-                style['background-repeat'] = 'no-repeat';
+            if (!video.pos)
+            {
+                video.pos='1 1';
             }
 
             if (video.pos)
             {
                 video.pos = denormalize('pos',video.pos);
+                if (video.pos.x>=1 || video.pos.y>=1 ||
+                    video.pos.x<0 || video.pos.y<0)
+                {
+                    style.display = 'none';
+                    if (config.app.LogThemeStyles)
+                    {
+                        console.log('Offscreen - hidden');
+                        console.groupEnd('styler.createVideoStyle('+video.name+')');
+                    }
+                    video.div = style;
+                    return;
+                }
                 style.left = util.pct(video.pos.x,'vw');
                 style.top = util.pct(video.pos.y,'vh');
+            }
+
+            style['object-fit'] = 'fill';
+
+            if (video.showSnapshotNoVideo == 'true') {
+                style['background-size'] = 'contain';
+                style['background-repeat'] = 'no-repeat';
             }
 
             // default video origin center
@@ -1574,6 +1585,9 @@
                         system.view.system.helpsystem)
             {
                 help = system.view.system.helpsystem.help;
+            }
+            else {
+                help = {};
             }
 
             if (!help.div)

@@ -254,7 +254,11 @@
 
                 f.vw = (gl_width * f.width / width) - spacing;
 
-                var vcenter = styler.fonts[gl.fontFamily].vcenter || -50;
+                var vcenter = -50;
+                if (styler.fonts[gl.fontFamily])
+                {
+                    vcenter = styler.fonts[gl.fontFamily].vcenter;
+                }
                 f.style = { left: util.pct(x,'vw'),
                             width: util.pct(f.vw,'vw'),
                             'max-width': util.pct(f.vw,'vw'),
