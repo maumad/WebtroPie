@@ -21,15 +21,15 @@ $gamelist_file = $config['systems'][$system]['gamelist_file'];
 if(!$scan && !$match_media)
 {
     caching_headers($gamelist_file, filemtime($gamelist_file));
-}
 
-$gamelist_cache = preg_replace('/\.xml/', '.cache', $gamelist_file);
+    $gamelist_cache = preg_replace('/\.xml/', '.cache', $gamelist_file);
 
-if(file_exists($gamelist_cache) &&
-    filemtime($gamelist_cache) > filemtime($gamelist_file))
-{
-   echo file_get_contents($gamelist_cache);
-   exit;
+    if(file_exists($gamelist_cache) &&
+        filemtime($gamelist_cache) > filemtime($gamelist_file))
+    {
+       echo file_get_contents($gamelist_cache);
+       exit;
+    }
 }
 
 $SYSTEM_PATH = ROMSPATH.$system;
@@ -176,7 +176,8 @@ foreach ($response['folder'] as $index => &$game)
 unset($response['folder'])
 */
 
-if($config['app']['CacheGamelists'])
+if(!$scan && !$match_media &&
+   $config['app']['CacheGamelists'])
 {
     chdir($svr_dir);
     file_put_contents($gamelist_cache, json_encode($response, JSON_UNESCAPED_UNICODE));
