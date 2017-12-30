@@ -467,6 +467,11 @@
                             game.lastplayed = util.timestampToDate(game.lptime);
                         }
 
+                        if (game.size)
+                        {
+                            game.human_size = util.humanSize(game.size);
+                        }
+
                         if (game.mtime)
                         {
                             game.modified = util.timestampToDate(game.mtime);

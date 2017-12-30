@@ -54,8 +54,18 @@
                 .on('load', function() {
                     vm.image_w = this.width;
                     vm.image_h = this.height;
+                    var url = this.src || this.href;
+                    var iTime = performance.getEntriesByName(url)[0];
+                    vm.image_size = util.humanSize(iTime.encodedBodySize);
                     this.remove(); // prevent memory leaks
                 });
+
+                var image_mtime = parseInt(vm.game['image_url'].replace(/^.*\?/,''));
+                if (image_mtime)
+                {
+                    vm.image_modified = util.formatDate(image_mtime);
+                    vm.image_modified_ago = util.formatDate(image_mtime,'ago');
+                }
             }
             if(vm.game['marquee_url'])
             {
@@ -64,8 +74,17 @@
                 .on('load', function() {
                     vm.marquee_w = this.width;
                     vm.marquee_h = this.height;
+                    var url = this.src || this.href;
+                    var iTime = performance.getEntriesByName(url)[0];
+                    vm.marquee_size = util.humanSize(iTime.encodedBodySize);
                     this.remove(); // prevent memory leaks
                 });
+                var marquee_mtime = parseInt(vm.game['marquee_url'].replace(/^.*\?/,''));
+                if (marquee_mtime)
+                {
+                    vm.marquee_modified = util.formatDate(marquee_mtime);
+                    vm.marquee_modified_ago = util.formatDate(marquee_mtime,'ago');
+                }
             }
         }
 

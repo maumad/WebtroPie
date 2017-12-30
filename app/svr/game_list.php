@@ -20,7 +20,7 @@ $gamelist_file = $config['systems'][$system]['gamelist_file'];
 
 if(!$scan && !$match_media)
 {
-    caching_headers($gamelist_file, filemtime($gamelist_file));
+    caching_headers($gamelist_file, max(filemtime('game_list.php'),filemtime($gamelist_file)));
 
     $gamelist_cache = preg_replace('/\.xml/', '.cache', $gamelist_file);
 
@@ -137,7 +137,7 @@ foreach ($response['game'] as $index => &$game)
     {
         $size = filesize($game['path']);
         $game['size'] = $size;
-        $game['human_size'] = human_filesize($size);
+        //$game['human_size'] = human_filesize($size);
         $game['mtime'] = filemtime($game['path']);
     }
     else

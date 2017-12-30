@@ -26,6 +26,7 @@
         self.go = go;     // replace current page : no history
         self.formatDate = formatDate;
         self.hex2rgba = hex2rgba;
+        self.humanSize = humanSize;
         self.keyPress = keyPress;
         self.keyRelease = keyRelease;
         self.invert = invert;
@@ -178,10 +179,16 @@
                     .replace(/00\//g,'')
                     .replace(/^\/+/g,'');
 
+            if (typeof date == 'number')
+            {
+                date = timestampToDate(date);
+            }
+
             if (format == 'ago')
             {
                 return datetimeAgo(date);
             }
+
 
             var dp = dateToDateParts(date);
             return format
@@ -232,6 +239,13 @@
                                 parseInt(result[2], 16)+','+
                                 parseInt(result[3], 16)+','+
                                 self.round(parseInt(result[4], 16)/255,2)+')';
+        }
+
+        function humanSize(bytes)
+        {
+            var sz = 'BKMGTP';
+            var factor = Math.floor(((''+bytes).length - 1) / 3);
+            return round(bytes / Math.pow(1024, factor),2) + sz[factor];
         }
 
         // convert "#RRGGBBAA" hex to string "rgba(r,g,b,a)" (decimal x 3 + float)

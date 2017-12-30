@@ -576,7 +576,6 @@ input, select, textarea {
     color: yellow;
     background-color: rgba(240,240,240,0.4);
     font-weight: bold;
-    font-size: 150%;
     text-shadow: 2px 2px 3px black,
                 -1px -1px 0 black,
                  1px -1px 0 black,

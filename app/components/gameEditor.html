@@ -21,7 +21,9 @@
             <md-media-upload md="image" accept="image/*"></md-media-upload>
             <div ng-show="vm.image_preview && vm.image_w && !app.dragover" class="preview"
                  ng-style="vm.gamePreviewStyle('image')">
-                {{vm.image_w}} x {{vm.image_h}}
+                {{vm.image_w}} x {{vm.image_h}}<br />
+                {{app.config.lang.md_label.human_size}} {{vm.image_size}}<br />
+                {{app.config.lang.md_label.modified}} {{vm.image_modified}}, {{vm.image_modified_ago}}
             </div>
         </td>
     </tr>
@@ -83,7 +85,9 @@
             <md-media-upload md="marquee" accept="image/*"></md-media-upload>
             <div ng-show="vm.marquee_preview && vm.marquee_w && !app.dragover" class="preview"
                  ng-style="vm.gamePreviewStyle('marquee')">
-                {{vm.marquee_w}} x {{vm.marquee_h}}
+                {{vm.marquee_w}} x {{vm.marquee_h}} <br />
+                {{app.config.lang.md_label.human_size}} {{vm.marquee_size}}  <br />
+                {{app.config.lang.md_label.modified}} {{vm.marquee_modified}} {{vm.marquee_modified_ago}}
             </div>
         </td>
     </tr>
