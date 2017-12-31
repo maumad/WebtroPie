@@ -140,6 +140,7 @@
                 GameService.mdChanged(vm.md);
                 // trigger digest cycle now so there's no visual delay
                 $scope.$parent.$evalAsync();
+                GameService.getMediaInfo(vm.md, GameService.game);
                 // finished
                 vm.uploading = false;
                 vm.progress = 0;

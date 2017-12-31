@@ -19,11 +19,11 @@
             ng-mouseleave="vm.image_preview=false"
             title="{{vm.image_w ? vm.image_w + ' x ' + vm.image_h : ''}}">
             <md-media-upload md="image" accept="image/*"></md-media-upload>
-            <div ng-show="vm.image_preview && vm.image_w && !app.dragover" class="preview"
+            <div ng-show="vm.image_preview && vm.game.image_w && !app.dragover" class="preview"
                  ng-style="vm.gamePreviewStyle('image')">
-                {{vm.image_w}} x {{vm.image_h}}<br />
-                {{app.config.lang.md_label.human_size}} {{vm.image_size}}<br />
-                {{app.config.lang.md_label.modified}} {{vm.image_modified}}, {{vm.image_modified_ago}}
+                {{vm.game.image_w}} x {{vm.game.image_h}}<br />
+                {{app.config.lang.md_label.human_size}} {{vm.game.image_size}}<br />
+                {{app.config.lang.md_label.modified}} {{vm.game.image_modified}}, {{vm.game.image_modified_ago}}
             </div>
         </td>
     </tr>
@@ -83,11 +83,11 @@
             ng-mouseover="vm.marquee_preview=true"
             ng-mouseleave="vm.marquee_preview=false">
             <md-media-upload md="marquee" accept="image/*"></md-media-upload>
-            <div ng-show="vm.marquee_preview && vm.marquee_w && !app.dragover" class="preview"
+            <div ng-show="vm.marquee_preview && vm.game.marquee_w && !app.dragover" class="preview"
                  ng-style="vm.gamePreviewStyle('marquee')">
-                {{vm.marquee_w}} x {{vm.marquee_h}} <br />
-                {{app.config.lang.md_label.human_size}} {{vm.marquee_size}}  <br />
-                {{app.config.lang.md_label.modified}} {{vm.marquee_modified}} {{vm.marquee_modified_ago}}
+                {{vm.game.marquee_w}} x {{vm.game.marquee_h}} <br />
+                {{app.config.lang.md_label.human_size}} {{vm.game.marquee_size}}  <br />
+                {{app.config.lang.md_label.modified}} {{vm.game.marquee_modified}} {{vm.game.marquee_modified_ago}}
             </div>
         </td>
     </tr>

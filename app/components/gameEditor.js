@@ -41,65 +41,8 @@
         function onInit()
         {
             util.waitForRender($scope).then(focusFirstButton);
-            getImageStats();
-        }
-
-        // get images (does not cause a second http request)
-        function getImageStats()
-        {
-            if(vm.game['image_url'])
-            {
-                angular.element('<img/>')
-                .attr('src', 'svr/'+vm.game['image_url'])
-                .on('load', function() {
-                    vm.image_w = this.width;
-                    vm.image_h = this.height;
-                    var url = this.src || this.href;
-                    var iTime = performance.getEntriesByName(url)[0];
-                    vm.image_size = util.humanSize(iTime.encodedBodySize);
-                    this.remove(); // prevent memory leaks
-                    if (vm.game.image == vm.game.reset.image)
-                    {
-                        ['url','w','h','size','modified','modofied_ago']
-                        .forEach(function(f) {
-                            vm.game.reset['image_'+f] = vm.game['image_'+f];
-                        });
-                    }
-                });
-
-                var image_mtime = parseInt(vm.game['image_url'].replace(/^.*\?/,''));
-                if (image_mtime)
-                {
-                    vm.image_modified = util.formatDate(image_mtime);
-                    vm.image_modified_ago = util.formatDate(image_mtime,'ago');
-                }
-            }
-            if(vm.game['marquee_url'])
-            {
-                angular.element('<img/>')
-                .attr('src', 'svr/'+vm.game['marquee_url'])
-                .on('load', function() {
-                    vm.marquee_w = this.width;
-                    vm.marquee_h = this.height;
-                    var url = this.src || this.href;
-                    var iTime = performance.getEntriesByName(url)[0];
-                    vm.marquee_size = util.humanSize(iTime.encodedBodySize);
-                    this.remove(); // prevent memory leaks
-                    if (vm.game.marquee == vm.game.reset.marquee)
-                    {
-                        ['url','w','h','size','modified','modofied_ago']
-                        .forEach(function(f) {
-                            vm.game.reset['marquee_'+f] = vm.game['marquee_'+f];
-                        });
-                    }
-                });
-                var marquee_mtime = parseInt(vm.game['marquee_url'].replace(/^.*\?/,''));
-                if (marquee_mtime)
-                {
-                    vm.marquee_modified = util.formatDate(marquee_mtime);
-                    vm.marquee_modified_ago = util.formatDate(marquee_mtime,'ago');
-                }
-            }
+            GameService.getMediaInfo('image', vm.game);
+            GameService.getMediaInfo('marquee', vm.game);
         }
 
         function clearMedia(md)
@@ -175,8 +118,8 @@
             if (vm.game[md+'_url'])
             {
                 return { 'background-image': 'url("svr/'+vm.game[md+'_url']+'")',
-                            width: vm[md+'_w']+'px',
-                            height: vm[md+'_h']+'px' }
+                            width: vm.game[md+'_w']+'px',
+                            height: vm.game[md+'_h']+'px' }
             }
         }
 
