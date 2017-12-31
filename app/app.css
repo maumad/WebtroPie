@@ -563,8 +563,8 @@ input, select, textarea {
 
 .preview {
     position: absolute;
-    top: 10vh;
-    left: 15vw;
+    top: -3vh;
+    left: -7vh;
     z-index: 6000;
     border-top: 1px solid rgba(255,255,255,0.6);
     border-left: 1px solid rgba(250,250,250,0.6);

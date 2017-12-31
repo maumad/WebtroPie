@@ -813,6 +813,11 @@
             {
                 game[field] = game.reset[field];
             });
+            ['url','w','h','size','modified','modofied_ago']
+            .forEach(function(f) {
+                game['image_'+f] = game.reset['image_'+f];
+                game['marquee_'+f] = game.reset['marquee_'+f];
+            });
 
             delete game.changes;
         }

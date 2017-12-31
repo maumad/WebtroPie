@@ -367,12 +367,10 @@
                 if (!image.pos)
                 {
                     image.size = '0 0';
-                    console.log('(background) pos = 0 0');
                 }
                 if (!image.size)
                 {
                     image.size = '1 1';
-                    console.log('(background) size = 1 1');
                 }
             }
 

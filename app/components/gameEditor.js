@@ -58,6 +58,13 @@
                     var iTime = performance.getEntriesByName(url)[0];
                     vm.image_size = util.humanSize(iTime.encodedBodySize);
                     this.remove(); // prevent memory leaks
+                    if (vm.game.image == vm.game.reset.image)
+                    {
+                        ['url','w','h','size','modified','modofied_ago']
+                        .forEach(function(f) {
+                            vm.game.reset['image_'+f] = vm.game['image_'+f];
+                        });
+                    }
                 });
 
                 var image_mtime = parseInt(vm.game['image_url'].replace(/^.*\?/,''));
@@ -78,6 +85,13 @@
                     var iTime = performance.getEntriesByName(url)[0];
                     vm.marquee_size = util.humanSize(iTime.encodedBodySize);
                     this.remove(); // prevent memory leaks
+                    if (vm.game.marquee == vm.game.reset.marquee)
+                    {
+                        ['url','w','h','size','modified','modofied_ago']
+                        .forEach(function(f) {
+                            vm.game.reset['marquee_'+f] = vm.game['marquee_'+f];
+                        });
+                    }
                 });
                 var marquee_mtime = parseInt(vm.game['marquee_url'].replace(/^.*\?/,''));
                 if (marquee_mtime)
@@ -92,6 +106,11 @@
         {
             vm.game[md]='';
             vm.game[md+'_url']='';
+            vm.game[md+'_w']='';
+            vm.game[md+'_h']='';
+            vm.game[md+'_size']='';
+            vm.game[md+'_modified']='';
+            vm.game[md+'_modified_ago']='';
             vm.mdChanged(md);
         }
 
