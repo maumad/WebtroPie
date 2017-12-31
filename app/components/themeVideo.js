@@ -57,17 +57,6 @@
                 {
                     vm.video_url = '';
                     vm.obj.div['background-image'] = vm.game.image_url;
-                    if (!vm.obj.div.width)
-                    {
-                        vm.obj.div.width = vm.obj.div['max-width'];
-                        vm.obj.div.height = vm.obj.div['max-height'];
-                    }
-                }
-                if (vm.video_url && vm.obj.div &&
-                     vm.obj.div.width && vm.obj.div['max-width'])
-                {
-                    delete vm.obj.div.width;
-                    delete vm.obj.div.height;
                 }
             }
         }

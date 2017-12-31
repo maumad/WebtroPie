@@ -1053,10 +1053,12 @@
                 video.maxSize = denormalize('size',video.maxSize);
                 if (video.maxSize.w)
                 {
+                    style.width =
                     style['max-width'] = util.pct(video.maxSize.w,'vw');
                 }
                 if (video.maxSize.h)
                 {
+                    style.height =
                     style['max-height'] = util.pct(video.maxSize.h,'vh');
                 }
             }
