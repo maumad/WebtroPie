@@ -27,6 +27,9 @@ if [ $apache == "y" ]; then
     echo
     read -p "Redirect ${IP} to ${IP}/app ? [y/n]: " redirect
     if [ $redirect == "y" ]; then
+        if [ ! -s /var/www/html/index.html.orig ] ; then
+            sudo cp /var/www/html/index.html /var/www/html/index.html.orig
+        fi
         cp "$WebtroPie/redirect.html" /var/www/html/index.html
     fi
     echo

@@ -10,6 +10,11 @@ rm -f php.ini
 rm -f phpserver.ini
 sudo rm /var/www/html/app
 
+if [ -s /var/www/html/index.html.orig ] ; then
+    sudo cp /var/www/html/index.html /var/www/html/index.html.bak
+    sudo mv /var/www/html/index.html.orig /var/www/html/index.html
+fi
+
 if [ -s /etc/apache2/envvars.orig ] ; then
     sudo cp /etc/apache2/envvars /etc/apache2/envvars.bak
     sudo mv /etc/apache2/envvars.orig /etc/apache2/envvars
