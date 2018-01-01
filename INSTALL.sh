@@ -11,10 +11,9 @@ LIB=$WebtroPie/app/lib       # external libs
 
 echo "WebtroPie can either run under Apache or standalone"
 echo
-echo "To access Emulationstation files and write to gamelist file WebtroPie must run as 'pi' user"
-echo "Under Apache, the Apache webserver process itself must run as pi user for WebtroPie to have"
-echo "the same permissions, choosing 'y' will change the Apache RUN_USER from www-data to pi"
-echo "and also increase to PHP upload limits in php.ini"
+echo "To access Emulationstation files and write to gamelist file WebtroPie must run as 'pi' user."
+echo "If you type 'y' the Apache RUN_USER will be changed from www-data to pi"
+echo "and PHP upload limits are increased."
 echo
 echo "Running standalone runs in a single thread, no changes are made to Apache or PHP but"
 echo "WebtroPie may not run as reponsively as under Apache"

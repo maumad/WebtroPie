@@ -3,6 +3,7 @@
 WebtroPie is a ROM Manager specifically for RetroPie
 
 * [source](https://github.com/gazpan/WebtroPie)
+* [wiki](https://github.com/gazpan/WebtroPie/wiki)
 * [early WIP very long video](https://www.youtube.com/watch?v=d1ovSZqve44)
 * [forum link](https://retropie.org.uk/forum/topic/10164/web-app-wip-please-give-it-a-name/18)
 
@@ -12,6 +13,11 @@ It can be used by any device running a modern web browser in your home or remote
 
 WebtroPie uses the themes installed on your pi to show systems and gamelists similarly to EmulationStation.
 
+```sh
+git clone https://github.com/gazpan/WebtroPie
+cd WebtroPie
+sudo ./INSTALL.sh
+```
 
 Controls
 =
