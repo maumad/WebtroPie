@@ -20,7 +20,8 @@ $USER_PREFERENCE_SETTINGS = array(
     'ShowEmptySystems','ShowEmptyDirectories',
     'ShowAddFields','ShowGameCounts',
     'ShowThemeSelect','ShowViewSelect',
-    'LogSystemTotals'
+    'LogSystemTotals','WaitForAnimations',
+    'AutoplayVideos','MuteVideos','ShowVideoControls'
 );
 
 function getConfig($get)

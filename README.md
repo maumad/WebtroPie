@@ -169,6 +169,3 @@ Include a viewbox, otherwise the SVG may not fully be displayed
 * google for making angularjs
 * php guys
 
-
-
-

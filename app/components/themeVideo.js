@@ -17,7 +17,9 @@
             scope: true,
             template: '<div>'+
                           '<video ng-style="vm.obj.div" ng-if="vm.video_url"'+
-                                ' ng-src="{{vm.video_url}}" autoplay loop></video>'+
+                                ' ng-src="{{vm.video_url}}" loop'+
+                                ' ng-click="vm.togglePlayPause()">'+
+                                '</video>'+
                           '<div ng-style="vm.obj.div" ng-if="!vm.video_url && '+
                                 'vm.obj.div[\'background-image\']"></div>'+
                       '<div>',
@@ -28,17 +30,99 @@
         return directive;
     }
 
-    controller.$inject = ['$scope','GameService'];
+    controller.$inject = ['$scope','GameService','$element','util','config','$timeout'];
 
-    function controller($scope, GameService)
+    function controller($scope, GameService, $element, util, config, $timeout)
     {
         var vm = this;
+        vm.$onInit = onInit;
+        vm.togglePlayPause = togglePlayPause;
 
-        // watch for theme change
-        $scope.$watch('vm.obj', updateVideo);
+        function onInit()
+        {
+            if (vm.obj.delay && typeof vm.obj.delay == 'string')
+            {
+                vm.obj.delay = parseFloat(vm.obj.delay);
+            }
 
-        // watch for current game change, update image using meta data value
-        $scope.$watch('vm.game', updateVideo);
+            // watch for theme change
+            $scope.$watch('vm.obj', updateVideo);
+
+            // watch for current game change, update image using meta data value
+            $scope.$watch('vm.game', updateVideo);
+
+            util.waitForRender($scope)
+            .then(function() {
+                var el = $element.find( "video" );
+                if (el && el.length)
+                {
+                    vm.video = el[0];
+                    // watch for autoplay, show controls and muted option changes
+                    $scope.$watch(function() { return config.app.AutoplayVideos; }, setAutoplay);
+                    $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
+                    $scope.$watch(function() { return config.app.MuteVideos; }, setMuted);
+
+                    // play first video
+                    updateVideo();
+                }
+            });
+        }
+
+        function setAutoplay(new_val, old_val)
+        {
+            if (new_val != old_val)
+            {
+                if (config.app.AutoplayVideos)
+                {
+                    vm.video.play();
+                }
+                else
+                {
+                    vm.video.pause();
+                }
+            }
+        }
+
+        function setControls(new_val, old_val)
+        {
+            if (config.app.ShowVideoControls)
+            {
+                vm.video.setAttribute("controls","controls");
+            }
+            else
+            {
+                vm.video.removeAttribute("controls");
+            }
+        }
+
+        function setMuted()
+        {
+            if (config.app.MuteVideos)
+            {
+                vm.video.muted = true;
+            }
+            else
+            {
+                vm.video.muted = false;
+            }
+        }
+
+        // click on video to pause/play video
+        function togglePlayPause()
+        {
+            if (vm.video)
+            {
+                if (vm.video.paused)
+                {
+                    vm.video.play();
+                }
+                else
+                {
+                    vm.video.pause();
+                }
+            }
+            util.defaultFocus();
+        }
 
         function updateVideo()
         {
@@ -57,6 +141,21 @@
                 {
                     vm.video_url = '';
                     vm.obj.div['background-image'] = vm.game.image_url;
+                }
+            }
+
+            // after a game change autoplay video after theme delay seconds
+            if (vm.video && config.app.AutoplayVideos)
+            {
+                if (vm.obj.delay)
+                {
+                    $timeout(function () {
+                        vm.video.play();
+                    }, vm.obj.delay * 1000);
+                }
+                else
+                {
+                    vm.video.play();
                 }
             }
         }
