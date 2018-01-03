@@ -559,12 +559,13 @@ input, select, textarea {
     background-position: center;
     background-repeat: no-repeat;
     width: 45%;
+    text-align: center;
 }
 
 .preview {
     position: absolute;
-    top: -3vh;
-    left: -7vh;
+    top: 2vh;
+    left: 3vh;
     z-index: 6000;
     border-top: 1px solid rgba(255,255,255,0.6);
     border-left: 1px solid rgba(250,250,250,0.6);

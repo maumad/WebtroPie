@@ -330,6 +330,10 @@
                             game.reset[md+'_'+f] = game[md+'_'+f];
                         });
                     }
+                    if (game.video == game.reset.video)
+                    {
+                        game.reset.video_url = game.video_url;
+                    }
                 });
             }
         }
@@ -855,6 +859,7 @@
                 game['image_'+f] = game.reset['image_'+f];
                 game['marquee_'+f] = game.reset['marquee_'+f];
             });
+            game.video_url = game.reset.video_url;
 
             delete game.changes;
         }

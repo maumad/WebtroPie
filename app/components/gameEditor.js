@@ -43,6 +43,7 @@
             util.waitForRender($scope).then(focusFirstButton);
             GameService.getMediaInfo('image', vm.game);
             GameService.getMediaInfo('marquee', vm.game);
+            vm.game.reset.video_url = vm.game.video_url;
         }
 
         function clearMedia(md)

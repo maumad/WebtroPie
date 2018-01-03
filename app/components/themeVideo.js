@@ -16,7 +16,7 @@
             replace: true,
             scope: true,
             template: '<div>'+
-                          '<video ng-style="vm.obj.div" ng-if="vm.video_url"'+
+                          '<video ng-style="vm.obj.div" ng-show="vm.video_url"'+
                                 ' ng-src="{{vm.video_url}}" loop'+
                                 ' ng-click="vm.togglePlayPause()">'+
                                 '</video>'+
@@ -43,6 +43,7 @@
             if (vm.obj.delay && typeof vm.obj.delay == 'string')
             {
                 vm.obj.delay = parseFloat(vm.obj.delay);
+                console.log('video delay is '+ vm.obj.delay + ' seconds')
             }
 
             // watch for theme change
@@ -62,8 +63,8 @@
                     $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
                     $scope.$watch(function() { return config.app.MuteVideos; }, setMuted);
 
-                    // play first video
-                    updateVideo();
+                    // play first video, and watch for video upload or enter
+                    $scope.$watch('vm.game.video', updateVideo);
                 }
             });
         }
@@ -140,7 +141,7 @@
                 else if (vm.obj.showSnapshotNoVideo == 'true' && vm.game.image_url)
                 {
                     vm.video_url = '';
-                    vm.obj.div['background-image'] = vm.game.image_url;
+                    vm.obj.div['background-image'] = 'url("svr/'+vm.game.image_url+'")';
                 }
             }
 
