@@ -59,10 +59,15 @@ function get_media_paths_full_url($filename, $system)
     {
         $fullpath = $filename;
     }
+
     if ($fullpath)
     {
         $fullpath = simplify_path($fullpath);
-        if (substr($fullpath, 0, $l=18) === '/home/pi/RetroPie/')
+        if (substr($fullpath, 0, 45) === '/home/pi/.emulationstation/downloaded_images/')
+        {
+            $url = substr($fullpath, 27);
+        }
+        else if (substr($fullpath, 0, $l=18) === '/home/pi/RetroPie/')
         {
             $url = substr($fullpath, $l);
             if (!file_exists($url))

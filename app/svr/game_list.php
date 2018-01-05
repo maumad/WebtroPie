@@ -20,12 +20,15 @@ $gamelist_file = $config['systems'][$system]['gamelist_file'];
 
 if(!$scan && !$match_media)
 {
-    caching_headers($gamelist_file, max(filemtime('game_list.php'),filemtime($gamelist_file)));
+    $mtime = max(filemtime('game_list.php'),
+                 filemtime('game.php'),
+                 filemtime($gamelist_file));
+
+    caching_headers($gamelist_file, $mtime);
 
     $gamelist_cache = preg_replace('/\.xml/', '.cache', $gamelist_file);
 
-    if(file_exists($gamelist_cache) &&
-        filemtime($gamelist_cache) > filemtime($gamelist_file))
+    if(file_exists($gamelist_cache) && filemtime($gamelist_cache) > $mtime)
     {
        echo file_get_contents($gamelist_cache);
        exit;
