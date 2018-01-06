@@ -25,7 +25,6 @@
         self.getDefaultGamelistViewName = getDefaultGamelistViewName;
         self.getGamelist = getGamelist;
         self.getGameMetadata = getGameMetadata;
-        self.getMediaInfo = getMediaInfo;
         self.getParentDir = getParentDir;
         self.getSubDirectory = getSubDirectory;
         self.getSystemGamelist = getSystemGamelist;
@@ -296,46 +295,6 @@
             }
 
             return (typeof obj) == 'object' ? obj.text : obj;
-        }
-
-        function getMediaInfo(md, game)
-        {
-            if(game[md+'_url'])
-            {
-                var mtime = parseInt(game[md+'_url'].replace(/^.*\?/,''));
-                if (mtime)
-                {
-                    game[md+'_modified'] = util.formatDate(mtime);
-                    game[md+'_modified_ago'] = util.formatDate(mtime,'ago');
-                }
-                else
-                {
-                    game[md+'_modified'] = '';
-                    game[md+'_modified_ago'] = '';
-                }
-                var el = angular.element('<img/>');
-                el
-                .attr('src', 'svr/'+game[md+'_url'])
-                .on('load', function() {
-                    game[md+'_w'] = el[0].width;
-                    game[md+'_h'] = el[0].height;
-                    var url = el[0].src || el[0].href;
-                    var iTime = performance.getEntriesByName(url)[0];
-                    game[md+'_size'] = util.humanSize(iTime.encodedBodySize);
-                    el.remove(); // prevent memory leaks
-                    if (game[md] == game.reset[md])
-                    {
-                        ['url','w','h','size','modified','modified_ago']
-                        .forEach(function(f) {
-                            game.reset[md+'_'+f] = game[md+'_'+f];
-                        });
-                    }
-                    if (game.video == game.reset.video)
-                    {
-                        game.reset.video_url = game.video_url;
-                    }
-                });
-            }
         }
 
         // return path of parent directory
@@ -854,12 +813,12 @@
             {
                 game[field] = game.reset[field];
             });
-            ['url','w','h','size','modified','modofied_ago']
+            ['url','w','h','size','duration','modified','modofied_ago']
             .forEach(function(f) {
                 game['image_'+f] = game.reset['image_'+f];
                 game['marquee_'+f] = game.reset['marquee_'+f];
+                game['video_'+f] = game.reset['video_'+f];
             });
-            game.video_url = game.reset.video_url;
 
             delete game.changes;
         }

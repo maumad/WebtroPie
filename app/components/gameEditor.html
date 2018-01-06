@@ -13,18 +13,8 @@
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('name')">
         </td>
-        <td class=snap rowspan=4
-            ng-style="vm.gameImageStyle('image')"
-            ng-mouseover="vm.image_preview=true"
-            ng-mouseleave="vm.image_preview=false"
-            title="{{vm.image_w ? vm.image_w + ' x ' + vm.image_h : ''}}">
-            <md-media-upload md="image" accept="image/*"></md-media-upload>
-            <div ng-show="vm.image_preview && vm.game.image_w && !app.dragover" class="preview"
-                 ng-style="vm.gamePreviewStyle('image')">
-                {{vm.game.image_w}} x {{vm.game.image_h}}<br />
-                {{app.config.lang.md_label.human_size}} {{vm.game.image_size}}<br />
-                {{app.config.lang.md_label.modified}} {{vm.game.image_modified}}, {{vm.game.image_modified_ago}}
-            </div>
+        <td class=snap rowspan=4>
+            <md-media-upload md="image" accept="image/*" thumbnail="18vh"></md-media-upload>
         </td>
     </tr>
     <tr>
@@ -62,18 +52,9 @@
                    ng-keydown="vm.editorKeyPress($event)"
                    ng-change="vm.mdChanged('publisher')">
         </td>
-        <td class=snap rowspan=3
-            ng-style="vm.gameImageStyle('marquee')"
-            ng-mouseover="vm.marquee_preview=true"
-            ng-mouseleave="vm.marquee_preview=false">
-        <md-media-upload md="marquee" accept="image/*"></md-media-upload>
-        <div ng-show="vm.marquee_preview && vm.game.marquee_w && !app.dragover" class="preview"
-             ng-style="vm.gamePreviewStyle('marquee')">
-            {{vm.game.marquee_w}} x {{vm.game.marquee_h}} <br />
-            {{app.config.lang.md_label.human_size}} {{vm.game.marquee_size}}  <br />
-            {{app.config.lang.md_label.modified}} {{vm.game.marquee_modified}} {{vm.game.marquee_modified_ago}}
-        </div>
-    </td>
+        <td class=snap rowspan=3>
+            <md-media-upload md="marquee" accept="image/*" thumbnail="13vh"></md-media-upload>
+        </td>
     </tr>
     <tr>
         <th>{{app.config.lang.md_label.releasedate}}</th>
@@ -135,10 +116,7 @@
             </small>
         </td>
         <td class=snap rowspan=3>
-            <video style="height: 15vh" ng-if="vm.game.video_url"
-                   ng-src="svr/{{vm.game.video_url}}" autoplay loop muted>
-            </video>
-            <md-media-upload md="video" accept="video/mp4,video/x-m4v,video/*"></md-media-upload>
+            <md-media-upload md="video" accept="video/mp4,video/x-m4v,video/*" thumbnail="13vh"></md-media-upload>
         </td>
     </tr>
     <tr>

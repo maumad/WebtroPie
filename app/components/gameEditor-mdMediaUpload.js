@@ -1,8 +1,8 @@
 /**
- * gameEditor-fileSelector.js
+ * gameEditor-mdMediaUpload.js
  *
- * copies selected files into ngModel
- * which in turn should fire ngChange
+ * show and handle media upload
+ * show thumbnail and preview + info
  */
 (function() {
 
@@ -17,39 +17,29 @@
         var directive = {
             restrict: 'EA',
             scope: true,
-            template:
-            '<div>'+
-                '<form class="upload" novalidate'+
-                        ' ng-hide="!vm.dragover && !vm.uploading && '+
-                        ' app.GameService.game[vm.md] && '+
-                        ' app.GameService.game[vm.md+\'_url\']">'+
-                    '<div ng-show="vm.uploading" class="progressbar"'+
-                        ' ng-style="{width: vm.progress}"'+
-                        ' ng-bind="vm.progress_text">'+
-                    '</div>'+
-                    '<span ng-show="vm.dragover">Drop to upload {{::vm.md}} file</span>'+
-                    '<div ng-hide="vm.uploading || vm.dragover">'+
-                        '<icon svg="\'resources/upload.svg\'"></icon>'+
-                        '<input class="uploadfile" type="file" accept="image/*"'+
-                            ' ng-model="vm.files" file-selector id="{{::vm.md}}_files"'+
-                            ' ng-change="upload(vm.files)"/> '+
-                        '<label for="{{::vm.md}}_files">'+
-                            'Choose or drag a {{::vm.md}} file.</label>'+
-                    '</div>'+
-                '</form>'+
-            '</div>',
+            templateUrl: 'components/gameEditor-mdEditorUpload.html',
             controller: controller,
             controllerAs: 'vm',
-            bindToController: { md:'@', accept:'@' }
+            bindToController: { md:'@', accept:'@', thumbnail: '@' }
         }
         return directive;
     }
 
-    controller.$inject = ['$scope','$element','$http','GameService','util'];
+    controller.$inject = ['$scope','$element','$http','GameService','util','config'];
 
-    function controller($scope, $element, $http, GameService, util)
+    function controller($scope, $element, $http, GameService, util, config)
     {
-        var vm = this
+        var vm = this;
+        vm.gameMediaUrl = gameMediaUrl;
+        vm.mediaLoaded = mediaLoaded;
+        vm.zoomIn = zoomIn;
+        vm.zoomOut = zoomOut;
+        vm.zoomStyle = zoomStyle;
+        vm.width = 0;
+        vm.height = 0;
+        vm.zoomScales = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
+        vm.zoom = 4;
+        vm.scale = null;
 
         // member functions
         vm.$onInit = onInit;
@@ -94,6 +84,30 @@
                 this.style['outline-offset']='';
                 this.style['background-color']='';
             });
+        }
+
+        function gameMediaUrl()
+        {
+            if (GameService.game[vm.md+'_url'])
+            {
+                return 'svr/'+GameService.game[vm.md+'_url'];
+            }
+        }
+
+        function mediaLoaded($event, width, height, size, mtime)
+        {
+            vm.width = width;
+            vm.height = height;
+            if(vm.md=='video')
+            {
+                vm.duration = Math.floor(size,0) + ' ' + config.lang.time.seconds;
+            }
+            else
+            {
+                vm.size = util.humanSize(size);
+            }
+            vm.modified = util.formatDate(mtime);
+            vm.modified_ago = util.formatDate(mtime,'ago');
         }
 
         function upload(files)
@@ -146,6 +160,42 @@
                 vm.progress = 0;
             }
         }
+
+        function zoomIn()
+        {
+            if (vm.zoom < vm.zoomScales.length-1)
+            {
+                vm.zoom++;
+            }
+            vm.scale = vm.zoomScales[vm.zoom];
+        }
+
+        function zoomOut()
+        {
+            if (vm.zoom > 0)
+            {
+                vm.zoom--;
+            }
+            vm.scale = vm.zoomScales[vm.zoom];
+        }
+
+
+        function zoomStyle(border)
+        {
+            if (!vm.scale && !border)
+            {
+                return;
+            }
+            if (!border)
+            {
+                border = 0;
+            }
+            var scale = vm.scale || 1;
+            return {width: (vm.width * scale + border)+'px',
+                   height: (vm.height * scale + border)+'px'};
+        }
+
+
     }
 
 })();

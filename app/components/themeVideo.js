@@ -15,13 +15,25 @@
             restrict: 'E',
             replace: true,
             scope: true,
-            template: '<div>'+
-                          '<video ng-style="vm.obj.div" ng-show="vm.video_url"'+
+            template: '<div class="themeVideo">'+
+                          '<video ng-show="vm.video_url"'+
+                                ' ng-style="vm.obj.div"'+
                                 ' ng-src="{{vm.video_url}}" loop'+
                                 ' ng-click="vm.togglePlayPause()">'+
                                 '</video>'+
                           '<div ng-style="vm.obj.div" ng-if="!vm.video_url && '+
                                 'vm.obj.div[\'background-image\']"></div>'+
+                          '<div class="info" ng-if="vm.video_url"'+
+                                ' ng-style="vm.obj.div">'+
+                             '<div class="controls play">'+
+                                 '<span ng-show="vm.video.paused"'+
+                                      ' ng-click="vm.video.play()">'+
+                                      '{{app.config.lang.button.play}}</span>'+
+                                 '<span ng-hide="vm.video.paused"'+
+                                      ' ng-click="vm.video.pause()">'+
+                                      '{{app.config.lang.button.pause}}</span>'+
+                             '</div>'+
+                          '</div>'+
                       '<div>',
             controller: controller,
             controllerAs: 'vm',

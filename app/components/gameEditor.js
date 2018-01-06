@@ -34,16 +34,11 @@
         vm.editorButtonKeyPress = editorButtonKeyPress;
         vm.editorKeyPress = editorKeyPress;
         vm.focusFirstButton = focusFirstButton;
-        vm.gameImageStyle = gameImageStyle;
-        vm.gamePreviewStyle = gamePreviewStyle;
         vm.mdChanged = mdChanged;
 
         function onInit()
         {
             util.waitForRender($scope).then(focusFirstButton);
-            GameService.getMediaInfo('image', vm.game);
-            GameService.getMediaInfo('marquee', vm.game);
-            vm.game.reset.video_url = vm.game.video_url;
         }
 
         function clearMedia(md)
@@ -103,24 +98,6 @@
                     el[i].focus();
                     break;
                 }
-            }
-        }
-
-        function gameImageStyle(md)
-        {
-            if (vm.game[md+'_url'])
-            {
-                return { 'background-image': 'url("svr/'+vm.game[md+'_url']+'")' }
-            }
-        }
-
-        function gamePreviewStyle(md)
-        {
-            if (vm.game[md+'_url'])
-            {
-                return { 'background-image': 'url("svr/'+vm.game[md+'_url']+'")',
-                            width: vm.game[md+'_w']+'px',
-                            height: vm.game[md+'_h']+'px' }
             }
         }
 
