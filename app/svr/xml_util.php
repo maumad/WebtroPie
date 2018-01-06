@@ -203,21 +203,27 @@ function load_file_xml_as_array($filename, $wrap_tag='', $utf8_encode=false, $ar
 function simplify_path($path, $directory=null)
 {
     // simplify "/./" to "/"
-    $path = preg_replace('|/\./|','/',$path);
+    $path = str_replace('/./','/',$path);
 
     // simplify "/dir/.." to "/"
     $path = preg_replace('|[^/\.]+/\.\./|','',$path);
     $path = preg_replace('|[^/\.]+/\.\./|','',$path);
     $path = preg_replace('|[^/\.]+/\.\./|','',$path);
+
     // simplify "/./" to "/"
-    $path = preg_replace('|/\./|','/',$path);
-    $path = preg_replace('|/\./|','/',$path);
-    $path = preg_replace('|^\./|','',$path);
+    $path = str_replace('/./','/',$path);
+
+    if (substr($path,0,2)=='./')
+    {
+        $path = substr($path,2);
+    }
 
     if ($directory)
     {
-        $path = preg_replace('|^~|',HOME,$path);
-        //$path = preg_replace('|^\./|','',$path);
+        if (substr($path,0,1)=='~')
+        {
+            $path = HOME.substr($path,1);
+        }
 
         if (substr($path, 0, $l=strlen($directory)) == $directory)
         {

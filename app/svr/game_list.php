@@ -140,7 +140,6 @@ foreach ($response['game'] as $index => &$game)
     {
         $size = filesize($game['path']);
         $game['size'] = $size;
-        //$game['human_size'] = human_filesize($size);
         $game['mtime'] = filemtime($game['path']);
     }
     else
@@ -168,23 +167,11 @@ if ($scan && $extensions)
 {
     scan_dir();
 }
-
-/*
- TODO : Folders
-foreach ($response['folder'] as $index => &$game)
-{
-    $game['isDir'] = 1;    // flag as folder
-    $response['game'][] = $game;   // add to game array
-}
-unset($response['folder'])
-*/
-
 if(!$scan && !$match_media &&
    $config['app']['CacheGamelists'])
 {
     chdir($svr_dir);
     file_put_contents($gamelist_cache, json_encode($response, JSON_UNESCAPED_UNICODE));
 }
-
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
 ?>

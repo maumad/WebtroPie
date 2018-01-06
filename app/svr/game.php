@@ -38,6 +38,7 @@ function get_media_path($media, $system)
 function get_media_paths_full_url($filename, $system)
 {
     global $svr_dir;
+    static $checked_dirs = [];
 
     $SYSTEM_PATH = ROMSPATH.$system;
 
@@ -62,7 +63,8 @@ function get_media_paths_full_url($filename, $system)
 
     if ($fullpath)
     {
-        $fullpath = simplify_path($fullpath);
+        $fullpath = str_replace('/./','/',$fullpath);
+
         if (substr($fullpath, 0, 45) === '/home/pi/.emulationstation/downloaded_images/')
         {
             $url = substr($fullpath, 27);
@@ -70,7 +72,8 @@ function get_media_paths_full_url($filename, $system)
         else if (substr($fullpath, 0, $l=18) === '/home/pi/RetroPie/')
         {
             $url = substr($fullpath, $l);
-            if (!file_exists($url))
+            $dir = pathinfo($url, PATHINFO_DIRNAME );
+            if (!isset($checked_dirs) && !file_exists($dir))
             {
                 $p = strpos($url, '/'.$system.'/');
                 if ($p !== false)
@@ -84,12 +87,14 @@ function get_media_paths_full_url($filename, $system)
                         exec("ln -s $full_dir $url_dir");
                     }
                 }
+                $checked_dirs[$dir] = true;
             }
         }
         elseif (substr($fullpath, 0, $l=9) === '/home/pi/')
         {
             $url = 'home_'.substr($fullpath, $l);
-            if (!file_exists($url))
+            $dir = pathinfo($url, PATHINFO_DIRNAME );
+            if (!isset($checked_dirs) && !file_exists($dir))
             {
                 $p = strpos($url, '/'.$system.'/');
                 if ($p !== false)
@@ -103,6 +108,7 @@ function get_media_paths_full_url($filename, $system)
                         exec("ln -s $full_dir $url_dir");
                     }
                 }
+                $checked_dirs[$dir] = true;
             }
         }
     }
