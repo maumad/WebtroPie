@@ -95,13 +95,15 @@
                 {
                     $timeout(function() {
                         page.loaded = true;
-                        util.focus('#filter');
+                        if (GameService.filter)
+                            util.focus('#filter');
                     }, 600)
                 }
                 else
                 {
                     page.loaded = true;
-                    util.focus('#filter');
+                    if (GameService.filter)
+                        util.focus('#filter');
                 }
 
                 util.register_keyPressCallback(keyPress, $scope);
