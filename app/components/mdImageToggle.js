@@ -79,7 +79,6 @@
                 // update image to reflect changed value
                 updateImage();
             }
-            util.defaultFocus();
         }
 
         function changeSize(size)

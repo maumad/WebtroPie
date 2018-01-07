@@ -67,9 +67,7 @@
             
             page.animating = false;  // just used for carousel animation -1, 0 or +1
 
-            // focus on center logo (so that input events are listened to)
-            util.register_defaultFocus('#logo0');
-            util.register_keyPressCallback(keyPress);
+            util.register_keyPressCallback(keyPress, $scope);
 
             // wait for config (need to know which theme?)
             config.init()
@@ -106,8 +104,6 @@
             })
             .then(function()
             {
-                util.defaultFocus();
-
                 // all done so get other stuff in advance
 
                 // for next/prev carousel image animations
@@ -136,7 +132,6 @@
             page.animating = false;
             GameService.getGamelist(CarouselService.getCurrentCarouselSystemName())
             .then(createAllSystemStyles);
-            util.defaultFocus();
         }
 
         // do some of probably next screen work to smooth animations transitions
@@ -238,6 +233,8 @@
 
         function keyPress($event)
         {
+            $event.stopPropagation();
+
             // Ctrl - M - Main Menu
             if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
             {

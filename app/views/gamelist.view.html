@@ -44,8 +44,7 @@
       <span class="dropdown uppercase"
             ng-if="app.config.app.ShowAddFields"
             ng-mouseover="colhover=true"
-            ng-mouseout="colhover=false"
-            ng-click="app.util.defaultFocus()">
+            ng-mouseout="colhover=false">
          <div class="filters" help-inverter
               ng-click="colhover=!colhover" > +/- </div>
          <div ng-style="app.styler.helpTextColorBorder"
@@ -81,7 +80,7 @@
             ng-mouseover="app.config.themehover=true"
             ng-mouseout="app.config.themehover=false" >
          <div class="filters" help-inverter
-            ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" >{{app.config.lang.systemView.Theme}}</div>
+            ng-click="app.config.themehover=!app.config.themehover" >{{app.config.lang.systemView.Theme}}</div>
          <div ng-style="app.styler.helpTextColorBorder"
               ng-class="app.styler.helpMenuOptionClasses+' '+(app.config.themes_list.length>=40?'treble':(app.config.themes_list.length>=20?'double':''))"
               ng-show="app.config.themehover" >
@@ -99,14 +98,14 @@
             ng-mouseover="viewhover=true"
             ng-mouseout="viewhover=false">
          <div class="filters" help-inverter
-             ng-click="viewhover=!viewhover; app.util.defaultFocus()" >{{app.config.lang.gamelistView.View}}</div>
+             ng-click="viewhover=!viewhover" >{{app.config.lang.gamelistView.View}}</div>
          <div ng-class="app.styler.helpMenuOptionClasses"
               ng-style="app.styler.helpTextColorBorder"
               ng-show="viewhover">
             <a help-inverter
                ng-repeat="view in app.ThemeService.system.view | orderObjectBy:'name':false"
                ng-hide="view.name == 'system'"
-               ng-click="app.ThemeService.switchView(view.name); viewhover=false; app.util.defaultFocus()" >
+               ng-click="app.ThemeService.switchView(view.name); viewhover=false" >
                {{::view.name}}
                <span ng-show="view == app.ThemeService.view">*</span>
             </a>

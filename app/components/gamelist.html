@@ -4,7 +4,7 @@
         <div class="text headerfield"
              ng-repeat="field in app.GameService.fields_shown"
              ng-style="field.headerstyle"
-             ng-click="vm.setOrderBy(field); app.util.defaultFocus()">{{field.text}}</div>
+             ng-click="vm.setOrderBy(field)">{{field.text}}</div>
     </div>
 <!--
          ng-touchcancel="vm.mouseUp($event)"

@@ -113,15 +113,11 @@
 
         function activateAfterRender()
         {
-            util.register_defaultFocus('#scroller'+vm.system);
-
             vm.scroller =
                 GameService.scroller =
                     $element[0].querySelector('#scroller'+vm.system)
 
             vm.scroller.addEventListener('scroll', onScroll);
-
-            util.defaultFocus();
         }
 
         function applyFieldsShown()

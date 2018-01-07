@@ -189,7 +189,6 @@
                 GameService.mdChanged(vm.md, true, vm.game);
                 updateToggleImage();
             }
-            util.defaultFocus();
         }
 
         function updateToggleImage()

@@ -104,7 +104,7 @@
                     util.focus('#filter');
                 }
 
-                util.register_keyPressCallback(keyPress);
+                util.register_keyPressCallback(keyPress, $scope);
 
                 $scope.$watch('app.GameService.show_favorite', filterChange);
                 $scope.$watch('app.GameService.show_nested', filterChange);
@@ -188,6 +188,8 @@
 
         function keyPress($event)
         {
+            $event.stopPropagation();
+
             // Ctrl - M - Main Menu
             if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
             {
@@ -259,25 +261,21 @@
         function showFavoriteOn()
         {
             GameService.show_favorite = true;
-            util.defaultFocus();
         }
 
         function showFavoriteOff()
         {
             GameService.show_favorite = false;
-            util.defaultFocus();
         }
 
         function showNestedOn()
         {
             GameService.show_nested = true;
-            util.defaultFocus();
         }
 
         function showNestedOff()
         {
             GameService.show_nested = false;
-            util.defaultFocus();
         }
 
         function scan()
@@ -288,15 +286,13 @@
                 util.waitForRender($scope).then(function() {
                     GameService.game = game;
                     page.checkGameStillVisible();
-                    util.defaultFocus();
                 });
             });
         }
 
         function matchMedia()
         {
-            GameService.getSystemGamelist(page.system, false, true)
-            .then(util.defaultFocus);
+            GameService.getSystemGamelist(page.system, false, true);
         }
     }
 

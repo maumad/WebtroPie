@@ -70,7 +70,7 @@
             ng-mouseover="app.config.themehover=true"
             ng-mouseout="app.config.themehover=false" >
             <div class="filters" help-inverter
-                 ng-click="app.config.themehover=!app.config.themehover; app.util.defaultFocus()" >
+                 ng-click="app.config.themehover=!app.config.themehover" >
                  {{app.config.lang.systemView.Theme}}
             </div>
             <div ng-style="app.styler.helpTextColorBorder"

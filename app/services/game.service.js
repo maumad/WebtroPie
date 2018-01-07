@@ -189,7 +189,6 @@
         function hideEditor()
         {
             self.edit = false;
-            util.defaultFocus();
         }
 
         // get either a specific gamelist for a system or all systems

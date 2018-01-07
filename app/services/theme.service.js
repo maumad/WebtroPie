@@ -943,7 +943,6 @@
         function switchView(view_name)
         {
             setSystem(self.system_name, view_name);
-            util.defaultFocus();
         }
 
         // load up (current) theme from memory otherwise from server

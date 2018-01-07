@@ -111,7 +111,6 @@
                     GameService.mdChanged('rating', vm.autosave, vm.game);
                 }
             }
-            util.defaultFocus();
         }
 
         function setDefaults()

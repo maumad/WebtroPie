@@ -9,9 +9,9 @@
         .module('WebtroPie')
         .controller('AppController', controller);
 
-    controller.$inject = ['$scope','config','util','styler', 'ThemeService','GameService','CarouselService'];
+    controller.$inject = ['$scope','$window','config','util','styler', 'ThemeService','GameService','CarouselService'];
         
-    function controller($scope, config, util, styler, ThemeService, GameService, CarouselService)
+    function controller($scope, $window, config, util, styler, ThemeService, GameService, CarouselService)
     {
         var app = this;
 
@@ -60,6 +60,9 @@
                     app.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
                 }
             }
+
+            angular.element($window).bind("keydown", util.keyPress);
+            angular.element($window).bind("keyup", util.keyRelease); 
         }
 
         function appConfigChanged(field)
@@ -105,7 +108,6 @@
         {
             app.show_menu = false;
             app.menu.history.length = 0;
-            util.defaultFocus();
         }
 
         function languageChanged()
@@ -193,7 +195,6 @@
 
                 // choose best view
                 GameService.checkSystemTheme(ThemeService.system.name, true);
-                util.defaultFocus();
 
                 if (app.themeChangedCallback)
                 {
@@ -206,14 +207,12 @@
         {
             config.save('ViewTransitions', config.app.ViewTransitions, 'string', config.APP);
             ThemeService.setCurrentSystem();
-            util.defaultFocus();
         }
 
         function viewStyleChanged()
         {
             ThemeService.switchView(config.app.ViewStyle);
             config.save('ViewStyle', config.app.ViewStyle, 'string', config.APP);
-            util.defaultFocus();
         }
     }
 

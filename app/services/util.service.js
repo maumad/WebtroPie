@@ -21,7 +21,6 @@
         self.call = call; // generate history : to return
         self.datepartsToString = datepartsToString;
         self.dateToDateParts = dateToDateParts;
-        self.defaultFocus = defaultFocus;
         self.focus = focus;
         self.go = go;     // replace current page : no history
         self.formatDate = formatDate;
@@ -36,7 +35,6 @@
         self.nextButton = nextButton;
         self.pct = pct;
         self.prevButton = prevButton;
-        self.register_defaultFocus = register_defaultFocus;
         self.register_keyPressCallback = register_keyPressCallback;
         self.rgbToHSL = rgbToHSL;
         self.round = round;
@@ -91,26 +89,6 @@
             }
         }
 
-        function defaultFocus()
-        {
-            if (self.defaultFocusSelector)
-            {
-                self.focus(self.defaultFocusSelector);
-            }
-        }
-
-        function focus(selector)
-        {
-            $timeout(function()
-            {
-                var el = angular.element(document.querySelector(selector));
-                if (el && el.length > 0)
-                {
-                    el[0].focus();
-                }
-            });
-        }
-
         function datetimeAgo(date)
         {
             function unitsAgo(n, unit)
@@ -158,6 +136,18 @@
 
             var years = Math.floor(months / 12);
             return unitsAgo(years, 'year');
+        }
+
+        function focus(selector)
+        {
+            $timeout(function()
+            {
+                var el = angular.element(document.querySelector(selector));
+                if (el && el.length > 0)
+                {
+                    el[0].focus();
+                }
+            });
         }
 
         function formatDate(date, format)
@@ -342,6 +332,8 @@
                     $event.preventDefault();
                 }
             }
+
+            self.keyPressScope.$evalAsync();
         }
 
         function keyRelease($event)
@@ -392,15 +384,10 @@
             }
         }
 
-        function register_defaultFocus(selector)
-        {
-            self.defaultFocusSelector = selector;
-            self.defaultFocus();
-        }
-
-        function register_keyPressCallback(callback)
+        function register_keyPressCallback(callback, scope)
         {
             self.keyPressCallback = callback;
+            self.keyPressScope = scope;
         }
 
         // round a number to 'decimals' decimal places

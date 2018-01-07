@@ -134,7 +134,6 @@
                     vm.video.pause();
                 }
             }
-            util.defaultFocus();
         }
 
         function updateVideo()

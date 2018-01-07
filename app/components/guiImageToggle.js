@@ -76,7 +76,6 @@
             vm.ngModel = !vm.ngModel;
 
             updateImage();
-            util.defaultFocus();
 
             // if it's a configuration setting then auto save config
             if ($attrs.ngModel.substring(0,14) == 'app.config.app')
