@@ -28,12 +28,12 @@
              ng-click="vm.preview=!vm.preview">
         </video>
         <div ng-show="vm.preview && vm.width && !vm.dragover" class="preview"
-             ng-style="vm.zoomStyle(4)"
-            ><img ng-if="vm.md!='video'"
+             ng-style="vm.zoomStyle(4,3)"
+            ><img ng-if="vm.md!='video' && vm.gameMediaUrl()"
                   ng-src="{{vm.gameMediaUrl()}}"
                   ng-style="vm.zoomStyle()"
                   on-load-image="vm.mediaLoaded($event, width, height, size, mtime)"/
-            ><video ng-if="vm.md=='video'"
+            ><video ng-if="vm.md=='video' && vm.gameMediaUrl()"
                   ng-src="{{vm.gameMediaUrl()}}"
                   ng-style="vm.zoomStyle()"
                   on-load-video="vm.mediaLoaded($event, width, height, size, mtime)"

@@ -19,6 +19,7 @@
                           '<video ng-show="vm.video_url"'+
                                 ' ng-style="vm.obj.div"'+
                                 ' ng-src="{{vm.video_url}}" loop'+
+                                ' on-load-video="vm.videoLoaded($event, width, height, size, mtime)"'+
                                 ' ng-click="vm.togglePlayPause()">'+
                                 '</video>'+
                           '<div ng-style="vm.obj.div" ng-if="!vm.video_url && '+
@@ -49,36 +50,32 @@
         var vm = this;
         vm.$onInit = onInit;
         vm.togglePlayPause = togglePlayPause;
+        vm.videoLoaded = videoLoaded;
 
         function onInit()
         {
             if (vm.obj.delay && typeof vm.obj.delay == 'string')
             {
                 vm.obj.delay = parseFloat(vm.obj.delay);
-                console.log('video delay is '+ vm.obj.delay + ' seconds')
             }
 
             // watch for theme change
             $scope.$watch('vm.obj', updateVideo);
 
-            // watch for current game change, update image using meta data value
+            // watch for current game change, update video using meta data value
             $scope.$watch('vm.game', updateVideo);
+        }
 
-            util.waitForRender($scope)
-            .then(function() {
-                var el = $element.find( "video" );
-                if (el && el.length)
-                {
-                    vm.video = el[0];
-                    // watch for autoplay, show controls and muted option changes
-                    $scope.$watch(function() { return config.app.AutoplayVideos; }, setAutoplay);
-                    $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
-                    $scope.$watch(function() { return config.app.MuteVideos; }, setMuted);
-
-                    // play first video, and watch for video upload or enter
-                    $scope.$watch('vm.game.video', updateVideo);
-                }
-            });
+        function videoLoaded($event, width, height, size, mtime)
+        {
+            if (vm.video)
+            {
+                $scope.$watch(function() { return config.app.AutoplayVideos; }, setAutoplay);
+                $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
+                $scope.$watch(function() { return config.app.MuteVideos; }, setMuted);
+            }
+            vm.video = $event.target;
+            updateVideo();
         }
 
         function setAutoplay(new_val, old_val)
@@ -100,7 +97,7 @@
         {
             if (config.app.ShowVideoControls)
             {
-                vm.video.setAttribute("controls","controls");
+                vm.video.setAttribute("controls", "controls");
             }
             else
             {
@@ -141,6 +138,7 @@
             delete vm.obj.div['background-image'];
             if (vm.game)
             {
+                // get video url or show image
                 if (vm.game.video_url)
                 {
                     vm.video_url = 'svr/'+vm.game.video_url;
@@ -151,6 +149,11 @@
                 }
                 else if (vm.obj.showSnapshotNoVideo == 'true' && vm.game.image_url)
                 {
+                    if (vm.video)
+                    {
+                        vm.video.pause();
+                        delete vm.video;
+                    }
                     vm.video_url = '';
                     vm.obj.div['background-image'] = 'url("svr/'+vm.game.image_url+'")';
                 }
@@ -159,13 +162,13 @@
             // after a game change autoplay video after theme delay seconds
             if (vm.video && config.app.AutoplayVideos)
             {
-                if (vm.obj.delay)
+                if (vm.obj.delay)  // play after delay seconds
                 {
                     $timeout(function () {
                         vm.video.play();
                     }, vm.obj.delay * 1000);
                 }
-                else
+                else  // play now
                 {
                     vm.video.play();
                 }

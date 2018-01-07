@@ -180,19 +180,15 @@
         }
 
 
-        function zoomStyle(border)
+        function zoomStyle(xborder, yborder)
         {
-            if (!vm.scale && !border)
+            if (!vm.scale && !xborder)
             {
                 return;
             }
-            if (!border)
-            {
-                border = 0;
-            }
             var scale = vm.scale || 1;
-            return {width: (vm.width * scale + border)+'px',
-                   height: (vm.height * scale + border)+'px'};
+            return {width: (vm.width * scale + (xborder || 0))+'px',
+                   height: (vm.height * scale + (yborder || 0))+'px'};
         }
 
 
