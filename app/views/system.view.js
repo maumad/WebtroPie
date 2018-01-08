@@ -233,6 +233,9 @@
 
         function keyPress($event)
         {
+            if($event.target.tagName == 'INPUT')
+                return true;
+
             $event.stopPropagation();
 
             // Ctrl - M - Main Menu
