@@ -190,7 +190,7 @@
 
         function keyPress($event)
         {
-            if($event.target.tagName == 'INPUT')
+            if($event.target.tagName == 'INPUT' || $event.target.tagName == 'TEXTAREA')
                 return true;
 
             $event.stopPropagation();
