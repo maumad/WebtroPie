@@ -17,7 +17,7 @@
             scope: true,
             controller: GameEditorCtrl,
             controllerAs: 'vm',
-            bindToController: { game:'=', selectedList:'=' }
+            bindToController: { selectedList:'=' }
         }
         return directive;
     }
@@ -35,6 +35,8 @@
         vm.editorKeyPress = editorKeyPress;
         vm.focusFirstButton = focusFirstButton;
         vm.mdChanged = mdChanged;
+
+        vm.game = GameService.edit;
 
         function onInit()
         {

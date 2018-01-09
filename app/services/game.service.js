@@ -277,6 +277,10 @@
                     {
                         text = 'New: '+text;
                     }
+                    else if (game.missing)
+                    {
+                        text = 'Missing: ' + text;
+                    }
                     if (game.isDir)
                     {
                         text += ' ('+self.subdirs[game.path].games+')';
@@ -504,6 +508,11 @@
                         else if (game.rating>1)
                         {
                             game.rating = 1;
+                        }
+
+                        if (game.index && !game.isDir && !game.size)
+                        {
+                            game.missing = true;
                         }
 
                         // Add to list and auto lists
@@ -973,7 +982,7 @@
             //$scope.app.hideMenu();
             if (config.edit)
             {
-                self.edit = true;
+                self.edit = self.game;
             }
         }
     }

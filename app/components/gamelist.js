@@ -433,6 +433,17 @@
                                        '-1px 1px 0 black, '+
                                        '1px 1px 0 black';
             }
+            else if (game && game.missing)
+            {
+                style.color = '#f90000';
+                style['-webkit-text-stroke-width'] = '1px';
+                style['-webkit-text-stroke-color'] = '#c00000';
+                style['text-shadow'] = '2px 2px 3px black, '+  // blur shadow
+                                       '-1px -1px 0 black, '+  // black border
+                                       '1px -1px 0 black, '+
+                                       '-1px 1px 0 black, '+
+                                       '1px 1px 0 black';
+            }
             // normal unselected non current game
             else
             {

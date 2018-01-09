@@ -49,7 +49,15 @@
 
                 if (filter)
                 {
-                    var name = ( game.new ? 'New: ' : '' ) + game.name;
+                    var name = game.name;
+                    if (game.new)
+                    {
+                        name = 'New: ' + game.name;
+                    }
+                    else if (game.missing)
+                    {
+                        name = 'Missing: ' + game.name;
+                    }
                     if (name.toLowerCase().indexOf(filter.toLowerCase()) < 0)
                         return;
                 }
