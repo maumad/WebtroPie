@@ -68,7 +68,7 @@
 
         function videoLoaded($event, width, height, size, mtime)
         {
-            if (vm.video)
+            if (!vm.video)
             {
                 $scope.$watch(function() { return config.app.AutoplayVideos; }, setAutoplay);
                 $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
