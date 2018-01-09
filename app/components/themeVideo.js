@@ -25,7 +25,7 @@
                           '<div ng-style="vm.obj.div" ng-if="!vm.video_url && '+
                                 'vm.obj.div[\'background-image\']"></div>'+
                           '<div class="info" ng-if="vm.video_url"'+
-                                ' ng-style="vm.obj.div">'+
+                                ' ng-style="vm.infoStyle()">'+
                              '<div class="controls play">'+
                                  '<span ng-show="vm.video.paused"'+
                                       ' ng-click="vm.video.play()">'+
@@ -49,6 +49,7 @@
     {
         var vm = this;
         vm.$onInit = onInit;
+        vm.infoStyle = infoStyle;
         vm.togglePlayPause = togglePlayPause;
         vm.videoLoaded = videoLoaded;
 
@@ -66,16 +67,14 @@
             $scope.$watch('vm.game', updateVideo);
         }
 
-        function videoLoaded($event, width, height, size, mtime)
+
+        function infoStyle()
         {
-            if (!vm.video)
-            {
-                $scope.$watch(function() { return config.app.AutoplayVideos; }, setAutoplay);
-                $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
-                $scope.$watch(function() { return config.app.MuteVideos; }, setMuted);
+            return {
+                top: vm.obj.div.top,
+                left: vm.obj.div.left,
+                'z-index': vm.obj.div['z-index']
             }
-            vm.video = $event.target;
-            updateVideo();
         }
 
         function setAutoplay(new_val, old_val)
@@ -174,6 +173,19 @@
                 }
             }
         }
+
+        function videoLoaded($event, width, height, size, mtime)
+        {
+            if (!vm.video)
+            {
+                $scope.$watch(function() { return config.app.AutoplayVideos; }, setAutoplay);
+                $scope.$watch(function() { return config.app.ShowVideoControls; }, setControls);
+                $scope.$watch(function() { return config.app.MuteVideos; }, setMuted);
+            }
+            vm.video = $event.target;
+            updateVideo();
+        }
+
     }
 
 })();
