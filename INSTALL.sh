@@ -53,9 +53,13 @@ sudo ln -sf /home/pi/RetroPie/roms                         $SVR
 
 # download libs so that it can work offline in future
 cd $LIB
-wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js
-wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular-route.min.js
-wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular-animate.min.js
+rm -f angular*
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js.map
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-route.min.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-route.min.js.map
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-animate.min.js
+wget -nc -nv https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-animate.min.js.map
 
 # Make a version of runcommand.sh that doesn't try pipe input from /dev/tty
 sed 's/\(eval \$command\).*tty ./\1 \&/gi' \

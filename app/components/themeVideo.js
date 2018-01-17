@@ -25,7 +25,7 @@
                           '<div ng-style="vm.obj.div" ng-if="!vm.video_url && '+
                                 'vm.obj.div[\'background-image\']"></div>'+
                           '<div class="info" ng-if="vm.video_url"'+
-                                ' ng-style="vm.infoStyle()">'+
+                              ' ng-style="vm.infoStyle()">'+
                              '<div class="controls play">'+
                                  '<span ng-show="vm.video.paused"'+
                                       ' ng-click="vm.video.play()">'+
@@ -70,15 +70,33 @@
 
         function infoStyle()
         {
+            var x = vm.obj.pos.x;
+            var y = vm.obj.pos.y;
+            var ox = 0.5;
+            var oy = 0.5;
+            var w, h;
+            var size = vm.obj.size || vm.obj.maxSize;
+
+            if (size)
+            {
+                if (vm.obj.origin)
+                {
+                    ox -= vm.obj.origin.x;
+                    oy -= vm.obj.origin.y;
+                }
+                x += ox * size.w;
+                y += oy * size.h;
+            }
             return {
-                top: vm.obj.div.top,
-                left: vm.obj.div.left,
+                left: util.pct(x,'vw'),
+                top: util.pct(y,'vh'),
                 'z-index': vm.obj.div['z-index']
             }
         }
 
         function setAutoplay(new_val, old_val)
         {
+            if (!vm.video) return;
             if (new_val != old_val)
             {
                 if (config.app.AutoplayVideos)
@@ -94,6 +112,7 @@
 
         function setControls(new_val, old_val)
         {
+            if (!vm.video) return;
             if (config.app.ShowVideoControls)
             {
                 vm.video.setAttribute("controls", "controls");
@@ -106,6 +125,7 @@
 
         function setMuted()
         {
+            if (!vm.video) return;
             if (config.app.MuteVideos)
             {
                 vm.video.muted = true;
@@ -156,21 +176,29 @@
                     vm.video_url = '';
                     vm.obj.div['background-image'] = 'url("svr/'+vm.game.image_url+'")';
                 }
-            }
+                else
+                {
+                    vm.video_url = '';
+                }
 
-            // after a game change autoplay video after theme delay seconds
-            if (vm.video && config.app.AutoplayVideos)
-            {
-                if (vm.obj.delay)  // play after delay seconds
+                // after a game change autoplay video after theme delay seconds
+                if (vm.video && config.app.AutoplayVideos)
                 {
-                    $timeout(function () {
+                    if (vm.obj.delay)  // play after delay seconds
+                    {
+                        $timeout(function () {
+                            vm.video.play();
+                        }, vm.obj.delay * 1000);
+                    }
+                    else  // play now
+                    {
                         vm.video.play();
-                    }, vm.obj.delay * 1000);
+                    }
                 }
-                else  // play now
-                {
-                    vm.video.play();
-                }
+            }
+            else
+            {
+                vm.video_url = '';
             }
         }
 

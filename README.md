@@ -1,4 +1,4 @@
-# WebtroPie WIP 0.2.2
+# WebtroPie WIP 0.9
 
 WebtroPie is a ROM Manager specifically for RetroPie
 
@@ -168,4 +168,3 @@ Include a viewbox, otherwise the SVG may not fully be displayed
 * theme makers for emulationstation, thanks for making WebtroPie look good
 * google for making angularjs
 * php guys
-

@@ -12,7 +12,11 @@
     function menu()
     {
         var directive = {
-            template: '<div ng-include="app.menu.template"></div>'
+            template: '<div class="modal">'+
+                          '<div class="menu_in">'+
+                             '<div ng-include="app.menu.template"></div>'+
+                          '</div>'+
+                      '</div>'
         }
         return directive;
     }

@@ -20,11 +20,12 @@
                     var height = elem[0].height;
                     var url = elem[0].src || elem[0].href;
                     var iTime = performance.getEntriesByName(url)[0];
+                    var size = iTime ? iTime.encodedBodySize : null;
                     var mtime = parseInt(url.replace(/^.*\?/,''));
                     fn(scope, { $event: event,
                                  width: width,
                                 height: height,
-                                  size: iTime.encodedBodySize,
+                                  size: size,
                                  mtime: mtime });
                   });
                 });

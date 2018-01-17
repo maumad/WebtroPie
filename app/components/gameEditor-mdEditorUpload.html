@@ -1,6 +1,6 @@
 <div>
     <form class="upload" novalidate
-          ng-hide="!vm.dragover && !vm.uploading &&  app.GameService.game[vm.md] && app.GameService.game[vm.md+'_url']">
+          ng-hide="!vm.dragover && !vm.uploading && vm.game[vm.md] && vm.game[vm.md+'_url']">
         <div ng-show="vm.uploading" class="progressbar"
              ng-style="{width: vm.progress}"
              ng-bind="vm.progress_text">
@@ -42,7 +42,7 @@
             ><div class="info">
                 <div class="controls">
                     <span ng-click="vm.preview=false"
-                          title="{{app.config.lang.button.close}}">x</span>
+                          title="{{app.config.lang.button.close}}">&times;</span>
                     <span ng-click="vm.zoomOut()"
                           title="{{app.config.lang.misc.zoomOut}}">-</span>
                     {{(vm.scale || 1) * 100}}%

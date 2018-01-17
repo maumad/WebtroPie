@@ -9,26 +9,32 @@
         .module('WebtroPie')
         .controller('AppController', controller);
 
-    controller.$inject = ['$scope','$window','config','util','styler', 'ThemeService','GameService','CarouselService'];
+    controller.$inject = ['$scope','$window','$http','config','util','styler',
+                            'ThemeService','GameService','CarouselService','ES','MenuService'];
         
-    function controller($scope, $window, config, util, styler, ThemeService, GameService, CarouselService)
+    function controller($scope, $window, $http, config, util, styler,
+                            ThemeService, GameService, CarouselService, ES, MenuService)
     {
         var app = this;
 
         // methods
         app.appConfigChanged = appConfigChanged;
-        app.exitMenu = exitMenu;
-        app.goMenu = goMenu;
-        app.hideMenu = hideMenu;
         app.languageChanged = languageChanged;
-        app.menuKeyPress = menuKeyPress;
         app.registerThemeChangedCallback = registerThemeChangedCallback;
         app.setViewAnimation = setViewAnimation;
-        app.showMenu = showMenu;
+        app.stopES = ES.stop;
         app.themeChanged = themeChanged;
-        app.toggleMenu = toggleMenu;
         app.viewTransitionChanged = viewTransitionChanged;
         app.viewStyleChanged = viewStyleChanged;
+
+        // menu methods moved to service
+        app.exitMenu = MenuService.exitMenu;
+        app.goMenu = MenuService.goMenu;
+        app.hideMenu = MenuService.hideMenu;
+        app.menuKeyPress = MenuService.menuKeyPress;
+        app.showMenu = MenuService.showMenu;
+        app.toggleMenu = MenuService.toggleMenu;
+
         activate();
 
         function activate()
@@ -40,26 +46,13 @@
             app.GameService = GameService;
             app.styler = styler;
             app.CarouselService = CarouselService;
-
-            // app global data
-            app.menu = {};
-            app.menu.history = [];
+            app.menu = MenuService.menu;
 
             config.init()
-            .then(initConfigFetched);
-
-            function initConfigFetched()
-            {
-                app.menu.main = [
-                    {text: 'UI',          type: 'menu', action: 'menu/menu-ui.html'},
-                    {text: 'Helpbar',     type: 'menu', action: 'menu/menu-helpbar.html'}
-                ];
-                if (config.local)
-                {
-                    app.menu.main.push({text: 'Other',   type: 'menu', action: 'menu/menu-other.html'});
-                    app.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
-                }
-            }
+            .then(function () {
+                ES.init();
+                MenuService.init();
+            });
 
             angular.element($window).bind("keydown", util.keyPress);
             angular.element($window).bind("keyup", util.keyRelease); 
@@ -70,61 +63,14 @@
             config.save(field, config.app[field], 'string', config.APP);
         }
 
-        function exitMenu()
-        {
-            if (app.menu.history.length < 1)
-            {
-                app.hideMenu();
-            }
-            else
-            {
-                app.menu.template = app.menu.history[app.menu.history.length-1];
-                app.menu.history.length--;
-            }
-        }
-
-        function formatDate(text, format)
-        {
-            if (!format)
-            {
-                format = config.app.DateFormat || 'dd/mm/yyyy';
-            }
-            return format
-                      .replace(/yyyy/i, text.substring(0,4))
-                      .replace(/mm/i,    text.substring(4,6))
-                      .replace(/dd/i,    text.substring(6,8)) 
-                      .replace(/hh/i,    text.substring(9,11)) 
-                      .replace(/mi/i,    text.substring(11,13)) 
-                      .replace(/ss/i,    text.substring(13,15));
-        }
-
-        function goMenu(template)
-        {
-            app.menu.history.push(app.menu.template);
-            app.menu.template = template;
-        }
-
-        function hideMenu()
-        {
-            app.show_menu = false;
-            app.menu.history.length = 0;
-        }
-
         function languageChanged()
         {
             config.save('Language', config.app.Language, 'string', config.APP);
             config.load(config.LANG, config.app.Language, true)
             .then(function() {
-                GameService.setFieldText();
+                GameService.setLanguage();
+                ES.setLanguage();
             });
-        }
-
-        function menuKeyPress($event)
-        {
-            if ($event.keyCode == 27)  // Escape
-            {
-                exitMenu();
-            }
         }
 
         function registerThemeChangedCallback(callback)
@@ -153,25 +99,6 @@
             }
         }
 
-        function showMenu()
-        {
-            app.menu.template = 'menu/menu-main.html';
-            app.menu.history.length = 0;
-            app.show_menu = true;
-        }
-
-        function toggleMenu()
-        {
-            if (!app.show_menu)
-            {
-                showMenu();
-            }
-            else
-            {
-                hideMenu();
-            }
-        }
-
         function themeChanged(theme)
         {
             if (theme)
@@ -181,7 +108,7 @@
             }
             else
             {
-                hideMenu();
+                MenuService.hideMenu();
             }
 
             ThemeService.getTheme(config.app.ThemeSet, CarouselService.getCurrentCarouselSystemName(), ThemeService.view.name)

@@ -20,7 +20,7 @@
             templateUrl: 'components/gameEditor-mdEditorUpload.html',
             controller: controller,
             controllerAs: 'vm',
-            bindToController: { md:'@', accept:'@', thumbnail: '@' }
+            bindToController: { md:'@', accept:'@', thumbnail: '@', game: '=' }
         }
         return directive;
     }
@@ -88,9 +88,9 @@
 
         function gameMediaUrl()
         {
-            if (GameService.game[vm.md+'_url'])
+            if (vm.game[vm.md+'_url'])
             {
-                return 'svr/'+GameService.game[vm.md+'_url'];
+                return 'svr/'+vm.game[vm.md+'_url'];
             }
         }
 
@@ -116,8 +116,8 @@
             {
                 var formData = new FormData();
                 formData.append('upload', files[0]);
-                formData.append('system', GameService.game.sys);
-                formData.append('game_path', GameService.game.path);
+                formData.append('system', vm.game.sys);
+                formData.append('game_path', vm.game.path);
                 formData.append('media', vm.md);
                 vm.progress = 0;
                 vm.uploading = true;
@@ -148,13 +148,12 @@
             if (response.data.success)
             {
                 // E.g. set game.video = "videos/filename"
-                GameService.game[vm.md] = response.data.media_path;
-                GameService.game[vm.md+'_url'] = response.data.media_url;
+                vm.game[vm.md] = response.data.media_path;
+                vm.game[vm.md+'_url'] = response.data.media_url;
                 // flag that the field has changed
-                GameService.mdChanged(vm.md);
+                GameService.mdChanged(vm.md, false, vm.game);
                 // trigger digest cycle now so there's no visual delay
                 $scope.$parent.$evalAsync();
-                GameService.getMediaInfo(vm.md, GameService.game);
                 // finished
                 vm.uploading = false;
                 vm.progress = 0;

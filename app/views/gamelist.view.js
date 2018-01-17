@@ -10,11 +10,11 @@
         .controller('GamelistViewController', controller);
 
     controller.$inject = ['$scope','config','util','styler',
-                          'ThemeService','GameService','CarouselService',
+                          'ThemeService','GameService','CarouselService','MenuService',
                           '$routeParams','$window','$document','$timeout'];
 
     function controller($scope, config, util, styler,
-                        ThemeService, GameService, CarouselService,
+                        ThemeService, GameService, CarouselService, MenuService,
                         $routeParams, $window, $document, $timeout)
     {
         var page = this;
@@ -40,7 +40,7 @@
            [{langButton: 'options', svg: 'resources/button_select.svg',
                    menu: [{text: 'Scan',       click: scan},
                           {text: 'MatchMedia', click: matchMedia}]}
-           ,{langButton: 'menu',  click: $scope.app.toggleMenu,  svg: 'resources/button_start.svg'}
+           ,{langButton: 'menu',  click: MenuService.toggleMenu,  svg: 'resources/button_start.svg'}
            ,{langButton: 'back',  click: goBack,                      svg: 'resources/button_b.svg'}
 
            // X on the menu reflects the key enter / mouse click action
@@ -91,7 +91,9 @@
 
                 if (config.app.WaitForAnimations &&
                     $scope.app.animate_view_class &&
-                    $scope.app.animate_view_class.substring(0,5) == 'slide')
+                    $scope.app.animate_view_class.substring(0,5) == 'slide' &&
+                   (!GameService.systems[page.system] ||
+                     GameService.systems[page.system].total > 500))
                 {
                     $timeout(function() {
                         page.loaded = true;
@@ -198,7 +200,7 @@
             // Ctrl - M - Main Menu
             if (($event.ctrlKey || util.commandDown) && $event.keyCode == 77)
             {
-                $scope.app.toggleMenu();
+                MenuService.toggleMenu();
                 return true;
             }
 
@@ -232,7 +234,11 @@
             {
                 // if it's a directoy go to sub directory
                 // otherwise open game metadata editor
-                if (GameService.game.isDir)
+                if (GameService.game.func)
+                {
+                    return GameService.game.func();
+                }
+                else if (GameService.game.isDir)
                 {
                     return GameService.openFolder();
                 }

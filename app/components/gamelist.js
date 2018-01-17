@@ -90,7 +90,6 @@
 
             // get games (and count) for the current system
             GameService.getGamelist(vm.system, vm)
-            //GameService.getGamelist($scope.system, vm)
             .then(function(data)
             {
                 vm.fetching = false;
@@ -351,7 +350,11 @@
             {
                 if (clicked_index == vm.game_index)
                 {
-                    if (game.isDir)
+                    if (game.func)
+                    {
+                        game.func();
+                    }
+                    else if (game.isDir)
                     {
                         GameService.openFolder();
                     }

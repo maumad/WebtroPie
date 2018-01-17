@@ -485,7 +485,7 @@
                             style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
                         }
                     }
-                    // color image server side if it's svg or if php has gd2 library enabled
+                    // color image server side if it's a svg or if php has gd2 library enabled
                     else
                     if (image.fullpath && (image.type=='svg' || ( config.env.has_gd &&
                              (image.type=='png' || image.type=='jpg' || image.type=='gif')
@@ -1369,7 +1369,7 @@
 */
         }
 
-        // dynamically create audio element and it's source,
+        // dynamically create audio element and its source,
         // store audio element in an array for later lookup
         function loadAudio(id, filename)
         {

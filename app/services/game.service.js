@@ -11,10 +11,10 @@
         .module('WebtroPie.game_service', ['WebtroPie.config_service'])
         .service('GameService', service);
 
-    service.$inject = ['config','util','ThemeService',
+    service.$inject = ['config','util','ThemeService', 'ES',
                              '$http', '$httpParamSerializer', '$q', '$timeout', '$location'];
 
-    function service(config, util, ThemeService,
+    function service(config, util, ThemeService, ES,
                           $http, $httpParamSerializer, $q, $timeout, $location)
     {
         var self = this;
@@ -22,6 +22,7 @@
         self.allgames = [];
 
         self.checkSystemTheme = checkSystemTheme;
+        self.deleteGame = deleteGame;
         self.getDefaultGamelistViewName = getDefaultGamelistViewName;
         self.getGamelist = getGamelist;
         self.getGameMetadata = getGameMetadata;
@@ -37,7 +38,7 @@
         self.resetGame = resetGame;
         self.save = save;
         self.saveState = saveState;
-        self.setFieldText = setFieldText;
+        self.setLanguage = setLanguage;
         self.setSystem = setSystem;
         self.showEditor = showEditor;
         activate();
@@ -45,6 +46,7 @@
         function activate()
         {
             self.systems = {
+                'retropie': ES.retropieMenu,
                 'auto-allgames':
                     {  game_index: 0,
                        buffer_index: 0,
@@ -62,7 +64,7 @@
                        buffer_index: 0,
                        scrolltop: 0,
                        gamelist: [],
-                       total: 0 },
+                       total: 0 }
             };
 
             self.gamelists_loaded = 0; // increases as system game lists are loaded
@@ -113,7 +115,7 @@
             ]
 
             config.init()
-            .then(setFieldText);
+            .then(setLanguage);
         }
 
         function getDefaultGamelistViewName(system_name)
@@ -186,6 +188,51 @@
             }
         }
 
+        // save changed fields for a single game
+        function deleteGame(game)
+        {
+            var post = { system: game.sys, game_path: game.path};
+
+            post.delete = 1;
+
+            game.deleting = true;
+
+            $http({
+                method  : 'POST',
+                url     : 'svr/game_save.php',
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+                data    : $httpParamSerializer(post)
+            })
+            .then(
+                function onSuccess(response)
+                {
+                    if(response.data.success)
+                    {
+                        // also delete from client gamelists
+                        [game.sys, 'auto-allgames', 'auto-favorites', 'auto-lastplayed']
+                        .forEach(function(sys)
+                        {
+                            var gl = self.systems[sys].gamelist;
+                            var i = gl.indexOf(game);
+                            if (i>=0)
+                            {
+                                gl.splice(i, 1);
+                                self.systems[sys].total--;
+                            }
+                        });
+                        hideEditor();
+                    }
+                    game.deleting = false;
+                },
+                function onFailure(response)
+                {
+                    console.log('failed to delete');
+                    console.log(response);
+                    game.deleting = false;
+                }
+            );
+        }
+
         function hideEditor()
         {
             self.edit = false;
@@ -254,7 +301,10 @@
                         return '1';
                     else if (name == 'playcount')
                         return '0';
-                    return;
+                    else if(name == 'name')
+                        text = game.shortpath;
+                    else
+                        return;
                 }
 
                 if (isObject && obj.type == 'datetime')
@@ -344,6 +394,8 @@
                 return path;
             }
         }
+
+
 
         // get a single gamelist for a system
         function getSystemGamelist(system_name, scan, match_media)
@@ -588,7 +640,7 @@
                             path = path.substring(0,sysdir.length);
                         }
           
-                        // dont even try if its and abs path
+                        // dont even try if its an abs path
                         if (path.substring(0,1) == "/")
                         {
                             return;
@@ -809,7 +861,7 @@
             }
         }
 
-        // restore game meta data to it's original values
+        // restore game meta data to its original values
         function resetGame(game)
         {
             if (!game.reset)
@@ -831,7 +883,6 @@
             delete game.changes;
         }
 
-
         // save changed fields for a single game
         function save(game)
         {
@@ -851,6 +902,7 @@
             else
             {
                 post.update = 1;
+                post.index = game.index;
                 // otherwise send only updated fields
                 angular.forEach(game.changes, function(val, field)
                 {
@@ -870,6 +922,8 @@
                 }
             }
 
+            game.saving = true;
+
             $http({
                 method  : 'POST',
                 url     : 'svr/game_save.php',
@@ -877,8 +931,17 @@
                 data    : $httpParamSerializer(post)
             })
             .then(function onSuccess(response) {
-                delete game.changes;
-                delete game.new;
+                if(response.data.success)
+                {
+                    delete game.changes;
+                    delete game.new;
+                    hideEditor();
+                }
+                game.saving = false;
+            },function onFailure(response) {
+                console.log('failed to save');
+                console.log(response);
+                game.saving = false;
             });
         }
 
@@ -909,7 +972,7 @@
         }
 
         // set current language column headings
-        function setFieldText()
+        function setLanguage()
         {
             angular.forEach(self.list_fields, function(field, index)
             {

@@ -10,11 +10,11 @@
         .controller('SystemViewController',controller);
 
     controller.$inject = ['$scope','$window','$timeout',
-                          'config', 'styler', 'util',
+                          'config', 'styler', 'util', 'MenuService',
                           'ThemeService', 'GameService', 'CarouselService'];
 
     function controller($scope, $window, $timeout,
-                        config, styler, util,
+                        config, styler, util, MenuService,
                         ThemeService, GameService, CarouselService )
     {
         var page = this;
@@ -41,7 +41,7 @@
         page.systembar = {};
         page.helpmenu = [
           {langButton: 'menu',
-                click: $scope.app.toggleMenu,
+                click: MenuService.toggleMenu,
                   svg: 'resources/button_start.svg'
           },
           {langButton: 'select',
@@ -81,18 +81,7 @@
                 ThemeService.setSystem(ThemeService.system_name, 'system');
                 ThemeService.playSound('bgsound');
 
-                if (config.app.WaitForAnimations &&
-                    $scope.app.animate_view_class &&
-                    $scope.app.animate_view_class.substring(0,5)=='slide')
-                {
-                    $timeout(function() {
-                        page.loaded = true;
-                    }, 600)
-                }
-                else
-                {
-                    page.loaded = true;
-                }
+                page.loaded = true;
 
                 // get the current system gamelist
                 // (to show games total and get list ahead of navigation)

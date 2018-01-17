@@ -74,6 +74,15 @@
                     has_games: true
                 }
             }
+            if (!self.systems['retropie'])
+            {
+                self.systems['retropie'] = {
+                    name: 'retropie',
+                    fullname: 'RetroPie',
+                    theme: 'retropie',
+                    has_games: true
+                }
+            }
 /*
                 if(self.es.CollectionSystemsCustom)
                 self.es.CollectionSystemsCustom

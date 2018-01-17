@@ -18,7 +18,7 @@
         <div id="mainview" ng-class="app.animate_view_class" ng-view
              class="view"></div>
 
-        <menu ng-if="app.show_menu"></menu>
+        <menu ng-if="app.menu.show"></menu>
 
     </div>
 
@@ -33,6 +33,8 @@
     <script src="services/styler.service.js"></script>
     <script src="services/game.service.js"></script>
     <script src="services/carousel.service.js"></script>
+    <script src="services/es.service.js"></script>
+    <script src="services/menu.service.js"></script>
     <script src="app.controller.js"></script>
     <script src="components/guiDateInput.js"></script>
     <script src="components/guiIcon.js"></script>
@@ -53,6 +55,7 @@
     <script src="components/gameEditor-mdMediaUpload.js"></script>
     <script src="components/onLoadImage.js"></script>
     <script src="components/onLoadVideo.js"></script>
+    <script src="components/spinner.js"></script>
     <script src="filters/orderObjectBy.filter.js"></script>
     <script src="filters/gamelistDirectory.filter.js"></script>
     <script src="filters/gamelistFieldType.filter.js"></script>

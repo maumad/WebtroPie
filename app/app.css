@@ -346,17 +346,72 @@ input, select, textarea {
     border-radius: 0.25em;
 }
 
+
+/* The Modal (background) */
+.modal {
+    position: fixed;
+    z-index: 5069;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Modal Content */
+.menu_in {
+    position: relative;
+    animation-name: menu_in_anim;
+    animation-duration: 0.5s
+}
+
+/* Add Animation */
+@-ms-keyframes menu_in_anim {
+    from { top: 100vh; left: -50vw; opacity: 0; -ms-transform: scale(0.1,0.1); }
+    to   { top: 0;     left: 0;     opacity: 1; -ms-transform: scale(1,1); }
+}
+
+@-webkit-keyframes menu_in_anim {
+    from { top: 100vh; left: -50vw; opacity: 0; -webkit-transform: scale(0.1,0.1); }
+    to   { top: 0;     left: 0;     opacity: 1; -webkit-transform: scale(1,1); }
+}
+
+@keyframes menu_in_anim {
+    from { top: 100vh; left: -50vw; opacity: 0; transform: scale(0.1,0.1); }
+    to   { top: 0;     left: 0;     opacity: 1; transform: scale(1,1); }
+}
+
+.spinner {
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+    transform-origin: 50% 50%;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .menu {
     color: #777;
     background-color: #ddd;
     position: absolute;
-    top: 15.5vh; /* height: 56vh; */
-    left: 25vw; width: 50vw;
-    z-index: 5020;
+    width: 50vw;
+    top: 14vh;
+    left: 25vw;
+    z-index: 5070;
     -webkit-border-radius: 0.25em;
     -moz-border-radius: 0.25em;
     border-radius: 0.25em;
     box-shadow: 15px 15px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 .menu .title {
     padding: 2% 2%;
@@ -417,6 +472,9 @@ input, select, textarea {
  }
  .menu .option input.large {
     width: 40%;
+ }
+ .menu .prompt {
+    padding: 2% 2%;
  }
 
 .game_editor {
@@ -481,6 +539,12 @@ input, select, textarea {
 .game_editor .icon {
     /* margin-top: 1vh; */
     height: 3.2vmin;
+}
+.game_editor .working {
+    padding: 1% 2%;
+    font-weight: bold;
+    font-size: 4vmin;
+    text-align: left;
 }
 
 .gui button {
@@ -717,11 +781,24 @@ info .controls span:hover {
 }
 
 
-.slideleft {
+.slideleft,
+.slideright,
+.slideup,
+.slidedown {
     position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 .slideleft.ng-enter,
-.slideleft.ng-leave {
+.slideleft.ng-leave,
+.slideright.ng-enter,
+.slideright.ng-leave,
+.slideup.ng-enter,
+.slideup.ng-leave,
+.slidedown.ng-enter,
+.slidedown.ng-leave {
     -webkit-transition: all 0.6s ease;
     -moz-transition: all 0.6s ease;
     -o-transition: all 0.6s ease;
@@ -730,32 +807,15 @@ info .controls span:hover {
 .slideleft.ng-enter {
     left: 100%;
 }
-.slideleft.ng-enter-active {
-    left: 0;
-}
+.slideleft.ng-enter-active,
 .slideleft.ng-leave {
     left: 0;
 }
-.slideleft.ng-leave-active {
-    left: -100%;
-}
-
-.slideright {
-    position: absolute;
-}
-.slideright.ng-enter,
-.slideright.ng-leave {
-    -webkit-transition: all 0.6s ease;
-    -moz-transition: all 0.6s ease;
-    -o-transition: all 0.6s ease;
-    transition: all 0.6s ease;
-}
+.slideleft.ng-leave-active,
 .slideright.ng-enter {
     left: -100%;
 }
-.slideright.ng-enter-active {
-    left: 0;
-}
+.slideright.ng-enter-active,
 .slideright.ng-leave {
     left: 0;
 }
@@ -763,52 +823,18 @@ info .controls span:hover {
     left: 100%;
 }
 
-.slideup {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 100%;
-}
-.slideup.ng-enter,
-.slideup.ng-leave {
-    -webkit-transition: all 0.6s ease;
-    -moz-transition: all 0.6s ease;
-    -o-transition: all 0.6s ease;
-    transition: all 0.6s ease;
-}
 .slideup.ng-enter {
     top: 100%;
 }
-.slideup.ng-enter-active {
-    top: 0;
-}
+.slideup.ng-enter-active,
 .slideup.ng-leave {
     top: 0;
 }
-.slideup.ng-leave-active {
-    top: -100%;
-}
-
-.slidedown {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-.slidedown.ng-enter,
-.slidedown.ng-leave {
-    -webkit-transition: all 0.6s ease;
-    -moz-transition: all 0.6s ease;
-    -o-transition: all 0.6s ease;
-    transition: all 0.6s ease;
-}
+.slideup.ng-leave-active,
 .slidedown.ng-enter {
     top: -100%;
 }
-.slidedown.ng-enter-active {
-    top: 0;
-}
+.slidedown.ng-enter-active,
 .slidedown.ng-leave {
     top: 0;
 }

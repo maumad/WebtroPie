@@ -12,13 +12,71 @@ $response = array('success'=>false);
 
 $gamelist = simplexml_load_file($gamelist_file);
 
-if($_POST['insert'])
+// start search from where it was last in the gamelist
+function findGame(&$gamelist, &$post)
 {
+    global $response;
+
+    $index = (int)$post['index'];  // its last index
+
+    // usually, for a single user, the first test will find the game
+
+    // search 10 back (games above have been deleted?)
+    for ($i=$index; $i>$index-10; $i--)
+    {
+        $game = &$gamelist->game[$i];
+        if ($game->path == $post['game_path'])
+        {
+            $game->index = $i;
+            return $game;
+        }
+    }
+
+    // search forward 10 (games inserted above?)
+    for ($i=$index+1; $i < $index+10 && $i<count($gamelist->game); $i++)
+    {
+        $game = &$gamelist->game[$i];
+        if ($game->path == $post['game_path'])
+        {
+            $game->index = $i;
+            return $game;
+        }
+    }
+
+    // search -10 to 0 above
+    for ($i=$index-10; $i>=0; $i--)
+    {
+        $game = &$gamelist->game[$i];
+        if ($game->path == $post['game_path'])
+        {
+            $game->index = $i;
+            return $game;
+        }
+    }
+
+    // search +10 to end below
+    for ($i=$index+10; $i<count($gamelist->game); $i++)
+    {
+        $game = &$gamelist->game[$i];
+        if ($game->path == $post['game_path'])
+        {
+            $game->index = $i;
+            return $game;
+        }
+    }
+
+    return false;
+}
+
+function insertGame(&$gamelist, &$post)
+{
+    global $GAME_FIELDS;
+
     $game = $gamelist->addChild('game');
-    $game->addChild('path', $_POST['game_path']);
+    $game->addChild('path', $post['game_path']);
     foreach ($GAME_FIELDS as $field)
     {
-        if ($_POST[$field])
+        if ($post[$field])
         {
             if ($field == 'favorite' || $field == 'kidgame' || $field == 'hidden')
             {
@@ -26,57 +84,76 @@ if($_POST['insert'])
             }
             else
             {
-                $game->addChild($field, $_POST[$field]);
+                $game->addChild($field, $post[$field]);
             }
         }
     }
+}
+
+function updateGame(&$game, &$post)
+{
+    global $GAME_FIELDS;
+
+    // for all meta data posted...
+    foreach ($GAME_FIELDS as $field)
+    {
+        // get the value
+        if (isset($post[$field]))
+        {
+            $value = $post[$field];
+            if ($field == 'favorite' || $field == 'kidgame' || $field == 'hidden')
+            {
+                if ($value == 1 || $value == 'true')
+                {
+                    // add true
+                    if (isset($game->$field))
+                    {
+                        $game->$field = 'true';
+                    }
+                    else
+                    {
+                        $game->addChild($field, 'true');
+                    }
+                }
+                else if($game->$field)
+                {
+                    unset($game->$field);  // remove
+                }
+            }
+            else
+            {
+                // then update the xml
+                if (isset($game->$field))
+                    $game->$field = $value;
+                else
+                    $game->addChild($field, $value);
+            }
+        }
+    }
+}
+
+if($_POST['insert'])
+{
+    insertGame($gamelist, $_POST);
     $response['success'] = true;
 }
 elseif($_POST['update'])
 {
-    for ($i=0; $i<count($gamelist->game); $i++)
+    $game = findGame($gamelist, $_POST);
+    if ($game)
     {
-        $game = &$gamelist->game[$i];
-        if ($game->path == $_POST['game_path'])
-        {
-            // for all meta data posted...
-            foreach ($GAME_FIELDS as $field)
-            {
-                // get the value
-                if (isset($_POST[$field]))
-                {
-                    $value = $_POST[$field];
-                    if ($field == 'favorite' || $field == 'kidgame' || $field == 'hidden')
-                    {
-                        if ($value == 1 || $value == 'true')
-                        {
-                            // add true
-                            if (isset($game->$field))
-                            {
-                                $game->$field = 'true';
-                            }
-                            else
-                            {
-                                $game->addChild($field, 'true');
-                            }
-                        }
-                        else if($game->$field)
-                        {
-                            unset($game->$field);  // remove
-                        }
-                    }
-                    else
-                    {
-                        // then update the xml
-                        if (isset($game->$field))
-                            $game->$field = $value;
-                        else
-                            $game->addChild($field, $value);
-                    }
-                }
-            }
-            $response['success'] = true;
-        }
+        updateGame($game, $_POST);
+        $response['index'] = $game->index;
+        $response['success'] = true;
+    }
+}
+elseif($_POST['delete'])
+{
+    $game = findGame($gamelist, $_POST);
+    if ($game)
+    {
+        unset($game[0]);
+        $response['success'] = true;
     }
 }
 

@@ -200,7 +200,8 @@ if (file_exists(ROMSPATH))
     }
 
     // collections
-    foreach (array('auto-allgames','auto-favorites','auto-lastplayed','custom-collections') as $system)
+    foreach (array('auto-allgames','auto-favorites','auto-lastplayed','custom-collections','retropie'
+    ) as $system)
     {
         if (file_exists($themepath.'/'.$system.'/theme.xml'))
         {

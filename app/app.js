@@ -16,6 +16,8 @@ angular
         'WebtroPie.gamelist',
         'WebtroPie.game_editor',
         'WebtroPie.carousel_service',
+        'WebtroPie.es_service',
+        'WebtroPie.menu_service',
         'ngTouch',
         'animEnd'
     ])

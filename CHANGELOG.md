@@ -1,3 +1,13 @@
+<a name="0.9"></a>
+- Fix delete new scanned game name
+- EmulationStation running warning (only shows when Save Metadata on exit is set), sopt ES option for local users
+- EmulationStation stop/start option under new RetroPie menu for local users
+- Save game speed up, progress (pacman) spinner
+- Delete game
+- Video play/pause position fix
+- Main menu now modal (open animation)
+- slide animations fix
+
 <a name="0.2.2"></a>
 - Fix game launch, INSTALL.sh improvements, stand alone web server option (2017-12-27)
 - Improve text vertical positioning for some fonts (2017-12-27)

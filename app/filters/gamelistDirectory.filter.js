@@ -50,6 +50,10 @@
                 if (filter)
                 {
                     var name = game.name;
+                    if (!name)
+                    {
+                        name = game.shortpath;
+                    }
                     if (game.new)
                     {
                         name = 'New: ' + game.name;

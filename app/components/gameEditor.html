@@ -1,8 +1,6 @@
 <div class="game_editor gui">
-    <div class=rom>{{app.GameService.game.index||'New'}}) {{app.GameService.game.shortpath}}
-         <span ng-if="vm.game.index && !vm.game.isDir && !vm.game.size" class=missing>
-         - missing
-         </span>
+    <div class=rom>{{vm.game.index||'New'}}) {{vm.game.shortpath}}
+         <span ng-if="vm.game.missing" class=missing>- missing</span>
     </div>
 
     <table style="width: 100%" cellspacing=0>
@@ -14,7 +12,7 @@
                    ng-change="vm.mdChanged('name')">
         </td>
         <td class=snap rowspan=4>
-            <md-media-upload md="image" accept="image/*" thumbnail="18vh"></md-media-upload>
+            <md-media-upload game="vm.game" md="image" accept="image/*" thumbnail="18vh"></md-media-upload>
         </td>
     </tr>
     <tr>
@@ -53,7 +51,7 @@
                    ng-change="vm.mdChanged('publisher')">
         </td>
         <td class=snap rowspan=3>
-            <md-media-upload md="marquee" accept="image/*" thumbnail="13vh"></md-media-upload>
+            <md-media-upload game="vm.game" md="marquee" accept="image/*" thumbnail="13vh"></md-media-upload>
         </td>
     </tr>
     <tr>
@@ -116,7 +114,7 @@
             </small>
         </td>
         <td class=snap rowspan=3>
-            <md-media-upload md="video" accept="video/mp4,video/x-m4v,video/*" thumbnail="13vh"></md-media-upload>
+            <md-media-upload game="vm.game" md="video" accept="video/mp4,video/x-m4v,video/*" thumbnail="13vh"></md-media-upload>
         </td>
     </tr>
     <tr>
@@ -152,21 +150,27 @@
         </td>
     </tr>
     </table>
-    <div>
+    <div class="working" ng-if="vm.game.saving || vm.game.deleting">
+        <spinner size="6vmin"></spinner>
+        <span ng-if="vm.game.saving">{{app.config.lang.misc.saving}}</span>
+        <span ng-if="vm.game.deleing">{{app.config.lang.misc.deleting}}</span>
+        . . .
+    </div>
+    <div ng-hide="vm.game.saving || vm.game.deleting">
         <button ng-show="vm.game.size && app.config.env.has_launch"
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.launch(vm.game)">{{app.config.lang.button.launch}}</button>
         <!-- button class="todo">{{app.config.lang.button.scrape}}</button -->
         <button ng-show="vm.game.changes || vm.game.new"
                 ng-keydown="vm.editorButtonKeyPress($event)"
-                ng-click="app.GameService.save(vm.game); app.GameService.hideEditor()">{{app.config.lang.button.save}}</button>
+                ng-click="app.GameService.save(vm.game)">{{app.config.lang.button.save}}</button>
         <button ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.hideEditor()">{{app.config.lang.button.close}}</button>
         <button ng-show="vm.game.changes && vm.game.reset"
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.resetGame(vm.game)">{{app.config.lang.button.reset}}</button>
-        <!-- button class="todo">{{app.config.lang.button.delete}}</button>
-        <button class="todo">{{app.config.lang.button.move}}</button -->
+        <button ng-click="app.GameService.deleteGame(vm.game)">{{app.config.lang.button.delete}}</button>
+        <!-- button class="todo">{{app.config.lang.button.move}}</button -->
         <span ng-if="app.GameService.selectedList.length">
             Change all selected
             <image-toggle class="checkbox right"
