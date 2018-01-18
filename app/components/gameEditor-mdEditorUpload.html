@@ -17,12 +17,12 @@
     </form>
     <div>
         <img ng-if="vm.md!='video' && vm.gameMediaUrl()" class="click"
-             title="{{app.config.lang.misc.clickPreview}}"
+             title="{{app.config.lang.editor.clickPreview}}"
              ng-style="{height: vm.thumbnail}"
              ng-src="{{vm.gameMediaUrl()}}"
              ng-click="vm.preview=!vm.preview">
         <video ng-if="vm.md=='video' && vm.gameMediaUrl()" class="click"
-             title="{{app.config.lang.misc.clickPreview}}"
+             title="{{app.config.lang.editor.clickPreview}}"
              ng-style="{height: vm.thumbnail}"
              ng-src="{{vm.gameMediaUrl()}}" autoplay loop muted
              ng-click="vm.preview=!vm.preview">
@@ -44,10 +44,10 @@
                     <span ng-click="vm.preview=false"
                           title="{{app.config.lang.button.close}}">&times;</span>
                     <span ng-click="vm.zoomOut()"
-                          title="{{app.config.lang.misc.zoomOut}}">-</span>
+                          title="{{app.config.lang.editor.zoomOut}}">-</span>
                     {{(vm.scale || 1) * 100}}%
                     <span ng-click="vm.zoomIn()"
-                          title="{{app.config.lang.misc.zoomIn}}">+</span>
+                          title="{{app.config.lang.editor.zoomIn}}">+</span>
                 </div>
                 <div class="details">
                     {{vm.width}} x {{vm.height}}<br/>

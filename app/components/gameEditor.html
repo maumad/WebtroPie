@@ -152,8 +152,8 @@
     </table>
     <div class="working" ng-if="vm.game.saving || vm.game.deleting">
         <spinner size="6vmin"></spinner>
-        <span ng-if="vm.game.saving">{{app.config.lang.misc.saving}}</span>
-        <span ng-if="vm.game.deleting">{{app.config.lang.misc.deleting}}</span>
+        <span ng-if="vm.game.saving">{{app.config.lang.editor.saving}}</span>
+        <span ng-if="vm.game.deleting">{{app.config.lang.editor.deleting}}</span>
         . . .
     </div>
     <div ng-hide="vm.game.saving || vm.game.deleting">
@@ -169,7 +169,7 @@
         <button ng-show="vm.game.changes && vm.game.reset"
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.resetGame(vm.game)">{{app.config.lang.button.reset}}</button>
-        <button ng-click="app.GameService.deleteGame(vm.game)">{{app.config.lang.button.delete}}</button>
+        <button ng-click="app.deleteGame(vm.game)">{{app.config.lang.button.delete}}</button>
         <!-- button class="todo">{{app.config.lang.button.move}}</button -->
         <span ng-if="app.GameService.selectedList.length">
             Change all selected

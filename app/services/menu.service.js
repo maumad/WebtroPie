@@ -9,9 +9,9 @@
         .module('WebtroPie.menu_service', ['WebtroPie.config_service','WebtroPie.es_service'])
         .service('MenuService', MenuService);
 
-    MenuService.$inject = ['config','$http'];
+    MenuService.$inject = ['config','$http','util'];
 
-    function MenuService(config, $http)
+    function MenuService(config, $http, util)
     {
         var self = this;
 
@@ -41,6 +41,28 @@
                 self.menu.template = self.menu.history[self.menu.history.length-1];
                 self.menu.history.length--;
             }
+        }
+
+        function focusFirstButton()
+        {
+            util.waitForRender(self.appscope)
+            .then(function() {
+                var menu = angular.element(document.querySelector('#menu'));
+                if (menu && menu.length > 0)
+                {
+                    var el = menu.find( "button" );
+                    if (el)
+                    for (var i = 0; i<el.length; i++)
+                    {
+                        if(!el[i].className)
+                        {
+                            el[i].focus();
+                            break;
+                        }
+                    }
+                }
+            });
+
         }
 
         function goMenu(template)
@@ -85,6 +107,7 @@
             self.menu.template = template || 'menu/menu-main.html';
             self.menu.history.length = 0;
             self.menu.show = true;
+            focusFirstButton();
         }
 
         function toggleMenu()

@@ -19,6 +19,7 @@
 
         // methods
         app.appConfigChanged = appConfigChanged;
+        app.deleteGame = deleteGame;
         app.languageChanged = languageChanged;
         app.registerThemeChangedCallback = registerThemeChangedCallback;
         app.setViewAnimation = setViewAnimation;
@@ -47,6 +48,7 @@
             app.styler = styler;
             app.CarouselService = CarouselService;
             app.menu = MenuService.menu;
+            MenuService.appscope = $scope;
 
             config.init()
             .then(function () {
@@ -61,6 +63,13 @@
         function appConfigChanged(field)
         {
             config.save(field, config.app[field], 'string', config.APP);
+        }
+
+        function deleteGame(game)
+        {
+            app.gameToDelete = game;
+            app.deleteROM = true;
+            MenuService.showMenu('menu/deleteGame.html');
         }
 
         function languageChanged()

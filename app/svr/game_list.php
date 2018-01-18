@@ -144,7 +144,7 @@ foreach ($response['game'] as $index => &$game)
     }
     else
     {
-        $game['size'] = 0;
+        $game['size'] = -1;
     }
 
     if (isset($game['lastplayed']))

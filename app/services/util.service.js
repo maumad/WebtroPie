@@ -479,13 +479,16 @@
             var deferred = $q.defer();
 
             // do at least one digest cycle
-            if (!scope.$$phase)
+            if(scope)
             {
-                scope.$apply();
-            }
-            else
-            {
-                scope.$evalAsync();
+                if (!scope.$$phase)
+                {
+                    scope.$apply();
+                }
+                else
+                {
+                    scope.$evalAsync();
+                }
             }
 
             function waitLoop()

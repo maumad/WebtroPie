@@ -11,10 +11,10 @@
         .module('WebtroPie.game_service', ['WebtroPie.config_service'])
         .service('GameService', service);
 
-    service.$inject = ['config','util','ThemeService', 'ES',
-                             '$http', '$httpParamSerializer', '$q', '$timeout', '$location'];
+    service.$inject = ['config','util','ThemeService', 'ES', 'MenuService',
+                         '$http', '$httpParamSerializer', '$q', '$timeout', '$location'];
 
-    function service(config, util, ThemeService, ES,
+    function service(config, util, ThemeService, ES, MenuService,
                           $http, $httpParamSerializer, $q, $timeout, $location)
     {
         var self = this;
@@ -189,11 +189,15 @@
         }
 
         // save changed fields for a single game
-        function deleteGame(game)
+        function deleteGame(game, rom)
         {
-            var post = { system: game.sys, game_path: game.path};
+            var post = { system: game.sys, game_path: game.path, rom: rom};
 
             post.delete = 1;
+            if (!game.new)
+            {
+                post.index = game.index;
+            }
 
             game.deleting = true;
 
@@ -220,6 +224,7 @@
                                 self.systems[sys].total--;
                             }
                         });
+                        MenuService.hideMenu();
                         hideEditor();
                     }
                     game.deleting = false;
@@ -522,7 +527,7 @@
                             game.lastplayed = util.timestampToDate(game.lptime);
                         }
 
-                        if (game.size)
+                        if (game.size >= 0)
                         {
                             game.human_size = util.humanSize(game.size);
                         }
@@ -562,7 +567,7 @@
                             game.rating = 1;
                         }
 
-                        if (game.index && !game.isDir && !game.size)
+                        if (game.index && !game.isDir && game.size < 0)
                         {
                             game.missing = true;
                         }
@@ -933,6 +938,10 @@
             .then(function onSuccess(response) {
                 if(response.data.success)
                 {
+                    if (game.new)
+                    {
+                        game.index = self.systems[sys].total;
+                    }
                     delete game.changes;
                     delete game.new;
                     hideEditor();

@@ -13,7 +13,7 @@
     {
         var directive = {
             template: '<div class="modal">'+
-                          '<div class="menu_in">'+
+                          '<div id="menu" class="menu_in">'+
                              '<div ng-include="app.menu.template"></div>'+
                           '</div>'+
                       '</div>'

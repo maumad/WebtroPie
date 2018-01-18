@@ -132,12 +132,12 @@ function updateGame(&$game, &$post)
     }
 }
 
-if($_POST['insert'])
+if ($_POST['insert'])
 {
     insertGame($gamelist, $_POST);
     $response['success'] = true;
 }
-elseif($_POST['update'])
+elseif ($_POST['update'])
 {
     $game = findGame($gamelist, $_POST);
     if ($game)
@@ -147,13 +147,25 @@ elseif($_POST['update'])
         $response['success'] = true;
     }
 }
-elseif($_POST['delete'])
+elseif ($_POST['delete'])
 {
-    $game = findGame($gamelist, $_POST);
-    if ($game)
+    if (isset($_POST['index'])) // existing game
     {
-        unset($game[0]);
-        $response['success'] = true;
+        $game = findGame($gamelist, $_POST);
+        if ($game)
+        {
+            unset($game[0]);
+            $response['success'] = true;
+        }
+    }
+    if (isset($_POST['rom']) && $_POST['rom'])
+    {
+        chdir($config['systems'][$_POST['system']]['path']);
+        if(file_exists($_POST['game_path']))
+        {
+            unlink($_POST['game_path']);
+            $response['success'] = true;
+        }
     }
 }
 
