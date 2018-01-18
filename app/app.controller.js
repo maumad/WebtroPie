@@ -47,6 +47,7 @@
             app.GameService = GameService;
             app.styler = styler;
             app.CarouselService = CarouselService;
+            app.ES = ES;
             app.menu = MenuService.menu;
             MenuService.appscope = $scope;
 

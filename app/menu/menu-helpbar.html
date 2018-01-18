@@ -3,6 +3,16 @@
     <div class="title">{{app.config.lang.menu.Helpbar}}</div>
     <div class="line"></div>
 
+    <!-- div class="option">
+        {{app.config.lang.menu.ShowHomeMenu}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.ShowHomeMenu"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div ng-repeat-end class="line"></div -->
+
     <div class="option">
         {{app.config.lang.menu.ShowGameCounts}}
         <image-toggle class="checkbox right"
@@ -44,19 +54,9 @@
     <div class="line"></div>
 
     <div class="option">
-        {{app.config.lang.menu.ShowEmptySystems}}
+        {{app.config.lang.menu.ShowESControl}}
         <image-toggle class="checkbox right"
-                ng-model="app.config.app.ShowEmptySystems"
-                on-svg="resources/checkbox_checked.svg"
-                off-svg="resources/checkbox_unchecked.svg">
-        </image-toggle>
-    </div>
-    <div class="line"></div>
-
-    <div class="option">
-        {{app.config.lang.menu.ShowEmptyDirectories}}
-        <image-toggle class="checkbox right"
-                ng-model="app.config.app.ShowEmptyDirectories"
+                ng-model="app.config.app.ShowESControl"
                 on-svg="resources/checkbox_checked.svg"
                 off-svg="resources/checkbox_unchecked.svg">
         </image-toggle>

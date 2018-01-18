@@ -40,6 +40,7 @@
             {
                 self.menu.template = self.menu.history[self.menu.history.length-1];
                 self.menu.history.length--;
+                focusFirstButton();
             }
         }
 
@@ -69,6 +70,7 @@
         {
             self.menu.history.push(self.menu.template);
             self.menu.template = template;
+            focusFirstButton();
         }
 
         function hideMenu()
@@ -80,12 +82,13 @@
         function init()
         {
             self.menu.main = [
-                {text: 'UI',          type: 'menu', action: 'menu/menu-ui.html'},
-                {text: 'Helpbar',     type: 'menu', action: 'menu/menu-helpbar.html'}
+                {text: 'UI',      type: 'menu', action: 'menu/menu-ui.html'},
+                {text: 'Helpbar', type: 'menu', action: 'menu/menu-helpbar.html'},
+                {text: 'Other',   type: 'menu', action: 'menu/menu-other.html'}
             ];
             if (config.local)
             {
-                self.menu.main.push({text: 'Other',   type: 'menu', action: 'menu/menu-other.html'});
+                self.menu.main.push({text: 'Local',   type: 'menu', action: 'menu/menu-local.html'});
                 self.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
             }
             if (config.es.SaveGamelistsOnExit && config.env.es_pid)

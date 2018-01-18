@@ -10,11 +10,11 @@
         .controller('GamelistViewController', controller);
 
     controller.$inject = ['$scope','config','util','styler',
-                          'ThemeService','GameService','CarouselService','MenuService',
+                          'ThemeService','GameService','CarouselService','MenuService','ES',
                           '$routeParams','$window','$document','$timeout'];
 
     function controller($scope, config, util, styler,
-                        ThemeService, GameService, CarouselService, MenuService,
+                        ThemeService, GameService, CarouselService, MenuService, ES,
                         $routeParams, $window, $document, $timeout)
     {
         var page = this;
@@ -41,7 +41,7 @@
                    menu: [{text: 'Scan',       click: scan},
                           {text: 'MatchMedia', click: matchMedia}]}
            ,{langButton: 'menu',  click: MenuService.toggleMenu,  svg: 'resources/button_start.svg'}
-           ,{langButton: 'back',  click: goBack,                      svg: 'resources/button_b.svg'}
+           ,{langButton: 'back',  click: goBack,                  svg: 'resources/button_b.svg'}
 
            // X on the menu reflects the key enter / mouse click action
 

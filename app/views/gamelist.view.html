@@ -111,6 +111,13 @@
          </div>
       </span>
 
+      <span class="click"
+            ng-if="app.config.app.ShowESControl && !app.config.env.es_pid"
+            ng-click="app.ES.start()">{{app.config.lang.es.startHelpbar}}</span>
+      <span class="click"
+            ng-if="app.config.app.ShowESControl && app.config.env.es_pid"
+            ng-click="app.ES.stop()">{{app.config.lang.es.stopHelpbar}}</span>
+
    </help-menu>
 
 </div>
