@@ -84,12 +84,15 @@
                 </a>
             </div>
         </span>
-        <span class="click"
-              ng-if="app.config.app.ShowESControl && !app.config.env.es_pid"
-              ng-click="app.ES.start()">{{app.config.lang.es.startHelpbar}}</span>
-        <span class="click"
-              ng-if="app.config.app.ShowESControl && app.config.env.es_pid"
-              ng-click="app.ES.stop()">{{app.config.lang.es.stopHelpbar}}</span>
+
+        <span class="dropdown" ng-if="app.config.app.ShowESControl">
+            <div class="filters click" help-inverter
+                    ng-if="!app.config.env.es_pid"
+                    ng-click="app.ES.start()">{{app.config.lang.es.startHelpbar}}</div>
+            <div class="filters click" help-inverter
+                    ng-if="app.config.env.es_pid"
+                    ng-click="app.showMenu('menu/es_close_warning.html')">{{app.config.lang.es.stopHelpbar}}</div>
+        </span>
 
     </help-menu>
 </div>
