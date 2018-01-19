@@ -83,14 +83,14 @@
         {
             self.menu.main = [
                 {text: 'UI',      type: 'menu', action: 'menu/menu-ui.html'},
-                {text: 'Helpbar', type: 'menu', action: 'menu/menu-helpbar.html'},
-                {text: 'Other',   type: 'menu', action: 'menu/menu-other.html'}
+                {text: 'Helpbar', type: 'menu', action: 'menu/menu-helpbar.html'}
             ];
             if (config.local)
             {
                 self.menu.main.push({text: 'Local',   type: 'menu', action: 'menu/menu-local.html'});
                 self.menu.main.push({text: 'Uploads', type: 'menu', action: 'menu/menu-uploads.html'});
             }
+            self.menu.main.push({text: 'Other', type: 'menu', action: 'menu/menu-other.html'});
             if (config.es.SaveGamelistsOnExit && config.env.es_pid)
             {
                 showMenu('menu/es_warning.html');

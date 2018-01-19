@@ -46,10 +46,12 @@
            // X on the menu reflects the key enter / mouse click action
 
            // for a Game, X = Edit, A = Launch (if enabled)
+/*
            ,{langButton: 'edit',  click: GameService.showEditor, svg: 'resources/button_a.svg',
                                    show: '!app.GameService.game.isDir && app.config.edit'}
+*/
            ,{langButton: 'launch',click: GameService.launch,      svg: 'resources/button_x.svg',
-                                   show: '!app.GameService.game.isDir && app.config.env.has_launch'},
+                                   show: '!app.GameService.game.isDir && app.config.env.has_launch && app.config.app.ShowLaunch'},
 
             // for a Directory, X = Open, A = Edit
            ,{langButton: 'open',  click: GameService.openFolder, svg: 'resources/button_a.svg',
