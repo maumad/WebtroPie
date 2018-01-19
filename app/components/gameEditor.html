@@ -157,7 +157,7 @@
         . . .
     </div>
     <div ng-hide="vm.game.saving || vm.game.deleting">
-        <button ng-show="vm.game.size && app.config.env.has_launch"
+        <button ng-show="vm.game.size && app.config.env.has_launch && app.config.app.ShowLaunch"
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.launch(vm.game)">{{app.config.lang.button.launch}}</button>
         <!-- button class="todo">{{app.config.lang.button.scrape}}</button -->
