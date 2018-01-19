@@ -1,4 +1,5 @@
-<a name="0.9.0 Le grand départ (2018-01-19)"></a>
+# 0.9.0 Le grand départ (2018-01-19)
+<a name="0.9.0"></a>
 - Menu changes, delete game confirm, shotdown ES confirm
 - Fix delete new scanned game name
 - EmulationStation running warning (only shows when Save Metadata on exit is set), stop ES option for local users
