@@ -166,7 +166,7 @@
                 ng-click="app.GameService.save(vm.game)">{{app.config.lang.button.save}}</button>
         <button ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.hideEditor()">{{app.config.lang.button.close}}</button>
-        <button ng-show="vm.game.changes && vm.game.reset"
+        <button ng-show="vm.game.changes && vm.game.reset && !vm.game.new"
                 ng-keydown="vm.editorButtonKeyPress($event)"
                 ng-click="app.GameService.resetGame(vm.game)">{{app.config.lang.button.reset}}</button>
         <button ng-click="app.deleteGame(vm.game)">{{app.config.lang.button.delete}}</button>

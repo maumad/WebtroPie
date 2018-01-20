@@ -898,9 +898,9 @@
             {
                 post.insert = 1;
                 // send all fields for new game
-                angular.forEach(self.attrs, function(val, field)
+                angular.forEach(self.attrs, function(gamelist_field, theme_field)
                 {
-                    post[field] = game[field];
+                    post[gamelist_field] = game[gamelist_field];
                 });
             }
             // update
@@ -940,10 +940,11 @@
                 {
                     if (game.new)
                     {
-                        game.index = self.systems[sys].total;
+                        game.index = response.data.index;
                     }
                     delete game.changes;
                     delete game.new;
+                    MenuService.hideMenu();
                     hideEditor();
                 }
                 game.saving = false;

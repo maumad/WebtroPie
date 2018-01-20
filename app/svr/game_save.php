@@ -136,6 +136,7 @@ if ($_POST['insert'])
 {
     insertGame($gamelist, $_POST);
     $response['success'] = true;
+    $response['index'] = count($gamelist->game);
 }
 elseif ($_POST['update'])
 {
@@ -158,13 +159,14 @@ elseif ($_POST['delete'])
             $response['success'] = true;
         }
     }
-    if (isset($_POST['rom']) && $_POST['rom'])
+    if (isset($_POST['rom']) && $_POST['rom']=='true')
     {
         chdir($config['systems'][$_POST['system']]['path']);
         if(file_exists($_POST['game_path']))
         {
             unlink($_POST['game_path']);
             $response['success'] = true;
+            $response['deleteRom'] = $_POST['rom'];
         }
     }
 }
