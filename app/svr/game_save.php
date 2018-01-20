@@ -166,7 +166,6 @@ elseif ($_POST['delete'])
         {
             unlink($_POST['game_path']);
             $response['success'] = true;
-            $response['deleteRom'] = $_POST['rom'];
         }
     }
 }
