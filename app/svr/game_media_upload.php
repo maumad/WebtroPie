@@ -17,12 +17,13 @@ if ($config['edit'] && $_FILES['upload'])
         {
             // either from config for media type or default, E.g "roms/nes/images"
             $directory = get_media_path($media, $system);
+            $suffix = get_media_suffix($media);
 
             // The extension of the upload, E.g jpg
             $ext = strtolower( pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION) );
 
             // the filename of the ROM including ext, E.g PACMAN.jpg
-            $filename = pathinfo($_POST['game_path'], PATHINFO_FILENAME).'.'.$ext;
+            $filename = pathinfo($_POST['game_path'], PATHINFO_FILENAME).$suffix.'.'.$ext;
 
             // path (config style, may contain E.g. ~), E.g "roms/nes/images/PACMAN.jpg"
             $response['media_path'] = $directory . '/' . $filename;
@@ -40,7 +41,7 @@ if ($config['edit'] && $_FILES['upload'])
             if ($media == 'image')
             {
                 // is max image size set ?
-                if (isset($config['app']['uploadImageDirectory']))
+                if (isset($config['app']['maxImageSize']))
                 {
                     list($maxwidth, $maxheight) = preg_split("/x/", $config['app']['maxImageSize']);
                 }
@@ -48,7 +49,7 @@ if ($config['edit'] && $_FILES['upload'])
             elseif ($media == 'marquee')
             {
                 // is max marquee size set ?
-                if (isset($config['app']['uploadMarqueeDirectory']))
+                if (isset($config['app']['maxMarqueeSize']))
                 {
                     list($maxwidth, $maxheight) = preg_split("/x/", $config['app']['maxMarqueeSize']);
                 }

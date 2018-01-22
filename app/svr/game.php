@@ -13,7 +13,7 @@ $GAME_FIELDS = array(
 
 function get_media_path($media, $system)
 {
-    global $config, $svr_dir;
+    global $config;
 
     // use either config directories or roms path / images, videos or marquees
     if ($media == 'image' && isset($config['app']['uploadImageDirectory']))
@@ -30,10 +30,31 @@ function get_media_path($media, $system)
     }
     else
     {
-        return ROMSPATH.$system.'/'.$media.'s';  // E.g. images
+        return ROMSPATH.$system.'/'.$media.'s';  // E.g. .../images
     }
 }
 
+function get_media_suffix($media)
+{
+    global $config;
+
+    if ($media == 'image' && isset($config['app']['uploadImageSuffix']))
+    {
+        return $config['app']['uploadImageSuffix'];
+    }
+    else if ($media == 'video' && isset($config['app']['uploadVideoSuffix']))
+    {
+        return $config['app']['uploadVideoSuffix'];
+    }
+    else if ($media == 'marquee' && isset($config['app']['uploadMarqueeSuffix']))
+    {
+        return $config['app']['uploadMarqueeSuffix'];
+    }
+    else
+    {
+        return '';
+    }
+}
 
 function get_media_paths_full_url($filename, $system)
 {
