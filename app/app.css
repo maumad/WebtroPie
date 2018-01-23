@@ -49,6 +49,22 @@ input, select, textarea {
     border: 1px solid #777;
     border-radius: 4%;
 }
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: #bbb;
+    font-style: italic;
+}
+::-moz-placeholder { /* Firefox 19+ */
+    color: #bbb;
+    font-style: italic;
+}
+:-ms-input-placeholder { /* IE 10+ */
+    color: #bbb;
+    font-style: italic;
+}
+:-moz-placeholder { /* Firefox 18- */
+    color: #bbb;
+    font-style: italic;
+}
 
 .click, button {
     cursor: pointer;

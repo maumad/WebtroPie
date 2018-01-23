@@ -7,7 +7,7 @@
 
         <div class="option">
             {{app.config.lang.menu.uploadImageDirectory}}
-            <input class="right large"
+            <input class="right large" placeholder="./images"
                  ng-model="app.config.app.uploadImageDirectory"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('uploadImageDirectory')">
@@ -16,7 +16,7 @@
 
         <div class="option">
             {{app.config.lang.menu.uploadImageSuffix}}
-            <input class="right large"
+            <input class="right large" placeholder="-image"
                  ng-model="app.config.app.uploadImageSuffix"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('uploadImageSuffix')">
@@ -25,7 +25,7 @@
 
         <div class="option">
             {{app.config.lang.menu.maxImageSize}}
-            <input class="right tiny"
+            <input class="right tiny" placeholder="720x720"
                  ng-model="app.config.app.maxImageSize"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('maxImageSize')">
@@ -34,7 +34,7 @@
 
         <div class="option">
             {{app.config.lang.menu.uploadMarqueeDirectory}}
-            <input class="right large"
+            <input class="right large" placeholder="./marquees"
                  ng-model="app.config.app.uploadMarqueeDirectory"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('uploadMarqueeDirectory')">
@@ -43,7 +43,7 @@
 
         <div class="option">
             {{app.config.lang.menu.uploadMarqueeSuffix}}
-            <input class="right large"
+            <input class="right large" placeholder="-marquee"
                  ng-model="app.config.app.uploadMarqueeSuffix"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('uploadMarqueeSuffix')">
@@ -52,7 +52,7 @@
 
         <div class="option">
             {{app.config.lang.menu.maxMarqueeSize}}
-            <input class="right tiny"
+            <input class="right tiny" placeholder="400x400"
                  ng-model="app.config.app.maxMarqueeSize"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('maxMarqueeSize')">
@@ -61,7 +61,7 @@
 
         <div class="option">
             {{app.config.lang.menu.uploadVideoDirectory}}
-            <input class="right large"
+            <input class="right large" placeholder="./videos"
                  ng-model="app.config.app.uploadVideoDirectory"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('uploadVideoDirectory')">
@@ -70,7 +70,7 @@
 
         <div class="option">
             {{app.config.lang.menu.uploadVideoSuffix}}
-            <input class="right large"
+            <input class="right large" placeholder="-video"
                  ng-model="app.config.app.uploadVideoSuffix"
                  ng-keydown="app.menuKeyPress($event)"
                  ng-blur="app.appConfigChanged('uploadVideoSuffix')">

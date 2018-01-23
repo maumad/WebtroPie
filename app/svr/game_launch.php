@@ -3,8 +3,11 @@
 // LAUNCH A GAME
 
 require_once("vars.php");
+include_once("local.php");
 
-if (preg_match('/192.168/', $_SERVER['REMOTE_ADDR']) && // local
+$local = getLocal();
+
+if ($local &&
     isset($_GET['system']) &&
     isset($_GET['game_path']))
 {

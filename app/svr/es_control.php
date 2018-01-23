@@ -2,11 +2,11 @@
 // -----------------------------
 // Start / Stop EmulationStation
 ini_set('max_execution_time', 60);
-
-$local = preg_match('/192.168/', $_SERVER['REMOTE_ADDR']);
     
 require_once("vars.php");
+include_once("local.php");
 
+$local = getLocal();
 $response = array();
 
 // initial es_pid

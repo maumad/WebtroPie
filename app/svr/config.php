@@ -3,6 +3,7 @@ $session = session_start();
 
 require_once("xml_util.php");
 require_once("vars.php");
+include_once("local.php");
 
 define("APP", 1);
 define("ENV", 2);
@@ -29,7 +30,7 @@ function getConfig($get)
 {
     global $session, $USER_PREFERENCE_SETTINGS;
 
-    $local = preg_match('/192.168/',$_SERVER['REMOTE_ADDR']) ? 1 : 0;
+    $local = getLocal();
 
     $config = array('edit' => false, 'local' => $local);
 
