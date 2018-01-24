@@ -194,8 +194,15 @@
 
         function keyPress($event)
         {
+            // do normal input behaviour for input/textarea
             if($event.target.tagName == 'INPUT' || $event.target.tagName == 'TEXTAREA')
-                return true;
+            {
+                // unless filter is empty so that left right goes to new screen
+                if( ! ($event.target.id == 'filter' && !GameService.filter) )
+                {
+                    return true;
+                }
+            }
 
             $event.stopPropagation();
 

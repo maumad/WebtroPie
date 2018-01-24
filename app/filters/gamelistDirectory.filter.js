@@ -62,6 +62,10 @@
                     {
                         name = 'Missing: ' + game.name;
                     }
+                    else if (game.duplicate)
+                    {
+                        name = 'Duplicate: ' + game.name;
+                    }
                     if (name.toLowerCase().indexOf(filter.toLowerCase()) < 0)
                         return;
                 }

@@ -427,9 +427,9 @@
             // new game from scan
             else if (game && game.new)
             {
-                style.color = '#fbef2e';
+                style.color = '#00f900';
                 style['-webkit-text-stroke-width'] = '1px';
-                style['-webkit-text-stroke-color'] = '#fbb02e';
+                style['-webkit-text-stroke-color'] = '#00c000';
                 style['text-shadow'] = '2px 2px 3px black, '+  // blur shadow
                                        '-1px -1px 0 black, '+  // black border
                                        '1px -1px 0 black, '+
@@ -441,6 +441,17 @@
                 style.color = '#f90000';
                 style['-webkit-text-stroke-width'] = '1px';
                 style['-webkit-text-stroke-color'] = '#c00000';
+                style['text-shadow'] = '2px 2px 3px black, '+  // blur shadow
+                                       '-1px -1px 0 black, '+  // black border
+                                       '1px -1px 0 black, '+
+                                       '-1px 1px 0 black, '+
+                                       '1px 1px 0 black';
+            }
+            else if (game && game.duplicate)
+            {
+                style.color = '#fbef2e';
+                style['-webkit-text-stroke-width'] = '1px';
+                style['-webkit-text-stroke-color'] = '#fbb02e';
                 style['text-shadow'] = '2px 2px 3px black, '+  // blur shadow
                                        '-1px -1px 0 black, '+  // black border
                                        '1px -1px 0 black, '+

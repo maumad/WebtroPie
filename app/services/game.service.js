@@ -336,6 +336,10 @@
                     {
                         text = 'Missing: ' + text;
                     }
+                    else if (game.duplicate)
+                    {
+                        text = 'Duplicate: ' + text;
+                    }
                     if (game.isDir)
                     {
                         text += ' ('+self.subdirs[game.path].games+')';
@@ -399,7 +403,6 @@
                 return path;
             }
         }
-
 
 
         // get a single gamelist for a system
@@ -708,48 +711,56 @@
                         dir_count++;
                     });
 
+                    system.gamelist.sort(function (a, b)
+                    {
+                        return (a.shortpath > b.shortpath ? 1 : -1);
+                    });
+
+                    // look for sub directories
+                    var last_game = {};
+                    system.duplicates = 0;
                     if (config.app.LogSystemTotals)
                     {
-                        system.gamelist.sort(function (a, b)
-                        {
-                            return (a.shortpath > b.shortpath ? 1 : -1);
-                        });
-
-                        // look for sub directories
-                        var last_game = {};
-                        system.duplicates = 0;
                         console.groupCollapsed("%s (%d)", system_name, system.total);
                         console.log("games = %d", system.total);
                             console.groupCollapsed("duplicates");
-                            angular.forEach(system.gamelist, function(game) {
-                                if (game.shortpath == last_game.shortpath)
-                                {
-                                    console.groupCollapsed(game.shortpath);
-                                        console.log("Index = %s", last_game.index);
-                                        console.log("Name = %s", last_game.name);
-                                        console.log("Path = %s", last_game.path);
-                                        console.log("Index = %s", game.index);
-                                        console.log("Name = %s", game.name);
-                                        console.log("Path = %s", game.path);
-                                    console.groupEnd();
-                                    system.duplicates++;
-                                }
-                                last_game = game;
-                            })
+                    }
+                    angular.forEach(system.gamelist, function(game) {
+                        if (game.shortpath == last_game.shortpath)
+                        {
+                            game.duplicate = true;
+                            last_game.duplicate = true;
+                            if (config.app.LogSystemTotals)
+                            {
+                                console.groupCollapsed(game.shortpath);
+                                    console.log("Index = %s", last_game.index);
+                                    console.log("Name = %s", last_game.name);
+                                    console.log("Path = %s", last_game.path);
+                                    console.log("Index = %s", game.index);
+                                    console.log("Name = %s", game.name);
+                                    console.log("Path = %s", game.path);
+                                console.groupEnd();
+                            }
+                            system.duplicates++;
+                        }
+                        last_game = game;
+                    });
+                    if (config.app.LogSystemTotals)
+                    {
                             console.groupEnd();
                         console.log("duplicates = %d", system.duplicates);
                         console.log("directories = %d", dir_count);
                         console.log("total = %d", system.gamelist.length);
                         console.groupEnd();
+                    }
 
-                        system.gamelist.sort(function (a, b)
-                        {
-                            return (a.name > b.name ? 1 : -1);
-                        });
-                        if(system.duplicates > 0)
-                        {
-                            console.log("Warning: %s gamelist.xml contains %d duplicate rom paths", system_name, system.duplicates);
-                        }
+                    system.gamelist.sort(function (a, b)
+                    {
+                        return (a.name > b.name ? 1 : -1);
+                    });
+                    if(system.duplicates > 0 && config.app.LogSystemTotals)
+                    {
+                        console.log("Warning: %s gamelist.xml contains %d duplicate rom paths", system_name, system.duplicates);
                     }
 
                     deferred.resolve(system);
