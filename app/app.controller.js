@@ -20,6 +20,7 @@
         // methods
         app.appConfigChanged = appConfigChanged;
         app.deleteGame = deleteGame;
+        app.goWiki = goWiki;
         app.languageChanged = languageChanged;
         app.registerThemeChangedCallback = registerThemeChangedCallback;
         app.setViewAnimation = setViewAnimation;
@@ -71,6 +72,11 @@
             app.gameToDelete = game;
             app.deleteROM = true;
             MenuService.showMenu('menu/deleteGame.html');
+        }
+
+        function goWiki()
+        {
+            $window.open('https://github.com/gazpan/WebtroPie/wiki', '_blank');
         }
 
         function languageChanged()

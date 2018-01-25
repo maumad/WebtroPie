@@ -1,4 +1,6 @@
 <?php
+ini_set('max_execution_time', 300);
+
 require_once("cache.php");
 require_once("game.php");
 
