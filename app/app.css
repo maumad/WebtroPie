@@ -381,6 +381,26 @@ input, select, textarea {
     animation-duration: 0.5s
 }
 
+.elementinfo {
+    position: absolute;
+    z-index: 500;
+    width: 40px;
+    height: 20px;
+    top: 20px;
+    left: 20px;
+    border: 2px solid red;
+    color: yellow;
+    background-color: rgba(0,0,250,0.0.5);
+    background-image: url("svr/resources/alpha.png");
+    background-repeat: repeat;
+    overflow: scroll;
+    outline: 2px dashed yellow;
+    outline-offset: -2px;
+    padding: 2px 8px;
+    font-size: 2.5vmin;
+    box-sizing: border-box;
+}
+
 /* Add Animation */
 @-ms-keyframes menu_in_anim {
     from { top: 100vh; left: -50vw; opacity: 0; -ms-transform: scale(0.1,0.1); }

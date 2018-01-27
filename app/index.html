@@ -20,6 +20,7 @@
 
         <menu ng-if="app.menu.show"></menu>
 
+       <theme-element-info ng-if="app.config.app.ThemeEditor"></theme-element-info>
     </div>
 
     <!-- script src="lib/angular.min.js"></script -->
@@ -35,6 +36,7 @@
     <script src="services/carousel.service.js"></script>
     <script src="services/es.service.js"></script>
     <script src="services/menu.service.js"></script>
+    <script src="services/themer.service.js"></script>
     <script src="app.controller.js"></script>
     <script src="components/guiDateInput.js"></script>
     <script src="components/guiIcon.js"></script>
@@ -56,6 +58,8 @@
     <script src="components/onLoadImage.js"></script>
     <script src="components/onLoadVideo.js"></script>
     <script src="components/spinner.js"></script>
+    <script src="components/themeElement.js"></script>
+    <script src="components/themeElementInfo.js"></script>
     <script src="filters/orderObjectBy.filter.js"></script>
     <script src="filters/gamelistDirectory.filter.js"></script>
     <script src="filters/gamelistFieldType.filter.js"></script>

@@ -2,7 +2,8 @@
     <!-- all static images for current system's system view -->
     <theme-image
         ng-repeat="image in app.ThemeService.view.image|orderObjectBy:['include_count','index']:true|filter:{static:true}"
-        ng-if="image.name!='logo'" obj="image">
+        ng-if="image.name!='logo'" obj="image"
+        theme-element>
     </theme-image>
     <!-- all animatable images for current theme + prev/current/next system's "system" view -->
     <div ng-repeat="sysname in app.ThemeService.theme.carousel_systems_list"
@@ -13,7 +14,8 @@
         <div class="system_images_inner">
             <theme-image
                 ng-repeat="image in app.ThemeService.getSystemTheme(sysname).view.system.image|orderObjectBy:['include_count','index']:true|filter:{static:false}"
-                ng-if="image.name!='logo'" obj="image">
+                ng-if="image.name!='logo'" obj="image"
+                theme-element>
             </theme-image>
         </div>
     </div>
@@ -27,7 +29,8 @@
         ng-touchmove="page.mouseMove($event)"
         ng-touchcancel="page.mouseUp($event)"
         ng-touchend="page.mouseUp($event)"
-        class="systemcarousel systemtransition">
+        class="systemcarousel systemtransition"
+        theme-element>
         <div ng-style="app.styler.carousel.div_inner">
             <div ng-repeat="sysname in app.ThemeService.theme.carousel_systems_list"
                 id="sys-{{sysname}}"

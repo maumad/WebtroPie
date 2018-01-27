@@ -18,6 +18,7 @@ angular
         'WebtroPie.carousel_service',
         'WebtroPie.es_service',
         'WebtroPie.menu_service',
+        'WebtroPie.themer_service',
         'ngTouch',
         'animEnd'
     ])

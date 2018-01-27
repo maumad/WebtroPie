@@ -10,10 +10,12 @@
         .controller('AppController', controller);
 
     controller.$inject = ['$scope','$window','$http','config','util','styler',
-                            'ThemeService','GameService','CarouselService','ES','MenuService'];
+                            'ThemeService','GameService','CarouselService','ES','MenuService',
+                            'ThemerService'];
         
     function controller($scope, $window, $http, config, util, styler,
-                            ThemeService, GameService, CarouselService, ES, MenuService)
+                            ThemeService, GameService, CarouselService, ES, MenuService,
+                            ThemerService)
     {
         var app = this;
 
@@ -117,6 +119,8 @@
 
         function themeChanged(theme)
         {
+            ThemerService.setElement(null);
+
             if (theme)
             {
                 config.app.ThemeSet = theme;

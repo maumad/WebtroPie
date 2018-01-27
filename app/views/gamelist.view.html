@@ -1,22 +1,28 @@
 <div class=window_size>
    <!-- all theme components including game centric components -->
     <theme-image ng-repeat="obj in page.view.image" obj="obj" game="page.game" system="page.system"
-                                           ></theme-image>
+                 theme-element></theme-image>
     <theme-video ng-repeat="obj in page.view.video" obj="obj" game="page.game" system="page.system"
-                 ng-if="page.view.styled && page.loaded"></theme-video>
+                 ng-if="page.view.styled && page.loaded"
+                 theme-element></theme-video>
      <theme-text ng-repeat="obj in page.view.text" obj="obj" game="page.game" system="page.system"
-                 ng-if="!obj.anchor_label" ></theme-text>
+                 ng-if="!obj.anchor_label"
+                 theme-element></theme-text>
    <theme-rating ng-repeat="obj in page.view.rating" obj="obj" game="page.game"
-                 ng-if="!obj.anchor_label" ></theme-rating>
+                 ng-if="!obj.anchor_label"
+                 theme-element></theme-rating>
      <theme-date ng-repeat="obj in page.view.datetime" obj="obj" game="page.game"
-                 ng-if="!obj.anchor_label" ></theme-date>
+                 ng-if="!obj.anchor_label"
+                 theme-element></theme-date>
+
 
    <!-- the list -->
    <gamelist-virtual-repeat
       ng-if="page.view.styled && page.loaded"
       page-vm="page"
       system="{{::page.system}}"
-      subdir="{{::page.subdir}}">
+      subdir="{{::page.subdir}}"
+      theme-element>
    </gamelist-virtual-repeat>
 
    <game-editor ng-if="app.GameService.edit"

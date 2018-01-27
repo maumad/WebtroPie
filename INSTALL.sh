@@ -121,9 +121,6 @@ else
         chmod 755 "$WebtroPie/sessions"
     fi
 
-    # base for local is / not /app
-    sudo sed 's|base href="app"|base href=""|' app/index.html > app/index.php
-
     # must be run as pi (not root)
     if [ `whoami` != 'pi' ]; then
        echo "to run WebtroPie type :-"
