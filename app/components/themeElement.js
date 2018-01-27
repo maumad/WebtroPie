@@ -34,13 +34,6 @@
                     $event.preventDefault();
                     ThemerService.setElement($scope.vm.obj);
                 }
-            })
-            .bind('mouseout', function ($event) {
-                if (config.app.ThemeEditor)
-                {
-                    $event.stopPropagation();
-                    $event.preventDefault();
-                }
             });
         }
     }
