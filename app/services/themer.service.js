@@ -9,9 +9,7 @@
         .module('WebtroPie.themer_service', [])
         .service('ThemerService', service);
 
-    //service.$inject = ['config', 'util', 'styler', '$http', '$q', '$document', '$window'];
-
-    function service() //config, util, styler, $http, $q, $document, $window)
+    function service()
     {
         var self = this;
         self.setElement = setElement;
@@ -19,9 +17,9 @@
         function setElement(obj)
         {
             self.element = obj;
-            if (self.infoScope)
+            if (self.moverScope)
             {
-                self.infoScope.$evalAsync();
+                self.moverScope.$evalAsync();
             }
         }
 

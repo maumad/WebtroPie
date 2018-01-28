@@ -20,7 +20,8 @@
 
         <menu ng-if="app.menu.show"></menu>
 
-       <theme-element-info ng-if="app.config.app.ThemeEditor"></theme-element-info>
+       <theme-element-mover ng-if="app.config.app.ThemeEditor"></theme-element-mover>
+       <theme-element-properties draggable ng-if="app.config.app.ThemeEditor"></theme-element-properties>
     </div>
 
     <!-- script src="lib/angular.min.js"></script -->
@@ -58,8 +59,10 @@
     <script src="components/onLoadImage.js"></script>
     <script src="components/onLoadVideo.js"></script>
     <script src="components/spinner.js"></script>
-    <script src="components/themeElement.js"></script>
-    <script src="components/themeElementInfo.js"></script>
+    <script src="components/themeElementMouseOver.js"></script>
+    <script src="components/themeElementMover.js"></script>
+    <script src="components/themeElementProperties.js"></script>
+    <script src="components/draggable.js"></script>
     <script src="filters/orderObjectBy.filter.js"></script>
     <script src="filters/gamelistDirectory.filter.js"></script>
     <script src="filters/gamelistFieldType.filter.js"></script>

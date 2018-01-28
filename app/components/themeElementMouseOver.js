@@ -7,9 +7,9 @@
 
     angular
         .module('WebtroPie.components')
-        .directive('themeElement', themeElement);
+        .directive('themeElementMouseOver', themeElementMouseOver);
 
-    function themeElement() {
+    function themeElementMouseOver() {
         var directive = {
             restrict: 'A',
             replace: false,
@@ -27,8 +27,9 @@
         function onInit()
         {
             $element
-            .bind('mouseover', function ($event) {
-                if (config.app.ThemeEditor)
+            .bind('mouseover', function ($event)
+            {
+                if (config.app.ThemeEditor && !ThemerService.mouseDown)
                 {
                     $event.stopPropagation();
                     $event.preventDefault();

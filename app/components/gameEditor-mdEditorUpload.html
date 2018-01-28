@@ -29,6 +29,7 @@
         </video>
         <div ng-show="vm.preview && vm.width && !vm.dragover" class="preview"
              ng-style="vm.zoomStyle(4,3)"
+             draggable
             ><img ng-if="vm.md!='video' && vm.gameMediaUrl()"
                   ng-src="{{vm.gameMediaUrl()}}"
                   ng-style="vm.zoomStyle()"

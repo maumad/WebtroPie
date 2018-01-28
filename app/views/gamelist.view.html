@@ -1,19 +1,19 @@
 <div class=window_size>
    <!-- all theme components including game centric components -->
     <theme-image ng-repeat="obj in page.view.image" obj="obj" game="page.game" system="page.system"
-                 theme-element></theme-image>
+                 theme-element-mouse-over></theme-image>
     <theme-video ng-repeat="obj in page.view.video" obj="obj" game="page.game" system="page.system"
                  ng-if="page.view.styled && page.loaded"
-                 theme-element></theme-video>
+                 theme-element-mouse-over></theme-video>
      <theme-text ng-repeat="obj in page.view.text" obj="obj" game="page.game" system="page.system"
                  ng-if="!obj.anchor_label"
-                 theme-element></theme-text>
+                 theme-element-mouse-over></theme-text>
    <theme-rating ng-repeat="obj in page.view.rating" obj="obj" game="page.game"
                  ng-if="!obj.anchor_label"
-                 theme-element></theme-rating>
+                 theme-element-mouse-over></theme-rating>
      <theme-date ng-repeat="obj in page.view.datetime" obj="obj" game="page.game"
                  ng-if="!obj.anchor_label"
-                 theme-element></theme-date>
+                 theme-element-mouse-over></theme-date>
 
 
    <!-- the list -->
@@ -22,7 +22,7 @@
       page-vm="page"
       system="{{::page.system}}"
       subdir="{{::page.subdir}}"
-      theme-element>
+      theme-element-mouse-over>
    </gamelist-virtual-repeat>
 
    <game-editor ng-if="app.GameService.edit"
