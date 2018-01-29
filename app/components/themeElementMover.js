@@ -164,7 +164,7 @@
                     // calc new height
                     height = util.round((startH +
                                         (resizeNorth ? -1 : 1) *  // negative delta
-                                        (vm.element.origin ? 2 : 1) * // resizing both sides
+                                        (vm.element.origin && vm.element.origin.h ? 2 : 1) * // resizing both sides
                                          dy) / $window.innerHeight, 4);
                     // don't invert resize
                     if (height > 0)
@@ -189,7 +189,7 @@
                     // calc new width
                     width = util.round((startW +
                                         (resizeWest ? -1 : 1) *  // negative delta
-                                        (vm.element.origin ? 2 : 1) * // resizing both sides
+                                        (vm.element.origin && vm.element.origin.w ? 2 : 1) * // resizing both sides
                                          dx) / $window.innerWidth, 4);
                     // don't invert resize
                     if (width > 0)
