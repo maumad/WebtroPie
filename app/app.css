@@ -383,7 +383,7 @@ input, select, textarea {
 
 .element-mover {
     position: absolute;
-    z-index: 500;
+    z-index: 1000;
     border: 2px solid red;
     color: yellow;
     background-color: rgba(80,80,50,0.3);
@@ -399,7 +399,7 @@ input, select, textarea {
 
 .element-properties {
     position: absolute;
-    z-index: 500;
+    z-index: 1001;
     top: 20vh;
     left: 10vw;
     border: 2px solid yellow;

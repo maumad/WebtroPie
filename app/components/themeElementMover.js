@@ -69,7 +69,14 @@
                     vm.moverStyle.top = vm.themeStyle.top;
                     vm.moverStyle.width = hasWidth = vm.themeStyle.width || vm.themeStyle['max-width'];
                     vm.moverStyle.height = hasHeight = vm.themeStyle.height || vm.themeStyle['max-height'];
-                    vm.moverStyle['z-index'] = vm.themeStyle['z-index'];
+                    if (element.name == 'background')
+                    {
+                        vm.moverStyle['z-index'] = vm.themeStyle['z-index'];
+                    }
+                    else
+                    {
+                        vm.moverStyle['z-index'] = vm.themeStyle['z-index'] + 100;
+                    }
                     vm.moverStyle.transform = vm.themeStyle.transform;
                 }
             }
