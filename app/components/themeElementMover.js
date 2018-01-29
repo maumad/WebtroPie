@@ -103,8 +103,8 @@
                 resizeWest  = $event.offsetX < 5;
                 resizeEast  = $event.target.offsetWidth - $event.offsetX < 8;
                 // also move position when resizing left and top edges
-                moveX = resizeNorth;
-                moveY = resizeWest;
+                moveX = resizeWest;
+                moveY = resizeNorth;
 
                 // when cursor is near both edges, dont resize both : just move
                 if (resizeNorth && resizeSouth)
