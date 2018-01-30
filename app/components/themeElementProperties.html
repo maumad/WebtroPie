@@ -1,0 +1,137 @@
+<div class="element-properties" ng-show="pm.element">
+    <table>
+        <tr>
+            <td>{{pm.element.tag}}</td>
+            <td><input ng-model="pm.element.name" class="w60"></td>
+        </tr>
+        <tr>
+            <td>pos</td>
+            <td>
+                <input ng-model="pm.element.pos.x" class="w15"> :
+                <input ng-model="pm.element.pos.y" class="w15">
+            </td>
+        </tr>
+        <tr>
+            <td>size</td>
+            <td>
+                <input ng-model="pm.element.size.w" class="w15"> :
+                <input ng-model="pm.element.size.h" class="w15">
+            </td>
+        </tr>
+        <tr>
+            <td>maxSize</td>
+            <td>
+                <input ng-model="pm.element.maxSize.w" class="w15"> :
+                <input ng-model="pm.element.maxSize.h" class="w15">
+            </td>
+        </tr>
+        <tr>
+            <td>origin</td>
+            <td>
+                <input ng-model="pm.element.origin.x" class="w15"> :
+                <input ng-model="pm.element.origin.y" class="w15">
+            </td>
+        </tr>
+        <tr>
+            <td>zIndex</td>
+            <td>
+                <input ng-model="pm.element.zIndex" class="w15">
+                {{pm.style['z-index']}}
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='image'">
+            <td>path</td>
+            <td>
+                <input ng-model="pm.element.path" class="w60">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='image' || pm.element.tag=='video'">
+            <td>default</td>
+            <td>
+                <input ng-model="pm.element.default" class="w60"> 
+                <span ng-if="pm.element.tag=='image'">*</span>
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='image' || pm.element.tag=='video' || pm.element.tag=='text'">
+            <td>rotation</td>
+            <td>
+                <input ng-model="pm.element.rotation" class="w15"> *
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='image' || pm.element.tag=='video' || pm.element.tag=='text'">
+            <td>rotationOrigin</td>
+            <td>
+                <input ng-model="pm.element.rotationOrigin.x" class="w15"> :
+                <input ng-model="pm.element.rotationOrigin.y" class="w15"> *
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='image'">
+            <td>tile</td>
+            <td>
+                <input type="checkbox" ng-model="pm.element.tile"> 
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>color</td>
+            <td>
+                <input ng-model="pm.element.color" class="w15">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>backgroundColor</td>
+            <td>
+                <input ng-model="pm.element.backgroundColor" class="w15">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>fontPath</td>
+            <td>
+                <input ng-model="pm.element.fontPath" class="w60">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>fontSize</td>
+            <td>
+                <input ng-model="pm.element.fontSize" class="w15">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>alignment</td>
+            <td>
+                Left       <input type="radio" value="left" ng-model="pm.element.alignment">
+                Center V+H <input type="radio" value="center" ng-model="pm.element.alignment">
+                Right      <input type="radio" value="right" ng-model="pm.element.alignment">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>forceUppercase</td>
+            <td>
+                <input type="checkbox" ng-model="pm.element.forceUppercase"> 
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='text'">
+            <td>lineSpacing</td>
+            <td>
+                <input ng-model="pm.element.lineSpacing" class="w15">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='video'">
+            <td>delay</td>
+            <td>
+                <input ng-model="pm.element.delay" class="w15">
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='video'">
+            <td>showSnapshotNoVideo</td>
+            <td>
+                <input type="checkbox" ng-model="pm.element.showSnapshotNoVideo"> 
+            </td>
+        </tr>
+        <tr ng-if="pm.element.tag=='video'">
+            <td>showSnapshotDelay</td>
+            <td>
+                <input type="checkbox" ng-model="pm.element.showSnapshotDelay"> * 
+            </td>
+        </tr>
+    </table>
+</div>
