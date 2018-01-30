@@ -29,11 +29,19 @@
             $element
             .bind('mouseover', function ($event)
             {
-                if (config.app.ThemeEditor && !ThemerService.mouseDown)
+                if (config.app.ThemeEditor &&
+                     !ThemerService.mouseDown &&
+                     !ThemerService.pinned &&
+                      $scope.vm.obj
+                    )
                 {
-                    $event.stopPropagation();
-                    $event.preventDefault();
-                    ThemerService.setElement($scope.vm.obj);
+                    if ($scope.vm.obj != ThemerService.unpinned)
+                    {
+                        $event.stopPropagation();
+                        $event.preventDefault();
+                        ThemerService.setElement($scope.vm.obj);
+                        delete ThemerService.unpinned;
+                    }
                 }
             });
         }

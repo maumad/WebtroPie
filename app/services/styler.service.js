@@ -330,20 +330,27 @@
             self.class[className] = style; // save for later removal
         }
 
-        function createDatetimeStyle(text)
+        function createDatetimeStyle(datetime)
         {
-            createTextStyle(text);
+            createTextStyle(datetime);
+            datetime.tag = 'datetime';
 
-            if (text.name == 'md_lastplayed')
+            if (datetime.name == 'md_lastplayed')
             {
-                text.format = 'ago';
+                datetime.format = 'ago';
             }
-            //delete text.div.height;
+        }
+
+        function createHelpsystemStyle(helpsystem)
+        {
+            createTextStyle(helpsystem);
+            helpsystem.tag = 'helpsystem';
         }
 
         // convert theme image attributes to style
         function createImageStyle(image)
         {
+            image.tag = 'image';
             // skip non image
             if (!image || (typeof image) != 'object' || !image.name || image.styled)
             {
@@ -584,11 +591,6 @@
                 style['background-color'] = util.hex2rgba(image.color);
             }
 
-            // no longer needed
-            delete image.path;
-            delete image.color;
-            //delete image.index;
-
             // depending on the sizing method or tiling etc
             // we either style just a div or an image within a div
             if (style['background-image'] ||
@@ -647,6 +649,7 @@
         // set up position, background / foregrund stars
         function createRatingStyle(rating)
         {
+            rating.type = 'rating';
             if(!rating || (typeof rating) != 'object' || rating.styled)
             {
                 return;
@@ -746,6 +749,7 @@
         // convert theme text attributes to style
         function createTextStyle(text)
         {
+            text.tag = 'text';
             if (!text || (typeof text) != 'object' || text.styled)
             {
                 return;
@@ -952,6 +956,7 @@
         function createTextlistStyle(textlist)
         {
             createTextStyle(textlist);
+            textlist.tag = 'textlist';
             textlist.selectorOffsetY = parseFloat(textlist.selectorOffsetY || 0);
             textlist.fontSize        = parseFloat(textlist.fontSize);
             textlist.selectorHeight  = parseFloat(textlist.selectorHeight);
@@ -969,6 +974,7 @@
 
         function createVideoStyle(video)
         {
+            video.tag = 'video';
             if (!video || (typeof video) != 'object' || video.styled)
             {
                 return;
@@ -1156,7 +1162,7 @@
                 angular.forEach(view.datetime,    createDatetimeStyle);
                 angular.forEach(view.image,       createImageStyle);
                 angular.forEach(view.rating,      createRatingStyle);
-                angular.forEach(view.helpsystem,  createTextStyle);
+                angular.forEach(view.helpsystem,  createHelpsystemStyle);
                 angular.forEach(view.video,       createVideoStyle);
                 
 

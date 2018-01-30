@@ -17,6 +17,9 @@
                           ' ng-show="vm.element" '+
                           ' ng-style="vm.moverStyle">'+
                           '{{vm.element.name}}'+
+                          '<span class="right" '+
+                            'ng-click="vm.close($event)"'+
+                          '>&times;</span>'+
                       '</div>',
             controller: controller,
             controllerAs: 'vm'
@@ -29,6 +32,8 @@
     function controller($scope, $element, $document, $window, util, ThemerService)
     {
         var vm = this;
+        vm.close = close;
+
         var startX, startY, startW, startH;
         var initialMouseX, initialMouseY;
         var size, hasWidth, hasHeight;
@@ -56,6 +61,15 @@
             $element.bind('mousedown', mouseDown);
         }
 
+        function close($event)
+        {
+            $event.stopPropagation();
+            $event.preventDefault();
+            ThemerService.pinned = false;
+            ThemerService.unpinned = ThemerService.element;
+            ThemerService.setElement(null);
+        }
+
         function elementChanged(element)
         {
             vm.element = element;
@@ -69,7 +83,7 @@
                     vm.moverStyle.top = vm.themeStyle.top;
                     vm.moverStyle.width = hasWidth = vm.themeStyle.width || vm.themeStyle['max-width'];
                     vm.moverStyle.height = hasHeight = vm.themeStyle.height || vm.themeStyle['max-height'];
-                    if (element.name == 'background')
+                    if (element.fullscreen)
                     {
                         vm.moverStyle['z-index'] = vm.themeStyle['z-index'];
                     }
@@ -86,6 +100,7 @@
         {
             // rememeber state when clicked
             ThemerService.mouseDown = true;
+            ThemerService.pinned = true;
             startX = $element.prop('offsetLeft');
             startY = $element.prop('offsetTop');
             startW = $element.prop('offsetWidth');
@@ -93,6 +108,7 @@
             initialMouseX = $event.clientX;
             initialMouseY = $event.clientY;
             $document.bind('mouseup', mouseUp);
+            mouseMove($event);
             return false;
         }
 
@@ -105,10 +121,10 @@
             if (!ThemerService.mouseDown)
             {
                 // cursor near to edges ?
-                resizeNorth = $event.offsetY < 5;
-                resizeSouth = $event.target.offsetHeight - $event.offsetY < 8;
-                resizeWest  = $event.offsetX < 5;
-                resizeEast  = $event.target.offsetWidth - $event.offsetX < 8;
+                resizeNorth = $event.offsetY < 8;
+                resizeSouth = $event.target.offsetHeight - $event.offsetY < 12;
+                resizeWest  = $event.offsetX < 8;
+                resizeEast  = $event.target.offsetWidth - $event.offsetX < 12;
                 // also move position when resizing left and top edges
                 moveX = resizeWest;
                 moveY = resizeNorth;
@@ -158,13 +174,17 @@
                 }
                 else
                 {
-                    vm.moverStyle.cursor = 'move';
+                    vm.moverStyle.cursor = ThemerService.pinned ? 'move' : 'pointer';
                     moveX = moveY = true;
                 }
             }
 
             if (ThemerService.mouseDown)
             {
+                if (vm.moverStyle.cursor == 'pointer')
+                {
+                    vm.moverStyle.cursor = 'move';
+                }
                 // Vertical resize
                 if (hasHeight && (resizeNorth || resizeSouth))
                 {
@@ -177,14 +197,21 @@
                     if (height > 0)
                     {
                         vm.moverStyle.height = util.pct(height, 'vh');
-                        if (vm.element.size)
+
+                        if (vm.themeStyle.height)
                         {
                             vm.themeStyle.height = vm.moverStyle.height;
-                            vm.element.size.h = height;
                         }
-                        else if (vm.element.maxSize)
+                        else if(vm.themeStyle['max-height'])
                         {
                             vm.themeStyle['max-height'] = vm.moverStyle.height;
+                        }
+                        if (vm.element.size && vm.element.size.h)
+                        {
+                            vm.element.size.h = height;
+                        }
+                        else if (vm.element.maxSize && vm.element.maxSize.h)
+                        {
                             vm.element.maxSize.h = height;
                         }
                     }
@@ -202,15 +229,21 @@
                     if (width > 0)
                     {
                         vm.moverStyle.width = util.pct(width, 'vw');
-                        if (vm.element.size)
+                        if (vm.element.size && vm.element.size.w)
                         {
-                            vm.themeStyle.width = vm.moverStyle.width;
                             vm.element.size.w = width;
                         }
-                        else if (vm.element.maxSize)
+                        else if (vm.element.maxSize && vm.element.maxSize.w)
+                        {
+                            vm.element.maxSize.w = width;
+                        }
+                        if (vm.themeStyle.width)
+                        {
+                            vm.themeStyle.width = vm.moverStyle.width;
+                        }
+                        else if (vm.themeStyle['max-width'])
                         {
                             vm.themeStyle['max-width'] = vm.moverStyle.width;
-                            vm.element.maxSize.w = width;
                         }
                     }
                 }

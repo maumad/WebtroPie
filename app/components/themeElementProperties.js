@@ -13,15 +13,7 @@
         var directive = {
             restrict: 'E',
             replace: true,
-            template: '<div class="element-properties" '+
-                          'ng-show="pm.element">'+
-                          'name: {{pm.element.name}}<br />'+
-                          'pos: {{pm.element.pos.x}} {{pm.element.pos.y}}<br />'+
-                          'size: {{pm.element.size.w}} {{pm.element.size.h}}<br />'+
-                          'maxSize: {{pm.element.maxSize.w}} {{pm.element.maxSize.h}}<br />'+
-                          'origin: {{pm.element.origin.x}} {{pm.element.origin.y}}<br />'+
-                          'zIndex: {{pm.element.zIndex}} ({{pm.style[\'z-index\']}})<br />'+
-                      '</div>',
+            templateUrl: 'components/themeElementProperties.html',
             controller: controller,
             controllerAs: 'pm'
         }
