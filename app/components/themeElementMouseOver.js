@@ -18,9 +18,9 @@
         return directive;
     }
 
-    controller.$inject = ['$scope','$element','config','ThemerService'];
+    controller.$inject = ['$scope','$element','config','ThemerService','ThemeService'];
 
-    function controller($scope, $element, config, ThemerService)
+    function controller($scope, $element, config, ThemerService, ThemeService)
     {
         this.$onInit = onInit;
 
@@ -31,16 +31,26 @@
             {
                 if (config.app.ThemeEditor &&
                      !ThemerService.mouseDown &&
-                     !ThemerService.pinned &&
-                      $scope.vm.obj
+                     !ThemerService.pinned
                     )
                 {
-                    if ($scope.vm.obj != ThemerService.unpinned)
+                    var obj;
+                    if($scope.vm.obj)
+                    {
+                        obj = $scope.vm.obj;
+                    }
+                    else if ($scope.vm.liststyle)
+                    {
+                        obj = ThemeService.gamelist;
+                        //console.log($scope);
+                    }
+                    if (obj != ThemerService.dontpin &&
+                        obj != ThemerService.element)
                     {
                         $event.stopPropagation();
                         $event.preventDefault();
-                        ThemerService.setElement($scope.vm.obj);
-                        delete ThemerService.unpinned;
+                        ThemerService.setElement(obj);
+                        delete ThemerService.dontpin;
                     }
                 }
             });

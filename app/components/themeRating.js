@@ -20,10 +20,9 @@
             restrict: 'E',
             scope: true,
             template: '<div class="rating_background" title="{{vm.stars.width}}"'+
-                                 ' ng-style="vm.div"'+
+                                 ' ng-style="vm.style"'+
                                  ' ng-click="vm.click($event)">'+
-                          '<div class="rating_foreground" '+
-                                 ' ng-style="vm.stars"></div>'+
+                          '<div class="rating_foreground" ng-style="vm.stars"></div>'+
                       '</div>',
             controller: controller,
             controllerAs: 'vm',
@@ -50,7 +49,7 @@
         {
             if(!vm.obj)
             {
-                vm.div = {};
+                vm.style = {};
                 vm.stars = {};
                 setDefaults();
                 $scope.$watch('vm.size', sizeChange);
@@ -115,7 +114,7 @@
 
         function setDefaults()
         {
-            vm.div['background-image']
+            vm.style['background-image']
               = 'url("svr/resources/star_unfilled.svg")';
 
             vm.stars['background-image']
@@ -134,15 +133,15 @@
 
         function sizeChange(size)
         {
-            vm.div.width = util.pct(size, vm.sizeUnits);
-            vm.div.height = util.pct(size/5, vm.sizeUnits);
+            vm.style.width = util.pct(size, vm.sizeUnits);
+            vm.style.height = util.pct(size/5, vm.sizeUnits);
         }
 
         function themeChange(obj)
         {
-            if (obj.div)
+            if (obj.style)
             {
-                vm.div = obj.div;
+                vm.style = obj.style;
             }
             if (obj.stars)
             {

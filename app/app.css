@@ -385,31 +385,29 @@ input, select, textarea {
     position: absolute;
     z-index: 1000;
     border: 2px solid red;
+    font-size: 2vmin;
     color: yellow;
     background-color: rgba(80,80,50,0.1);
-    /*
-    background-image: url("svr/resources/alpha.png");
-    */
-    background-repeat: repeat;
     overflow: hidden;
     outline: 2px dashed yellow;
     outline-offset: -2px;
     padding: 2px 4px;
-    font-size: 2vmin;
     box-sizing: border-box;
 }
-.element-mover span {
+.close {
     border: 1px solid yellow;
     border-radius: 0.3em;
     padding: 0 3px;
     box-shadow: 3px 3px 2px rgba(0,0,0,0.4);
     cursor: pointer;
+    float: right;
+    font-size: 2vmin;
 }
 
 .element-properties {
     position: absolute;
     z-index: 1001;
-    top: 20vh;
+    top: 13vh;
     left: 10vw;
     border: 2px solid yellow;
     color: yellow;
@@ -422,14 +420,27 @@ input, select, textarea {
     box-shadow: 7px 7px 5px rgba(0,0,0,0.4);
     box-sizing: border-box;
 }
-.element-properties input {
+.element-properties input,
+.element-properties select,
+.element-properties option {
     color: white;
     padding: 0 0.5vw;
     border: 1px solid yellow;
     border-radius: 0.25em;
     font-size: 2vmin;
 }
-
+.element-properties input:disabled,
+.element-properties select:disabled,
+.element-properties option:disabled {
+    color: rgba(255,255,255,0.85);
+    padding: 0 0.5vw;
+    border: 1px solid rgba(200,200,200,0.85);
+    border-radius: 0.25em;
+    font-size: 2vmin;
+}
+.w5 {
+    width: 5%;
+}
 .w10 {
     width: 10%;
 }

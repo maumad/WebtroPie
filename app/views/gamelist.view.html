@@ -1,9 +1,9 @@
 <div class=window_size>
    <!-- all theme components including game centric components -->
-    <theme-image ng-repeat="obj in page.view.image" obj="obj" game="page.game" system="page.system"
+    <theme-image ng-repeat="obj in page.view.imageSorted" obj="obj" game="page.game" system="page.system"
                  theme-element-mouse-over></theme-image>
     <theme-video ng-repeat="obj in page.view.video" obj="obj" game="page.game" system="page.system"
-                 ng-if="page.view.styled && page.loaded"
+                 ng-if="page.view.styled && page.loaded && obj.pos"
                  theme-element-mouse-over></theme-video>
      <theme-text ng-repeat="obj in page.view.text" obj="obj" game="page.game" system="page.system"
                  ng-if="!obj.anchor_label"
@@ -22,6 +22,7 @@
       page-vm="page"
       system="{{::page.system}}"
       subdir="{{::page.subdir}}"
+      obj="page.view.textlist.gamelist"
       theme-element-mouse-over>
    </gamelist-virtual-repeat>
 

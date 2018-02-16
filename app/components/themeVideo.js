@@ -17,13 +17,13 @@
             scope: true,
             template: '<div class="themeVideo">'+
                           '<video ng-show="vm.video_url"'+
-                                ' ng-style="vm.obj.div"'+
+                                ' ng-style="vm.obj.style"'+
                                 ' ng-src="{{vm.video_url}}" loop'+
                                 ' on-load-video="vm.videoLoaded($event, width, height, size, mtime)"'+
                                 ' ng-click="vm.togglePlayPause()">'+
                                 '</video>'+
-                          '<div ng-style="vm.obj.div" ng-if="!vm.video_url && '+
-                                'vm.obj.div[\'background-image\']"></div>'+
+                          '<div ng-style="vm.obj.style" ng-if="!vm.video_url && '+
+                                'vm.obj.style[\'background-image\']"></div>'+
                           '<div class="info" ng-if="vm.video_url"'+
                               ' ng-style="vm.infoStyle()">'+
                              '<div class="controls play">'+
@@ -90,7 +90,7 @@
             return {
                 left: util.pct(x,'vw'),
                 top: util.pct(y,'vh'),
-                'z-index': vm.obj.div['z-index']
+                'z-index': vm.obj.style['z-index']
             }
         }
 
@@ -154,7 +154,10 @@
 
         function updateVideo()
         {
-            delete vm.obj.div['background-image'];
+            if (vm.obj && vm.obj.style)
+            {
+                delete vm.obj.style['background-image'];
+            }
             if (vm.game)
             {
                 // get video url or show image
@@ -174,7 +177,8 @@
                         delete vm.video;
                     }
                     vm.video_url = '';
-                    vm.obj.div['background-image'] = 'url("svr/'+vm.game.image_url+'")';
+                    vm.obj.style['background-image'] = 'url("svr/'+vm.game.image_url+'")';
+/* use thumbnail first */
                 }
                 else
                 {
@@ -187,7 +191,10 @@
                     if (vm.obj.delay)  // play after delay seconds
                     {
                         $timeout(function () {
-                            vm.video.play();
+                            if (vm.video)
+                            {
+                                vm.video.play();
+                            }
                         }, vm.obj.delay * 1000);
                     }
                     else  // play now

@@ -982,13 +982,19 @@
             {
                 self.subdirs[self.subdir].game_index = vm.game_index;
                 self.subdirs[self.subdir].buffer_index = vm.buffer_index;
-                self.subdirs[self.subdir].scrollTop = vm.scroller.scrollTop;
+                if (vm.scroller)
+                {
+                    self.subdirs[self.subdir].scrollTop = vm.scroller.scrollTop;
+                }
             }
             else
             {
                 self.systems[self.system_name].game_index = vm.game_index;
                 self.systems[self.system_name].buffer_index = vm.buffer_index;
-                self.systems[self.system_name].scrollTop = vm.scroller.scrollTop;
+                if (vm.scroller)
+                {
+                    self.systems[self.system_name].scrollTop = vm.scroller.scrollTop;
+                }
           }
         }
 

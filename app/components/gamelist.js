@@ -193,7 +193,7 @@
                 linesize = 0.95 * linesize * gl.size.w / ( max_width + extra_width);
                 selectorBarHeight = selectorBarHeight / (1 + extra_width);
             }
-            delete gl.div['font-size'];
+            delete gl.style['font-size'];
 
             gl.linesize = linesize;
             gl.fontsize_scaled = fontsize;
@@ -212,7 +212,7 @@
             vm.liststyle['font-size']  = util.pct(fontsize,'vh');
             vm.liststyle['line-height']  = util.pct(fontsize,'vh');
             vm.liststyle['font-family']  = gl.fontFamily;
-            vm.liststyle['text-transform']  = gl.div['text-transform']
+            vm.liststyle['text-transform']  = gl.style['text-transform']
 
             // column heading style
 
@@ -225,7 +225,7 @@
             delete vm.headerstyle['overflow'];
             vm.headerstyle.color = util.hex2rgba(gl.secondaryColor);
             vm.liststyle['overflow'] = 'auto';
-            vm.liststyle['z-index'] = gl.div['z-index'];
+            vm.liststyle['z-index'] = gl.style['z-index'];
 
             if (stretch)
             {
@@ -233,8 +233,8 @@
                 // but only page components vertically beside gamelist, not above or below
                 styler.insertIntoView(ThemeService.view, gl.pos.x + gl.size.w, extra_width, gl.pos.y, gl.pos.y + gl.size.h);
             }
-            vm.liststyle.left = gl.div.left;
-            vm.headerstyle.left = gl.div.left;
+            vm.liststyle.left = gl.style.left;
+            vm.headerstyle.left = gl.style.left;
 
             // work out x + widths proportional to overall width
             var x = 0;

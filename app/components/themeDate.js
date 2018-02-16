@@ -22,10 +22,10 @@
             replace: true,
             scope: true,
             template: '<div id="{{vm.obj.name}}" class="text"'+
-                          ' ng-style="vm.obj.div" '+
-                          ' ng-show="vm.obj.div || vm.blank">'+
-                          '<div class="text_inner vcenter" ng-style="vm.obj.style">{{vm.date}}</div>'+
-                          //'<div class="text_inner" ng-style="vm.obj.style">{{vm.date}}</div>'+
+                          ' ng-style="vm.obj.style" '+
+                          ' ng-show="vm.obj.style || vm.blank">'+
+                          '<div class="text_inner vcenter" ng-style="vm.obj.inner">{{vm.date}}</div>'+
+                          //'<div class="text_inner" ng-style="vm.obj.inner">{{vm.date}}</div>'+
                       '</div>',
             controller: controller,
             controllerAs: 'vm',

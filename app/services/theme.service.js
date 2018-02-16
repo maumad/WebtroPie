@@ -236,13 +236,9 @@
                                     image.fullpath != theme.systems.default.view[v].image[imagename].fullpath)
                                 {
                                     delete theme.systems.default.view[v].image[imagename].fullpath;
-                                    if (theme.systems.default.view[v].image[imagename].div)
+                                    if (theme.systems.default.view[v].image[imagename].style)
                                     {
-                                        delete theme.systems.default.view[v].image[imagename].div['background-image'];
-                                    }
-                                    if (theme.systems.default.view[v].image[imagename].img)
-                                    {
-                                        delete theme.systems.default.view[v].image[imagename].img['content'];
+                                        delete theme.systems.default.view[v].image[imagename].style['background-image'];
                                     }
                                 }
                             });
@@ -369,7 +365,7 @@
         {
             self.theme = theme;
 
-            var include_count = 1;
+            var include_count = -1;
 
             // LOAD INCLUDES:
             // expand (E.g split "basic, detailed" views) for each include file
@@ -386,7 +382,7 @@
                 }
 
                 // LOAD INCLUDE FILE MEDIA
-                styler.loadMedia(self.theme, inc, self.theme.path + subdir, include_count++);
+                styler.loadMedia(self.theme, inc, self.theme.path + subdir, include_count--);
 
                 // split combined objects (where key contains a comma)
                 expandMerged(inc);
@@ -430,8 +426,21 @@
                     angular.forEach(sys.theme, function(value, key) {
                         sys[key] = value;
                     })
-                    sys.view = sys.theme.view;
-                    delete sys.theme;
+
+                    /*
+                    if (sys.name != 'default')
+                    {
+                        if (!sys.variables)
+                        {
+                            sys.variables = [];
+                        }
+                        var system = config.systems[sys.name];
+                        sys.variables.push({'system.name': system.name});
+                        sys.variables.push({'system.fullname': system.fullname});
+                        sys.variables.push({'system.theme': system.theme});
+                    }
+                    */
+
                     if (sys.variables)
                     {
                         angular.forEach(sys.variables, function (replace, pattern)
@@ -468,11 +477,46 @@
                 // create convenient shortcuts
                 if (sys.view)
                 {
+                    angular.forEach(sys.view, function(view) {
+                        view.imageSorted = [];
+
+                        angular.forEach(view.image, function(image)
+                        {
+                            if(!image.include_count)
+                            {
+                                image.include_count = 0;
+                            }
+                            view.imageSorted.push(image);
+                        });
+
+                        view.imageSorted.sort(function (a, b)
+                        {
+                            if (a.include_count > b.include_count)
+                            {
+                                return 1;
+                            }
+                            else if (a.include_count < b.include_count)
+                            {
+                                return -1;
+                            }
+                            else if (a.index > b.index)
+                            {
+                                return 1;
+                            }
+                            else if (a.index < b.index)
+                            {
+                                return -1;
+                            }
+                            return 0;
+                        });
+                    })
+
                     if (sys.view.system.image && sys.view.system.image.logo)
                     {
                         sys.logo = 'url("' + sys.view.system.image.logo.fullpath + '")';
                     }
                 }
+                delete sys.theme;
             });
 
             createDefaultSystem(self.theme, theme.name);

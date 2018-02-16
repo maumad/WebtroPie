@@ -9,22 +9,6 @@
     <base href="app">
     <link rel="icon" type="image/png" href="zax80x80.png" />
     <link rel="stylesheet" href="app.css">
-</head>
-<body>
-
-    <div ng-controller="AppController as app">
-
-        <!-- Main view pages -->
-        <div id="mainview" ng-class="app.animate_view_class" ng-view
-             class="view"></div>
-
-        <menu ng-if="app.menu.show"></menu>
-
-       <theme-element-mover ng-if="app.config.app.ThemeEditor"></theme-element-mover>
-       <theme-element-properties draggable ng-if="app.config.app.ThemeEditor"></theme-element-properties>
-    </div>
-
-    <!-- script src="lib/angular.min.js"></script -->
     <script src="lib/angular.min.js"></script>
     <script src="lib/angular-route.min.js"></script>
     <script src="lib/angular-animate.min.js"></script>
@@ -61,7 +45,6 @@
     <script src="components/spinner.js"></script>
     <script src="components/themeElementMouseOver.js"></script>
     <script src="components/themeElementMover.js"></script>
-    <script src="components/themeElementProperties.js"></script>
     <script src="components/draggable.js"></script>
     <script src="filters/orderObjectBy.filter.js"></script>
     <script src="filters/gamelistDirectory.filter.js"></script>
@@ -70,6 +53,16 @@
     <script src="lib/animationEnd.js"></script>
     <script src="views/system.view.js"></script>
     <script src="views/gamelist.view.js"></script>
+</head>
+<body><div ng-controller="AppController as app">
+        <!-- Main view pages -->
+        <div id="mainview" ng-class="app.animate_view_class" ng-view
+             class="view"></div>
+
+        <menu ng-if="app.menu.show"></menu>
+        <theme-element-mover ng-if="app.config.app.ThemeEditor"></theme-element-mover>
+        <!-- theme-element-properties draggable ng-if="app.config.app.ThemeEditor"></theme-element-properties -->
+    </div>
     <div id="dynamic_media"></div>
 </body>
 </html>

@@ -22,6 +22,7 @@
         self.datepartsToString = datepartsToString;
         self.dateToDateParts = dateToDateParts;
         self.focus = focus;
+        self.getElement = getElement;
         self.go = go;     // replace current page : no history
         self.formatDate = formatDate;
         self.hex2rgba = hex2rgba;
@@ -142,7 +143,7 @@
         {
             $timeout(function()
             {
-                var el = angular.element(document.querySelector(selector));
+                var el = getElement(selector);
                 if (el && el.length > 0)
                 {
                     el[0].focus();
@@ -188,6 +189,11 @@
                     .replace(/hh/i,   dp.hh)
                     .replace(/mi/i,   dp.mi)
                     .replace(/ss/i,   dp.ss);
+        }
+
+        function getElement(selector)
+        {
+            return angular.element(document.querySelector(selector));
         }
 
         // replace current page : no history

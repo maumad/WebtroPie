@@ -48,6 +48,7 @@
         };
 
         // public functions
+
         self.calcObjBounds = calcObjBounds;
         self.changeCarousel = changeCarousel;
         self.createCarouselStyle = createCarouselStyle;
@@ -68,9 +69,26 @@
         self.loadMedia = loadMedia;
         self.loadSounds = loadSounds;
         self.objectReposition = objectReposition;
+        self.saveFilepath = saveFilepath;
         self.setHelpbarStyle = setHelpbarStyle;
-        self.setSystemImagesContainerStyle = setSystemImagesContainerStyle;
+        self.setSystemImagesContainerStƒyle = setSystemImagesContainerStyle;
         self.setSystemLogoStyle = setSystemLogoStyle;
+
+        self.styleAlignment = styleAlignment;
+        self.styleFontSize = styleFontSize;
+        self.styleImagePathColorTile = styleImagePathColorTile;
+        self.styleImageMaxSize = styleImageMaxSize;
+        self.styleImageZIndex = styleImageZIndex;
+        self.styleOrigin = styleOrigin;
+        self.stylePos = stylePos;
+        self.styleRatingSize = styleRatingSize;
+        self.styleRatingZIndex = styleRatingZIndex;
+        self.styleRotation = styleRotation;
+        self.styleSize = styleSize;
+        self.styleTextZIndex = styleTextZIndex;
+        self.styleVideoMaxSize = styleVideoMaxSize;
+        self.styleVideoZIndex = styleVideoZIndex;
+
         self.xReposition = xReposition;
 
         function calcObjBounds(obj)
@@ -112,15 +130,10 @@
         function createCarouselStyle(carousel)
         {
             // alredy done?
-            if (!carousel || (typeof carousel) != 'object' || carousel.styled)
+            if (!carousel || (typeof carousel) != 'object' || carousel.style)
             {
                 createCarsouselClasses(carousel);
                 return;
-            }
-
-            if (config.app.LogThemeStyles)
-            {
-                console.groupCollapsed('styler.createCarouselStyle('+carousel.name+')');
             }
 
             if (!carousel.type)
@@ -225,8 +238,7 @@
             style['color'] =  '#222';
             style['z-index'] = carousel.zIndex;
 
-
-            carousel.div = style;
+            carousel.style = style;
 
             if (carousel.type == 'vertical')
             {
@@ -245,13 +257,6 @@
             }
 
             createCarsouselClasses(carousel);
-
-            if (config.app.LogThemeStyles)
-            {
-                console.groupEnd('styler.createCarouselStyle('+carousel.name+')');
-            }
-
-            carousel.styled = true;
         }
 
         function createCarsouselClasses(carousel)
@@ -294,10 +299,6 @@
         {
             var style;
 
-            if (config.app.LogThemeStyles)
-            {
-                console.groupCollapsed('styler.createClass('+className+')');
-            }
             if (self.class[className])
             {
                 style = self.class[className];
@@ -320,12 +321,6 @@
             style.innerHTML = str;
 
             document.getElementsByTagName('head')[0].appendChild(style);
-
-            if (config.app.LogThemeStyles)
-            {
-                console.log(style);
-                console.groupEnd('styler.createClass('+className+')');
-            }
 
             self.class[className] = style; // save for later removal
         }
@@ -351,297 +346,25 @@
         function createImageStyle(image)
         {
             image.tag = 'image';
+
             // skip non image
-            if (!image || (typeof image) != 'object' || !image.name || image.styled)
+            if (!image || (typeof image) != 'object' || !image.name || image.style)
             {
-                return; // continue
+                return;
             }
+            image.style = {position: 'absolute'};
 
-            if (config.app.LogThemeStyles)
+            if (stylePos(image, image.style))
             {
-                console.groupCollapsed('styler.createImageStyle('+image.name+')');
-                angular.forEach(image, function(value, key) {
-                    console.log(key + ' = ' + value);
-                });
-            }
-
-            var style = {}
-            style['position'] = 'absolute';
-
-            if (image.name=='background')
-            {
-                image.fullscreen = true;
-                if (!image.pos)
-                {
-                    image.size = '0 0';
-                }
-                if (!image.size)
-                {
-                    image.size = '1 1';
-                }
-            }
-
-            if (image.pos)
-            {
-                image.pos = denormalize('pos',image.pos);
-                if (image.pos.x>=1 || image.pos.y>=1 ||
-                     image.pos.x<0 || image.pos.y<0)
-                {
-                    style.display = 'none';
-                    if (config.app.LogThemeStyles)
-                    {
-                        console.log('Offscreen - hidden');
-                        console.groupEnd('styler.createImageStyle('+image.name+')');
-                    }
-                    return;
-                }
-                style.left = util.pct(image.pos.x,'vw');
-                style.top = util.pct(image.pos.y,'vh');
-            }
-
-            if (image.size)
-            {
-                image.size = denormalize('size',image.size);
-                if(image.size.w)
-                {
-                    style.width = util.pct(image.size.w,'vw');
-                }
-                if(image.size.h)
-                {
-                    style.height = util.pct(image.size.h,'vh');
-                }
-
-                if (image.size.w >=1 && image.size.h >=1)
-                {
-                    image.fullscreen = true;
-                }
-                else if (image.size.w >=1 || image.size.h >=1)
-                {
-                    image.banner = true;
-                }
-            }
-
-            if (image.name == 'md_image' || image.name == 'md_marquee')
-            {
-                if (!image.origin)
-                {
-                    image.origin = '0.5 0.5';
-                }
-            }
-
-            if (image.origin)
-            {
-                image.origin = denormalize('pos',image.origin);
-                if (image.origin.x!=0 || image.origin.y!=0)
-                {
-                    style['-webkit-transform'] =
-                    style['-ms-transform'] =
-                    style.transform = 'translate('+
-                                                util.pct(-image.origin.x,'%')+','+
-                                                util.pct(-image.origin.y,'%')+')';
-                }
-            }
-
-            if (image.maxSize)
-            {
-                image.maxSize = denormalize('size',image.maxSize);
-                if (image.maxSize.w)
-                {
-                    style['max-width'] = util.pct(image.maxSize.w,'vw');
-                }
-                if (image.maxSize.h)
-                {
-                    style['max-height'] = util.pct(image.maxSize.h,'vh');
-                }
-            }
-
-            calcObjBounds(image);
-
-            // image file - not just a color
-            if (image.fullpath ||
-                   (image.name == 'md_image' ||
-                    image.name == 'md_marquee' ||
-                    image.name == 'background'))
-            {
-                if ( image.color )
-                {
-                    image.color = image.color.toLowerCase();
-                }
-
-                if ( image.color &&
-                      image.color != 'ffffff' &&
-                      image.color != 'ffffffff' )
-                {
-                    var hsl = util.rgbToHSL(image.color);
-
-                    // if greyscale color image client side
-                    if(hsl.h == 0 && hsl.s == 0 && hsl.l > 0.5)  // light
-                    {
-                        style.filter = 'brightness('+util.pct(hsl.l,'%')+')';
-                        if (hsl.a || hsl.a === 0)
-                        {
-                            style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
-                        }
-                    }
-                    else if(hsl.h == 0 && hsl.s == 0)  // dark
-                    {
-                        style.filter = 'invert(100%) saturate(0%)'; // contrast(100%)';
-                        style.filter += ' contrast('+util.pct(1-hsl.l,'%')+')';
-                        if (hsl.a || hsl.a === 0)
-                        {
-                            style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
-                        }
-                    }
-                    // color image server side if it's a svg or if php has gd2 library enabled
-                    else
-                    if (image.fullpath && (image.type=='svg' || ( config.env.has_gd &&
-                             (image.type=='png' || image.type=='jpg' || image.type=='gif')
-                          )))
-                    {
-                        image.fullpath = 'svr/color_img.php?file='+
-                                                     image.fullpath.substring(4)+ // remove svr/
-                                                     '&color='+image.color; //+'&mult=1';
-                    }
-                    // and if we don't have php_gd loaded ...
-                    // try to taint image to color specified using filters client side (poor)
-                    else
-                    {
-                        // speia is yellow (+60 degrees) so rotate -60 degrees
-                        style.filter = 'sepia(100%) saturate(5000%) hue-rotate('+((hsl.h-60)%360)+'deg)';
-                        if (hsl.a)
-                        {
-                            style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
-                        }
-                    }
-                }
-
-                // div background tiled
-                if (image.fullpath && image.tile == 'true')
-                {
-                    style['background-image'] = 'url("'+image.fullpath+'")';
-                    style['background-repeat'] = 'repeat';
-                }
-                // div background fullscreen
-                else if (image.fullpath && image.fullscreen)
-                {
-                    style['background-image'] = 'url("'+image.fullpath+'")';
-                    style['background-size'] = '100% 100%';
-                    style.width = '100vw';
-                    style.height = '100vh';
-                }
-                // stretch/shrink FIT keeping aspect ratio (uses background-size: contain)
-                else if (style['max-width'] && style['max-height'] && image.right <= 1)
-                {
-                    if (image.fullpath)
-                    {
-                        style['background-image'] = 'url("'+image.fullpath+'")';
-                    }
-                    style['background-size'] = 'contain';
-                    style['background-repeat'] = 'no-repeat';
-
-                    var bp_h = 'center';
-                    var bp_v = 'center';
-                    if (image.origin)
-                    {
-                        if (image.origin.x == 0)
-                        {
-                            bp_h = 'left';
-                        }
-                        else if (image.origin.x == 1)
-                        {
-                            bp_h = 'right';
-                        }
-                        if (image.origin.y == 0)
-                        {
-                            bp_v = 'top';
-                        }
-                        else if (image.origin.y == 1)
-                        {
-                            bp_v = 'bottom';
-                        }
-                    }
-                    style['background-position'] = bp_h + ' ' + bp_v;
-
-                    style.width = style['max-width'];
-                    style.height = style['max-height'];
-                    delete style['max-width'];
-                    delete style['max-height'];
-                }
-                // img src/content
-                else
-                {
-                    if (image.fullpath)
-                    {
-                        //style.content = 'url("'+image.fullpath+'")';
-                        image.img_src = image.fullpath;
-                    }
-
-                    // if theme has height 100% only and variable width make the width 100% anyway
-                    // i.e. stretch so no black left/right borders but aspect ratio will be wrong
-                    if (image.size && image.size.h==1)     // sorry themers!
-                    {
-                        //style.width = '100vw';
-                        style.width = '100%';
-                    }
-                }
-            }
-            // image is just a color with no image so just set background color
-            else if (image.color)
-            {
-                style['background-color'] = util.hex2rgba(image.color);
-            }
-
-            // depending on the sizing method or tiling etc
-            // we either style just a div or an image within a div
-            if (style['background-image'] ||
-                style['background-color'] ||
-                style['background-size'])
-            {
-                image.div = style;
-            }
-            else
-            {
-                image.img = style;
-            }
-
-            if (image.zIndex)
-            {
-                style['z-index'] = parseInt(image.zIndex);
-            }
-            else if (image.name == 'background')
-            {
-                style['z-index'] = 1;
-            }
-            else if(image.extra)
-            {
-                style['z-index'] = 10;
-            }
-            else if (image.name == 'md_image')
-            {
-                style['z-index'] = 30;
-            }
-            else if (image.name == 'md_video')
-            {
-                style['z-index'] = 30;
-            }
-            else if (image.name == 'md_marquee')
-            {
-                style['z-index'] = 35;
-            }
-            else if (image.name == 'logo')
-            {
-                style['z-index'] = 50;
-            }
-            else 
-            {
-                style['z-index'] = image.index;
-            }
-
-            image.styled = true;
-            if (config.app.LogThemeStyles)
-            {
-                console.log(style);
-                console.groupEnd('styler.createImageStyle('+image.name+')');
+                delete image.transformRotation;
+                delete image.transformOrigin;
+                styleSize(image, image.style);
+                styleImageMaxSize(image, image.style);
+                styleOrigin(image, image.style);
+                styleRotation(image, image.style);
+                calcObjBounds(image);
+                styleImagePathColorTile(image, image.style);
+                styleImageZIndex(image, image.style);
             }
          }
 
@@ -649,18 +372,10 @@
         // set up position, background / foregrund stars
         function createRatingStyle(rating)
         {
-            rating.type = 'rating';
-            if(!rating || (typeof rating) != 'object' || rating.styled)
+            rating.tag = 'rating';
+            if(!rating || (typeof rating) != 'object' || rating.style)
             {
                 return;
-            }
-
-            if (config.app.LogThemeStyles)
-            {
-                console.groupCollapsed('styler.createRatingStyle('+rating.name+')');
-                angular.forEach(rating, function(value, key) {
-                    console.log(key + ' = ' + value);
-                });
             }
 
             var style = {position: 'absolute'}
@@ -681,32 +396,8 @@
                 style.left = util.pct(rating.pos.x,'vw');
                 style.top = util.pct(rating.pos.y,'vh');
 
-                if (rating.size)
-                {
-                    rating.size = denormalize('size',rating.size);
-                    var pct;
+                styleRatingSize(rating, style);
 
-                    // theme should only have w or h not both
-                    if (rating.size.h)
-                    {
-                        rating.size.w = rating.size.h * 5;
-                        pct = 'vh';
-                    }
-                    else if (rating.size.w)
-                    {
-                        rating.size.h = rating.size.w / 5;
-                        pct = 'vw';
-                    }
-
-                    if (rating.size.h)
-                    {
-                        style.height = (100*rating.size.h) + pct;
-                    }
-                    if (rating.size.w)
-                    {
-                        style.width = (100*rating.size.w) + pct;
-                    }
-                }
                 if (rating.fullunfilledPath)
                 {
                     style['background-image'] = 'url("' + rating.fullunfilledPath + '")';
@@ -719,61 +410,31 @@
                     // original colour would be :-
                     //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
-
-                if (rating.zIndex)
-                {
-                    style['z-index'] = parseInt(rating.zIndex)+1;
-                }
-                else if (rating.name && rating.name.substring(0,3)=='md_')
-                {
-                    style['z-index'] = 30;
-                }
-                else
-                {
-                    style['z-index'] = rating.index;
-                }
+                styleRatingZIndex(rating, style);
             }
             calcObjBounds(rating);
-            rating.div = style;
+            rating.style = style;
             rating.stars = stars;
-            rating.styled = true;
-
-            if (config.app.LogThemeStyles)
-            {
-                console.log(style);
-                console.log(stars);
-                console.groupEnd('styler.createRatingStyle('+rating.name+')');
-            }
         }
 
         // convert theme text attributes to style
         function createTextStyle(text)
         {
             text.tag = 'text';
-            if (!text || (typeof text) != 'object' || text.styled)
+            if (!text || (typeof text) != 'object' || text.style)
             {
                 return;
             }
 
-            if (config.app.LogThemeStyles)
-            {
-                console.groupCollapsed('styler.createTextStyle('+text.name+')');
-                angular.forEach(text, function(value, key) {
-                    console.log(key + ' = ' + value);
-                });
-            }
-
-            text.div = {};
             text.style = {};
+            text.inner = {};
 
-            if (text.fontSize)
+            if (!stylePos(text, text.style))
             {
-                text.fontSize = util.round(text.fontSize,6);
+                return;
             }
-            else
-            {
-                text.fontSize = 0.035;
-            }
+
+            styleFontSize(text, text.inner);
 
             if (text.name == "help")
             {
@@ -785,47 +446,22 @@
                 {
                     text.iconColor = '777777';
                 }
-                text.div.color = '#'+text.textColor.substring(0,6);
+                text.style.color = '#'+text.textColor.substring(0,6);
             }
             else if (text.anchor_label)
             {
-                text.div.left = '100%';
-                text.div.top = '0';
-                text.style['margin-left'] = util.pct(text.fontSize * 0.75,'vmin');
+                text.style.left = '100%';
+                text.style.top = '0';
+                text.inner['margin-left'] = util.pct(text.fontSize * 0.75,'vmin');
                 if (!text.fontFamily)
                 {
-                    text.div['font-family'] = 'ohc_regular';
+                    text.inner['font-family'] = 'ohc_regular';
                 }
             }
             else if (!text.pos)
             {
-                text.div.display = 'none';
-                if (config.app.LogThemeStyles)
-                {
-                    console.log('no position - hidden');
-                    console.groupEnd('styler.createTextStyle('+text.name+')');
-                }
+                text.style.display = 'none';
                 return;
-            }
-
-            if (text.pos)
-            {
-                text.pos = denormalize('pos',text.pos);
-
-                if (text.pos.x>=1 || text.pos.y>=1 ||
-                     text.pos.x<0 || text.pos.y<0)
-                {
-                    text.div.display = 'none';
-                    if (config.app.LogThemeStyles)
-                    {
-                        console.log('Offscreen - hidden');
-                        console.groupEnd('styler.createTextStyle('+text.name+')');
-                    }
-                    return;
-                }
-
-                text.div.left = util.pct(text.pos.x,'vw');
-                text.div.top = util.pct(text.pos.y,'vh');
             }
 
             // default size for helpsystembar
@@ -838,8 +474,10 @@
                                      ? text.fontSize + 0.01  // padding 
                                      : 0.045};
             }
+/*
             else if (text.size)
             {
+
                 text.size = denormalize('size',text.size);
 
                 // don't allow gamelist off screen, I'm looking at you 'clean-look' theme
@@ -848,6 +486,9 @@
                     text.size.w = 0.995 - text.pos.x;
                 }
             }
+*/
+            styleSize(text, text.style);
+            text.inner.width = text.style.width;
 
             if (!text.lineSpacing)
             {
@@ -860,97 +501,80 @@
 
             calcObjBounds(text);
 
+            if (text.size)
+            {
+                if (text.size.w)
+                {
+                    text.style['max-width'] = text.style.width;
+                }
+                /*
+                if (text.size.h)
+                {
+                    text.style.height = util.pct(text.size.h,'vh');
+                }
+                */
+/* zzz
+                text.inner.width = text.style.width;
+*/
+            }
+
             if (text.name == 'md_description')
             {
                 text.multiline = true;
             }
 
-            if (text.size)
-            {
-                if (text.size.w)
-                {
-                    text.div['max-width'] =
-                    text.div.width = util.pct(text.size.w,'vw');
-                }
-                if (text.size.h)
-                {
-                    text.div.height = util.pct(text.size.h,'vh');
-                }
-                text.style.width = text.div.width;
-            }
-
             var height = text.fontSize * self.defaultLineSpacing; // text.lineSpacing
+
             if (text.size && text.size.h)
             {
                 height = text.size.h;
             }
 
-            text.div.height = util.pct(height,'vh');
+            text.style.height = util.pct(height,'vh');
 
-            text.style['font-size'] = util.pct(text.fontSize,'vh');
 
             text.rows = Math.floor(height / text.fontSize) || 1;
             if (text.multiline && text.lineSpacing)
             {
                 if (text.name != 'gamelist')
                 {
-                    text.style['line-height'] = text.lineSpacing;
+                    text.inner['line-height'] = text.lineSpacing;
                 }
             }
 
 
             if (text.color)
             {
-                text.style['color'] = util.hex2rgba(text.color);
+                text.inner['color'] = util.hex2rgba(text.color);
             }
 
             if (text.backgroundColor)
             {
-                text.div['background-color'] = util.hex2rgba(text.backgroundColor);
+                text.style['background-color'] = util.hex2rgba(text.backgroundColor);
             }
+
+            styleAlignment(text, text.inner);
 
             if (text.fontFamily)
             {
-                text.style['font-family'] = text.fontFamily;
-                text.div['font-family'] = text.fontFamily;
+                text.inner['font-family'] = text.fontFamily;
                 if (!text.multiline)
                 {
                     var vcenter = self.fonts[text.fontFamily].vcenter || -50;
-                    text.style['top'] = '50%';
-                    text.style['-webkit-transform'] = 'translateY('+vcenter+'%)';
-                    text.style['-ms-transform'] = 'translateY('+vcenter+'%)';
-                    text.style['transform'] = 'translateY('+vcenter+'%)';
+                    text.inner['top'] = '50%';
+                    text.inner['-webkit-transform'] = 'translateY('+vcenter+'%)';
+                    text.inner['-ms-transform'] = 'translateY('+vcenter+'%)';
+                    text.inner['transform'] = 'translateY('+vcenter+'%)';
                 }
             }
 
             if (parseInt(text.forceUppercase))
             {
-                text.style['text-transform'] = 'uppercase';
-                text.div['text-transform'] = 'uppercase';
+                text.inner['text-transform'] = 'uppercase';
             }
 
-            if (text.alignment)
-            {
-                text.div['text-align'] = text.alignment;
-            }
+            styleTextZIndex(text, text.style);
 
-            if (text.zIndex) // && parseInt(text.zIndex)>=0)
-            {
-                text.div['z-index'] = parseInt(text.zIndex)+1;
-            }
-            else if (text.name && text.name.substring(0,3)=='md_')
-            {
-                text.div['z-index'] = 40;
-            }
-
-            text.styled = true;
-
-            if (config.app.LogThemeStyles)
-            {
-                console.log(text.div);
-                console.log(text.style);
-                console.groupEnd('styler.createTextStyle('+text.name+')');
-            }
         }
 
         function createTextlistStyle(textlist)
@@ -975,50 +599,23 @@
         function createVideoStyle(video)
         {
             video.tag = 'video';
-            if (!video || (typeof video) != 'object' || video.styled)
+
+            if (!video || (typeof video) != 'object' || video.style || !video.pos)
             {
                 return;
             }
 
-            if (config.app.LogThemeStyles)
+            video.style = { position: 'absolute', 'object-fit': 'fill' };
+
+            if (!stylePos(video, video.style))
             {
-                console.groupCollapsed('styler.createVideoStyle('+video.name+')');
-                angular.forEach(video, function(value, key) {
-                    console.log(key + ' = ' + value);
-                });
+                return;
             }
 
-            var style = {};
-
-            if (!video.pos)
+            if (video.showSnapshotNoVideo == 'true')
             {
-                video.pos='1 1';
-            }
-
-            if (video.pos)
-            {
-                video.pos = denormalize('pos',video.pos);
-                if (video.pos.x>=1 || video.pos.y>=1 ||
-                    video.pos.x<0 || video.pos.y<0)
-                {
-                    style.display = 'none';
-                    if (config.app.LogThemeStyles)
-                    {
-                        console.log('Offscreen - hidden');
-                        console.groupEnd('styler.createVideoStyle('+video.name+')');
-                    }
-                    video.div = style;
-                    return;
-                }
-                style.left = util.pct(video.pos.x,'vw');
-                style.top = util.pct(video.pos.y,'vh');
-            }
-
-            style['object-fit'] = 'fill';
-
-            if (video.showSnapshotNoVideo == 'true') {
-                style['background-size'] = 'contain';
-                style['background-repeat'] = 'no-repeat';
+                video.style['background-size'] = 'contain';
+                video.style['background-repeat'] = 'no-repeat';
             }
 
             // default video origin center
@@ -1027,45 +624,11 @@
                 video.origin = '0.5 0.5';
             }
 
-            if (video.origin)
-            {
-                video.origin = denormalize('pos',video.origin);
-                if (video.origin.x!=0 || video.origin.y!=0)
-                {
-                    style['-webkit-transform'] =
-                    style['-ms-transform'] =
-                    style.transform = 'translate('+
-                                                util.pct(-video.origin.x,'%')+','+
-                                                util.pct(-video.origin.y,'%')+')';
-                }
-            }
+            delete video.style.transform;
+            styleOrigin(video, video.style);
+            styleSize(video, video.style);
+            styleVideoMaxSize(video, video.style);
 
-            if (video.size)
-            {
-                video.size = denormalize('size',video.size);
-                if (video.size.w)
-                {
-                    style.width = util.pct(video.size.w,'vw');
-                }
-                if (video.size.h)
-                {
-                    style.height = util.pct(video.size.h,'vh');
-                }
-            }
-            if (video.maxSize)
-            {
-                video.maxSize = denormalize('size',video.maxSize);
-                if (video.maxSize.w)
-                {
-                    style.width =
-                    style['max-width'] = util.pct(video.maxSize.w,'vw');
-                }
-                if (video.maxSize.h)
-                {
-                    style.height =
-                    style['max-height'] = util.pct(video.maxSize.h,'vh');
-                }
-            }
             var bp_h = 'center';
             var bp_v = 'center';
             if (video.origin)
@@ -1088,38 +651,11 @@
                 }
             }
 
-            style['background-position'] = bp_h + ' ' + bp_v;
+            video.style['background-position'] = bp_h + ' ' + bp_v;
 
             calcObjBounds(video);
 
-            style['position'] = 'absolute';
-
-            if (config.es.VideoOmxPlayer)
-            {
-                style['z-index'] = 5000;
-            }
-            else if (video.zIndex)
-            {
-                style['z-index'] = parseInt(video.zIndex)+1;
-            }
-            else if (video.name && video.name.substring(0,3)=='md_')
-            {
-                style['z-index'] = 30;
-            }
-            else
-            {
-                style['z-index'] = video.index;
-            }
-
-            video.div = style;
-
-            video.styled = true;
-
-            if (config.app.LogThemeStyles)
-            {
-                console.log(style);
-                console.groupEnd('styler.createVideoStyle('+video.name+')');
-            }
+            styleVideoZIndex(video, video.style);
         }
 
         // convert theme view object attributes to styles
@@ -1152,11 +688,6 @@
             // already done ?
             if (!view.styled)
             {
-                if (config.app.LogThemeStyles)
-                {
-                    console.groupCollapsed('styler.createViewStyles('+view.name+')');
-                }
-
                 angular.forEach(view.text,        createTextStyle);
                 angular.forEach(view.textlist,    createTextlistStyle);
                 angular.forEach(view.datetime,    createDatetimeStyle);
@@ -1165,7 +696,6 @@
                 angular.forEach(view.helpsystem,  createHelpsystemStyle);
                 angular.forEach(view.video,       createVideoStyle);
                 
-
                 // if text or date anchored to label float label left
                 if (view.text)
                 angular.forEach(config.lang.md_label, function(label_text, md) {
@@ -1180,10 +710,6 @@
                         label.style.float = 'left';
                     }
                 });
-                if (config.app.LogThemeStyles)
-                {
-                    console.groupEnd('styler.createViewStyles('+view.name+')');
-                }
 
                 view.styled = true;
             }
@@ -1235,19 +761,33 @@
 
         // translate path relative to file or include file
         // then simplify
-        function fullpath(object, field, path)
+        function saveFilepath(object, field, path)
         {
-            if (object[field].substr(0,2) == './')  // strip ./
+            object[field+'_filepath'] = path;
+            object['full'+field] = fullpath(object, field);
+        }
+
+        function fullpath(element, field)
+        {
+            var path;
+
+            if (element[field])
             {
-                object[field] = object[field].slice(2);
+                path = element[field];
+                if (self.system_name)
+                {
+                    path = ThemeService.variableReplace(path, system_name);
+                }
+                if (path.substr(0,2) == './')  // strip ./
+                {
+                    path = path.slice(2);
+                }
+                path = element[field+'_filepath']+'/'+path; // create full path
+                path = path.replace(/[^\/]*\/\.\.\//, '');
+                path = path.replace(/[^\/]*\/\.\.\//, '');
             }
 
-            object.type = object[field].slice(-3); // extension
-            object['full'+field] = path+'/'+object[field]; // create full path
-
-            // simplify parent/../ to ''  (twice) (.. doesn't play nice in url!)
-            object['full'+field] = object['full'+field].replace(/[^\/]*\/\.\.\//, '');
-            object['full'+field] = object['full'+field].replace(/[^\/]*\/\.\.\//, '');
+            return path
         }
 
         function fullViewImagePaths(view, path, include_count)
@@ -1256,7 +796,7 @@
             {
                 if (video.default)
                 {
-                    fullpath(video, 'default', path);
+                    saveFilepath(video, 'default', path);
                 }
             });
 
@@ -1264,7 +804,7 @@
             {
                 if (image.name && image.path)
                 {
-                    fullpath(image, 'path', path);
+                    saveFilepath(image, 'path', path);
                     image.include_count = include_count;
                 }
             });
@@ -1273,7 +813,7 @@
                 view.textlist.gamelist &&
                 view.textlist.gamelist.selectorImagePath)
             {
-                 fullpath(view.textlist.gamelist, 'selectorImagePath', path);
+                saveFilepath(view.textlist.gamelist, 'selectorImagePath', path);
             }
 
             // expand paths of rating star images if themed
@@ -1281,11 +821,11 @@
             {
                 if (view.rating.md_rating.unfilledPath)
                 {
-                    fullpath(view.rating.md_rating, 'unfilledPath', path);
+                    saveFilepath(view.rating.md_rating, 'unfilledPath', path);
                 }
                 if (view.rating.md_rating.filledPath)
                 {
-                    fullpath(view.rating.md_rating, 'filledPath', path);
+                    saveFilepath(view.rating.md_rating, 'filledPath', path);
                 }
             }
         }
@@ -1493,24 +1033,10 @@
         function objectReposition(obj, insert_x, width, gamelist_top, gamelist_bottom)
         {
             // not a thing we can move
-            if (!obj.div || !obj.pos)
+            if (!obj.style || !obj.pos)
             {
                 return;
             }
-/*
-            var size = obj.size || obj.maxSize;
-            if(!size || size.w==1 || !size.h)
-            {
-                return;
-            }
-            var pos_top = obj.pos.y
-            var pos_bottom = obj.pos.y + size.h;
-            if (obj.origin)
-            {
-                pos_top -= size.h * obj.origin.y;
-                pos_bottom -= size.h * obj.origin.y;
-            }
-*/
 
             // above or below gamelist
             if( obj.top >= gamelist_bottom || obj.bottom <= gamelist_top)
@@ -1524,7 +1050,7 @@
                       : obj.pos.x;  // reset back to normal
 
             // apply position change to style
-            obj.div['left'] = util.pct(x,'vw');
+            obj.style['left'] = util.pct(x,'vw');
 
             // size
             var w;
@@ -1544,31 +1070,20 @@
             // apply size change to style
             if (w)
             {
-                if (obj.div)
+                if (obj.style)
                 {
-                    if (obj.div['max-width'])
+                    if (obj.style['max-width'])
                     {
-                        obj.div['max-width'] = util.pct(w,'vw');
+                        obj.style['max-width'] = util.pct(w,'vw');
                     }
                     if (obj.name == 'md_rating')
                     {
-                        obj.div.width  = (100 * w) +'vh';
-                        obj.div.height = (100 * w / 5) +'vh';
+                        obj.style.width  = (100 * w) +'vh';
+                        obj.style.height = (100 * w / 5) +'vh';
                     }
-                    else if (obj.div['width'])
+                    else if (obj.style['width'])
                     {
-                        obj.div['width'] = util.pct(w,'vw');
-                    }
-                }
-                if (obj.img)
-                {
-                    if (obj.img['max-width'])
-                    {
-                        obj.img['max-width'] = util.pct(w,'vw');
-                    }
-                    if (obj.img['width'])
-                    {
-                        obj.img['width']      = util.pct(w,'vw');
+                        obj.style['width'] = util.pct(w,'vw');
                     }
                 }
             }
@@ -1596,16 +1111,16 @@
                 help = {};
             }
 
-            if (!help.div)
+            if (!help.style)
             {
-                help.div = {};
+                help.style = {};
             }
 
             if(help.fontSize)
             {
-                help.div['font-size'] = util.pct(help.fontSize, 'vh');
+                help.style['font-size'] = util.pct(help.fontSize, 'vh');
             }
-            help.div['line-height'] = (help.height / help.fontSize) + '%';
+            help.style['line-height'] = (help.height / help.fontSize) + '%';
 
             if (help)
             {
@@ -1637,11 +1152,11 @@
                          help.pos.x<0 || help.pos.y<0)
                     {
                         help.pos = pos;
-                        delete help.div['font-size'];
+                        delete help.style['font-size'];
 
-                        help.div.left = util.pct(help.pos.x,'vw');
-                        help.div.top = util.pct(help.pos.y,'vh');
-                        delete help.div.display;
+                        help.style.left = util.pct(help.pos.x,'vw');
+                        help.style.top = util.pct(help.pos.y,'vh');
+                        delete help.style.display;
                     }
                     else
                     {
@@ -1843,6 +1358,432 @@
             cell.opacity = opacity;
             cell['font-size'] = util.pct(fontsize, 'vmin');
         }
+
+        function styleAlignment(element, style)
+        {
+            if (element.alignment)
+            {
+                style['text-align'] = element.alignment;
+            }
+        }
+
+        function styleFontSize(element, style)
+        {
+            if (element.fontSize)
+            {
+                style['font-size'] = util.pct(util.round(element.fontSize,6),'vh');
+            }
+            else
+            {
+                //delete style['font-size'];
+                style['font-size'] = '3.5vh';
+            }
+        }
+
+        function styleImagePathColorTile(element, style)
+        {
+            element.img = false; // true = use img tag, false = use div background image/colour
+
+            // if called more than once (theme editor changes)
+            // then remove previous style
+            delete style['background-image'];
+            delete style['background-repeat'];
+            delete style['background-size'];
+            delete style['background-color'];
+            delete style.filter;
+            delete element.img_src;
+
+            // image file - not just a color
+            if (element.path ||
+                element.name == 'md_image' ||
+                element.name == 'md_marquee' ||
+                element.name == 'background')
+            {
+                // solid colour or image colour tint
+                if ( element.color )
+                {
+                    element.color = element.color.toLowerCase();
+                }
+
+                // image file extension
+                var ext;
+                if (element.path)
+                {
+                    ext = element.path.slice(-3);
+                }
+
+                // path relative to it's source file to fullpath
+                element.fullpath = fullpath(element, 'path');
+
+                // methods to tint image
+                // greyscale tint can be done cheaply on the client
+                // otherwise tint server side if gd installed
+                if ( element.color &&
+                     element.color != 'ffffff' &&
+                     element.color != 'ffffffff' )
+                {
+                    var hsl = util.rgbToHSL(element.color);
+
+                    // if greyscale color image client side
+                    if(hsl.h == 0 && hsl.s == 0 && hsl.l > 0.5)  // light
+                    {
+                        style.filter = 'brightness('+util.pct(hsl.l,'%')+')';
+                        if (hsl.a || hsl.a === 0)
+                        {
+                            style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+                        }
+                    }
+                    else if(hsl.h == 0 && hsl.s == 0)  // dark
+                    {
+                        style.filter = 'invert(100%) saturate(0%)'; // contrast(100%)';
+                        style.filter += ' contrast('+util.pct(1-hsl.l,'%')+')';
+                        if (hsl.a || hsl.a === 0)
+                        {
+                            style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+                        }
+                    }
+
+                    // color image server side if it's a svg or if php has gd2 library enabled
+                    else if (element.fullpath &&
+                               (ext=='svg' ||
+                                 ( config.env.has_gd && (ext=='png' || ext=='jpg' || ext=='gif'))))
+                    {
+                        element.fullpath = 'svr/color_img.php?file='+
+                                                    element.fullpath.substring(4)+ // remove svr/
+                                                    '&color='+element.color;
+                    }
+
+                    // and if we don't have php_gd loaded ...
+                    // try to taint image to color specified using filters client side (poor)
+                    else
+                    {
+                        // speia is yellow (+60 degrees) so rotate -60 degrees
+                        style.filter = 'sepia(100%) saturate(5000%) hue-rotate('+((hsl.h-60)%360)+'deg)';
+                        if (hsl.a)
+                        {
+                            style.filter += ' opacity('+util.pct(hsl.a,'%')+')';
+                        }
+                    }
+                }
+
+                // div background tiled
+                if (element.tile && element.tile != 'false')
+                {
+                    style['background-repeat'] = 'repeat';
+                }
+                // div background fullscreen
+                if (element.name=='background' || (element.size && element.size.w >=1 && element.size.h >=1))
+                {
+                    element.fullscreen = true;
+                    if (!style['background-repeat'])
+                    {
+                        style['background-size'] = '100% 100%';
+                    }
+                    style.width = '100vw';
+                    style.height = '100vh';
+                }
+                // img tag
+                else
+                {
+                    element.img = true;
+                }
+            }
+            // image is just a color with no image so just set background color
+            else if (element.color)
+            {
+                style['background-color'] = util.hex2rgba(element.color);
+            }
+
+            if (element.img)
+            {
+                if (element.fullpath)
+                {
+                    element.img_src = element.fullpath;
+                }
+            }
+            else
+            {
+                if (element.fullpath)
+                {
+                    style['background-image'] = 'url("'+element.fullpath+'")';
+                }
+            }
+        }
+
+        function styleImageMaxSize(element, style)
+        {
+            if (element.maxSize)
+            {
+                element.maxSize = denormalize('size', element.maxSize);
+                if (element.maxSize.w)
+                {
+                    style['max-width'] = util.pct(element.maxSize.w, 'vw');
+                }
+                if (element.maxSize.h)
+                {
+                    style['max-height'] = util.pct(element.maxSize.h, 'vh');
+                }
+            }
+        }
+
+        function styleImageZIndex(element, style)
+        {
+            if (element.zIndex)
+            {
+                style['z-index'] = parseInt(element.zIndex);
+            }
+            else if (element.name == 'background')
+            {
+                style['z-index'] = 1;
+            }
+            else if(element.extra)
+            {
+                style['z-index'] = 10;
+            }
+            else if (element.name == 'md_image')
+            {
+                style['z-index'] = 30;
+            }
+            else if (element.name == 'md_video')
+            {
+                style['z-index'] = 30;
+            }
+            else if (element.name == 'md_marquee')
+            {
+                style['z-index'] = 35;
+            }
+            else if (element.name == 'logo')
+            {
+                style['z-index'] = 50;
+            }
+            else
+            {
+                style['z-index'] = element.index;
+            }
+        }
+
+        function styleOrigin(element, style)
+        {
+            delete element.transformOrigin;
+
+            if (element.origin)
+            {
+                element.origin = denormalize('pos', element.origin);
+                if (element.origin.x || element.origin.y)
+                {
+                    element.transformOrigin = 'translate('+
+                                                util.pct(-element.origin.x,'%')+','+
+                                                util.pct(-element.origin.y,'%')+')';
+                }
+            }
+            joinTransform(element, style);
+        }
+
+        function stylePos(element, style)
+        {
+            if (!element.pos)
+            {
+                delete style.left;
+                delete style.top;
+
+                if (!element.anchor_label && element.name != 'help')
+                {
+                    style.display = 'none';
+                    return false;
+                }
+
+            }
+            else
+            {
+                element.pos = denormalize('pos',element.pos);
+
+                if (element.pos.x>=1 || element.pos.y>=1)
+                {
+                    style.display = 'none';
+                    return false;
+                }
+                delete style.display;
+                style.left = util.pct(element.pos.x,'vw');
+                style.top = util.pct(element.pos.y,'vh');
+            }
+
+            return true;
+        }
+
+        function styleRatingSize(element, style)
+        {
+            if (element.size)
+            {
+                element.size = denormalize('size', element.size);
+                var pct;
+
+                // theme should only have w or h not both
+                if (element.size.h)
+                {
+                    element.size.w = element.size.h * 5;
+                    pct = 'vh';
+                }
+                else if (element.size.w)
+                {
+                    element.size.h = element.size.w / 5;
+                    pct = 'vw';
+                }
+
+                if (element.size.h)
+                {
+                    style.height = (100 * element.size.h) + pct;
+                }
+                if (element.size.w)
+                {
+                    style.width = (100 * element.size.w) + pct;
+                }
+            }
+        }
+
+        function styleRatingZIndex(element, style)
+        {
+            if (element.zIndex)
+            {
+                style['z-index'] = parseInt(element.zIndex)+1;
+            }
+            else if (element.name && element.name.substring(0,3)=='md_')
+            {
+                style['z-index'] = 30;
+            }
+            else
+            {
+                style['z-index'] = element.index;
+            }
+        }
+
+        function styleRotation(element, style)
+        {
+            if (element.rotationOrigin)
+            {
+                element.rotationOrigin = denormalize('pos', element.rotationOrigin);
+                style['-ms-transform-origin'] =
+                style['-webkit-transform-origin'] =
+                style['transform-origin'] =
+                    util.pct(element.rotationOrigin.x, '%') + ' ' + util.pct(element.rotationOrigin.y, '%');
+            }
+
+            if (element.rotation)
+            {
+                element.transformRotation = 'rotate('+parseFloat(element.rotation)+'deg) ';
+            }
+            else
+            {
+                delete element.transformRotation;
+            }
+            joinTransform(element, style);
+        }
+
+        function joinTransform(element, style)
+        {
+            delete style.transform;
+            delete style['-ms-transform'];
+            delete style['-webkit-transform'];
+
+            if (element.transformOrigin)
+            {
+                style.transform = element.transformOrigin;
+                if (element.transformRotation)
+                {
+                    style.transform += ' ' +element.transformRotation;
+                }
+            }
+            else if (element.transformRotation)
+            {
+                style.transform = element.transformRotation;
+            }
+            else {
+                return;
+            }
+            style['-ms-transform'] = style['-webkit-transform'] = style.transform;
+        }
+
+        function styleSize(element, style)
+        {
+            if (!element.size)
+            {
+                delete style.width;
+                delete style.height;
+            }
+            else
+            {
+                element.size = denormalize('size', element.size);
+
+                if ((element.tag == 'textlist' || element.tag == 'text') &&
+                     element.pos && element.pos.x + element.size.w > 0.995)
+                {
+                    element.size.w = 0.995 - element.pos.x;
+                }
+
+                if(element.size.w)
+                {
+                    style.width = util.pct(element.size.w, 'vw');
+                }
+                if(element.size.h)
+                {
+                    style.height = util.pct(element.size.h, 'vh');
+                }
+            }
+        }
+
+        function styleTextZIndex(element, style)
+        {
+            if (element.zIndex) // && parseInt(text.zIndex)>=0)
+            {
+                style['z-index'] = parseInt(element.zIndex)+1;
+            }
+            else if (element.name && element.name.substring(0,3)=='md_')
+            {
+                style['z-index'] = 40;
+            }
+            else
+            {
+                style['z-index'] = element.index;
+            }
+        }
+
+        function styleVideoMaxSize(element, style)
+        {
+            if (element.maxSize)
+            {
+                element.maxSize = denormalize('size', element.maxSize);
+                if (element.maxSize.w)
+                {
+                    style.width =
+                    style['max-width'] = util.pct(element.maxSize.w, 'vw');
+                }
+                if (element.maxSize.h)
+                {
+                    style.height =
+                    style['max-height'] = util.pct(element.maxSize.h, 'vh');
+                }
+            }
+        }
+
+        function styleVideoZIndex(element, style)
+        {
+            if (config.es.VideoOmxPlayer)
+            {
+                style['z-index'] = 5000;
+            }
+            else if (element.zIndex)
+            {
+                style['z-index'] = parseInt(element.zIndex)+1;
+            }
+            else if (element.name && element.name.substring(0,3)=='md_')
+            {
+                style['z-index'] = 30;
+            }
+            else
+            {
+                style['z-index'] = element.index;
+            }
+        }
+
 
         // calculate x changed position
         // used to insert space mid screen, move everything right (E.g extra list columns)

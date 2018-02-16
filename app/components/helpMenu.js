@@ -22,7 +22,7 @@
             replace: true,
             scope: true,
             transclude: true,
-            template: '<div class="helpsystembar" ng-style="vm.obj.div">'+
+            template: '<div class="helpsystembar" ng-style="vm.obj.style">'+
                           '<span ng-repeat="item in vm.list" class="dropdown"'+
                                   ' ng-click="item.click()"'+
                                   ' ng-mouseover="hover=true"'+

@@ -32,7 +32,7 @@
             controllerAs: 'vm',
             bindToController: {
                 ngModel: '=',
-                ngChange: '=',
+                //ngChange: '=',
                 onSvg:'@',
                 offSvg:'@',
                 onColor: '@',
@@ -71,10 +71,8 @@
 
             $event.preventDefault();
             $event.stopPropagation();
-
             // toggle value
             vm.ngModel = !vm.ngModel;
-
             updateImage();
 
             // if it's a configuration setting then auto save config
@@ -84,9 +82,11 @@
             }
 
             // if we have a changed expression eval on parent scope
-            if ($attrs.changed)
+            if ($attrs.clicked)
             {
-                scope.$parent.$eval($attrs.changed);
+                // below should propegate anyway, but doesn't
+                $scope.$parent.$eval($attrs.ngModel+'='+vm.ngModel);
+                $scope.$parent.$eval($attrs.clicked);
             }
         }
 
