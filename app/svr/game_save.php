@@ -146,6 +146,7 @@ elseif ($_POST['update'])
         updateGame($game, $_POST);
         $response['index'] = $game->index;
         $response['success'] = true;
+        unset($game->index);
     }
 }
 elseif ($_POST['delete'])

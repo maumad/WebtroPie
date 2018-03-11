@@ -1028,6 +1028,8 @@
                     }
                     delete game.changes;
                     delete game.new;
+                    delete game.reset;
+                    rememberGameMetadata(game);
                     MenuService.hideMenu();
                     hideEditor();
                 }
