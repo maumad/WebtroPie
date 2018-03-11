@@ -6,11 +6,11 @@ $theme  = isset($_GET['theme']) ? $_GET['theme'] : false;
 
 if ($theme)
 {
-    $config = getConfig( SYSTEMS );
+    $config = getConfig( SYSTEMS | ES );
 }
 else
 {
-    $config = getConfig( SYSTEMS | APP | ENV );
+    $config = getConfig( SYSTEMS | ES | APP | ENV );
 
     $theme = $config['app']['ThemeSet'] ||
              $config['es']['ThemeSet'] ||
@@ -159,61 +159,70 @@ function load_and_include($file, &$parent=null, $index=-1)
 }
 // array of 'systems', get theme for each system/platform
 // where roms/system/gamelist.xml exists
-if (file_exists(ROMSPATH))
+$response['systems'] = array();
+
+// default theme
+if (file_exists($themepath.'/theme.xml'))
 {
-    $response['systems'] = array();
-
-    // default theme
-    if (file_exists($themepath.'/theme.xml'))
-    {
-        $response['systems']['default'] =
-            array('name' => 'default',
-                  'path' => 'svr/'.$themepath,
-                  'theme' => load_and_include('theme.xml'));
-    }
-    // (usable - having roms) system themes
-    foreach ($config['systems'] as $system_name => $system)
-    {
-        if (isset($_GET['all']) ||
-            (isset($system['gamelist_file']) && file_exists($system['gamelist_file']))
-        )
+    $response['systems']['default'] =
+        array('name' => 'default',
+                'path' => 'svr/'.$themepath,
+                'theme' => load_and_include('theme.xml'));
+}
+// (usable - having roms) system themes
+foreach ($config['systems'] as $system_name => $system)
+{
+    //if (isset($_GET['all']) ||
+    //    (isset($system['gamelist_file']) && file_exists($system['gamelist_file']))
+    //)
+    //{
+        if (file_exists($themepath.'/'.$system['theme'].'/theme.xml'))
         {
-            if (file_exists($themepath.'/'.$system['theme'].'/theme.xml'))
-            {
-                $response['systems'][$system['theme']] =
-                    array(
-                        'name' => $system['theme'],
-                        'path' => 'svr/'.$themepath.'/'.$system['theme'],
-                        'theme' => load_and_include($system['theme'].'/theme.xml')
-                );
-            }
-            elseif (file_exists($themepath.'/'.$system['name'].'/theme.xml'))
-            {
-                $response['systems'][$system['name']] =
-                    array(
-                        'name' => $system['name'],
-                        'path' => 'svr/'.$themepath.'/'.$system['name'],
-                        'theme' => load_and_include($system['name'].'/theme.xml')
-                );
-            }
+            $response['systems'][$system['theme']] =
+                array(
+                    'name' => $system['theme'],
+                    'path' => 'svr/'.$themepath.'/'.$system['theme'],
+                    'theme' => load_and_include($system['theme'].'/theme.xml')
+            );
         }
-    }
-
-    // collections
-    foreach (array('auto-allgames','auto-favorites','auto-lastplayed','custom-collections','retropie'
-    ) as $system)
-    {
-        if (file_exists($themepath.'/'.$system.'/theme.xml'))
+        elseif (file_exists($themepath.'/'.$system['name'].'/theme.xml'))
         {
-            $response['systems'][$system] =
-                array('name' => $system,
-                      'path' => 'svr/'.$themepath.'/'.$system,
-                      'theme' => load_and_include($system.'/theme.xml'));
+            $response['systems'][$system['name']] =
+                array(
+                    'name' => $system['name'],
+                    'path' => 'svr/'.$themepath.'/'.$system['name'],
+                    'theme' => load_and_include($system['name'].'/theme.xml')
+            );
         }
+    //}
+}
+
+// collections
+foreach (array('auto-allgames','auto-favorites','auto-lastplayed','custom-collections','retropie'
+) as $system)
+{
+    if (file_exists($themepath.'/'.$system.'/theme.xml'))
+    {
+        $response['systems'][$system] =
+            array('name' => $system,
+                    'path' => 'svr/'.$themepath.'/'.$system,
+                    'theme' => load_and_include($system.'/theme.xml'));
     }
 }
-else
-    $response['error'] = "Can't open ".ROMSPATH;
+
+// custom collections that match systems
+if($config['es']['CollectionSystemsCustom'])
+foreach (preg_split('/,/', $config['es']['CollectionSystemsCustom']) as $system)
+{
+    if (file_exists($themepath.'/'.$system.'/theme.xml'))
+    {
+        $response['systems'][$system] =
+            array('name' => $system,
+                    'path' => 'svr/'.$themepath.'/'.$system,
+                    'theme' => load_and_include($system.'/theme.xml'));
+    }
+}
+
 
 // return converted array to json
 echo json_encode($response);

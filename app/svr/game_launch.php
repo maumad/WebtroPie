@@ -2,8 +2,9 @@
 // -------------
 // LAUNCH A GAME
 
-require_once("vars.php");
-include_once("local.php");
+require_once("config.php");
+
+$config = getConfig( SYSTEMS );
 
 $local = getLocal();
 
@@ -19,7 +20,7 @@ if ($local &&
         $game_path = substr($game_path, 2);
     }
     
-    $SYSTEM_PATH = ROMSPATH.$system;
+    $SYSTEM_PATH = $config['systems'][$system]['path'];
     
     echo exec('killall -q emulationstation
 export HOME='.HOME.'

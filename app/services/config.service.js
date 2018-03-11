@@ -84,18 +84,21 @@
                 }
             }
 /*
-                if(self.es.CollectionSystemsCustom)
-                self.es.CollectionSystemsCustom
-                .split(',')
-                .forEach(function(system) {
-                    self.systems['custom-'+system] = {
-                        name: 'custom-'+system,
-                        fullname: system,
-                        theme: 'custom-collections',
-                        has_games: true
-                    }
-                });
+<string name="CollectionSystemsAuto" value="all,favorites,recent" />
+<bool name="UseCustomCollectionsSystem" value="true" />
 */
+            if(self.es.CollectionSystemsCustom)
+            self.es.CollectionSystemsCustom
+            .split(',')
+            .forEach(function(system) {
+                self.systems['custom-'+system] = {
+                    name: 'custom-'+system,
+                    fullname: system,
+                    theme: 'custom-collections',
+                    has_games: true
+                }
+            });
+
         }
 
         function load(bitmask, lang, refresh)

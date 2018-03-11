@@ -39,8 +39,10 @@
 
         function update()
         {
+            var themeSystem = ThemeService.theme.carousel_systems[vm.systemName].themeSystem;
+            var theme = ThemeService.getSystemTheme(themeSystem);
             var system = config.systems[vm.systemName];
-            var theme = ThemeService.getSystemTheme(vm.systemName);
+
             if (theme && theme.logo)
             {
                 vm.logo = ThemeService.variableReplace(theme.logo, vm.systemName);
@@ -49,7 +51,7 @@
             {
                 delete vm.logo;
             }
-            vm.name = system.fullname || vm.systemName
+            vm.name = system.fullname || vm.systemName;
         }
     }
 

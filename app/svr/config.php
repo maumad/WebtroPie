@@ -103,7 +103,7 @@ function getConfig($get)
 
     if ($get & ES)
     {
-        $config['es'] = load_file_xml_as_array(ES_CONFIG_PATH."/es_settings.cfg", true);
+        $config['es'] = load_file_xml_as_array(ES_CONFIG."/es_settings.cfg", true);
     }
 
     if ($get & THEMES)
@@ -129,18 +129,25 @@ function getConfig($get)
     {
         $config['systems'] = array();
 
-        if (file_exists($file = HOME_ES."/es_systems.cfg") ||
-            file_exists($file = ES_PATH."/es_systems.cfg"))
+        if (file_exists($file = HOME.".emulationstation/es_systems.cfg") ||
+            file_exists($file = ETC_ES."/es_systems.cfg"))
         {
             $systems = load_file_xml_as_array($file, false, false, ['system'=>true]);
 
             foreach($systems['system'] as &$system)
             {
+                $system['path'] = str_replace('\\', '/', $system['path']);
+                $system['path'] = str_replace('~', HOME, $system['path']);
+
+                $system['url'] = str_replace(ROMBASE.'/','', $system['path']);
+                /* TODO rom path is not under web root
+                if (!file_exists($system['url']))
+                {
+                    mklink full -> url
+                }
+                */
                 if (file_exists($file = $system['path']."/gamelist.xml") ||
-                    file_exists($file = ROMSPATH.$system['name']."/gamelist.xml") ||
-                    file_exists($file = HOME_ES."/gamelists/".$system['name']."/gamelist.xml") ||
-                    file_exists($file = ES_PATH."/gamelists/".$system['name']."/gamelist.xml") ||
-                    file_exists($file = "/opt/retropie/configs/all/emulationstation/".$system['name']."/gamelist.xml"))
+                    file_exists($file = ES_CONFIG.'/'.$system['name']."/gamelist.xml"))
                 {
                     $system['has_gamelist'] = true;
                     $system['gamelist_mtime'] = filemtime($file);

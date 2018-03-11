@@ -44,12 +44,17 @@
 
         function getCarouselSystemName(system_index)
         {
-            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)]
+            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)].system_name;
+        }
+
+        function getCarouselSystemThemeName(system_index)
+        {
+            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)].themeSystem;
         }
 
         function getCarouselSystemTheme(system_index)
         {
-            return ThemeService.getSystemTheme(getCarouselSystemName(system_index));
+            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)].theme;
         }
 
         // return E.g previous or next system name
@@ -131,11 +136,14 @@
         function setCarouselSystemByIndex(system_index, view_name, keep_style)
         {
             self.system_index = wrapIndex(system_index);
-            ThemeService.setSystem(getCarouselSystemName(system_index), view_name, keep_style);
+            ThemeService.setSystem(getCarouselSystemThemeName(system_index), view_name, keep_style);
         }
+
         function setCarouselSystemIndexByName(system_name)
         {
-            self.system_index = ThemeService.theme.carousel_systems_list.indexOf(system_name);
+            self.system_index = ThemeService.theme.carousel_systems_list.findIndex(function(car) {
+                return car.system_name == system_name;
+            });
         }
 
         // ensure index is always between 0 and array.length

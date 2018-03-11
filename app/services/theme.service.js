@@ -170,15 +170,40 @@
 
             // self.theme.systems is unsorted object 
             // self.theme.carousel_systems_list becomes a sorted array
-            angular.forEach(config.systems, function (sys, system_name)
+            angular.forEach(config.systems, function (system, system_name)
             {
-                if (sys.has_games)
+                if (system.has_games || config.app.ShowEmptySystems)
                 {
                     if (self.theme.carousel_systems[system_name] == undefined)
                     {
-                        self.theme.carousel_systems_list.push(system_name);
+                        var car = {themeSystem: system.theme,
+                                   system_name: system_name,
+                                        system: system,
+                                         order: system.fullname};  // order by fullname
+
+                        // Order carousel by system fullname
+                        // then custom collections then auto collections
+                        if (system.name.substring(0, 7) == 'custom-')
+                        {
+                            car.order = 'zzz' + car.order;
+                            car.themeSystem = system.name;
+                            var custom = system.name.substring(7);
+                            // If theme has system matching collection name then use that
+                            if (self.theme.systems[custom])
+                            {
+                                car.themeSystem = custom;
+                            }
+                        }
+                        if (system.name.substring(0, 5) == 'auto-')
+                        {
+                            car.order = 'zzzz' + car.order;
+                        }
+
+                        car.theme = self.theme.systems[car.themeSystem] || self.theme.systems.default;
+
+                        self.theme.carousel_systems[system_name] = car;
+                        self.theme.carousel_systems_list.push(car);
                     }
-                    self.theme.carousel_systems[system_name] = true;
                 }
             });
 
@@ -187,14 +212,8 @@
             // sort systems array by name
             self.theme.carousel_systems_list.sort(function (a, b)
             {
-                if (a.substring(0, 4) == 'auto') a = 'zzz' + a;
-                if (a.substring(0, 6) == 'custom') a = 'zzzz' + a;
-                if (b.substring(0, 4) == 'auto') b = 'zzz' + b;
-                if (b.substring(0, 6) == 'custom') b = 'zzzz' + b;
-                if (a > b)
-                    return 1;
-                if (a < b)
-                    return -1;
+                if (a.order > b.order) return 1;
+                if (a.order < b.order) return -1;
                 return 0;
             });
         }
@@ -638,7 +657,6 @@
         // get either from memory or server
         function getTheme(themename, system_name, view_name, scan)
         {
-//console.log('ThemeService.getTheme('+themename+', ' + system_name + ', ' + view_name+')')
             // if ThemeSet not in config for some reason
             if (!themename)
             {
@@ -688,7 +706,7 @@
                     if (!system_name)
                     {
                         // first system
-                        system_name = self.theme.carousel_systems_list[0];
+                        system_name = self.theme.carousel_systems_list[0].system_name;
                     }
 
                     setThemeSystemView(self.theme, system_name, view_name);
@@ -725,7 +743,7 @@
                             if (!system_name)
                             {
                                 // first system
-                                system_name = self.theme.carousel_systems_list[0];
+                                system_name = self.theme.carousel_systems_list[0].system_name;
                             }
 
                             setThemeSystemView(self.theme, system_name, view_name);
@@ -929,8 +947,17 @@
 
         function setSystemByName(system_name, view_name, nocheck)
         {
+            if (system_name.substring(0,7)=='custom-')
+            {
+                var custom = system_name.substring(7);
+                // If theme has system matching collection name then use that
+                if (self.theme.systems[custom])
+                {
+                    system_name = custom;
+                }
+            }
+
             var system = getSystemTheme(system_name);
-            //console.log('set system by name : sys = ' + system_name + ' : view = '+ view_name)
             if (!system)
             {
                 return;

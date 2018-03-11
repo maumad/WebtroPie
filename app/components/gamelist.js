@@ -212,7 +212,6 @@
             vm.liststyle['font-size']  = util.pct(fontsize,'vh');
             vm.liststyle['line-height']  = util.pct(fontsize,'vh');
             vm.liststyle['font-family']  = gl.fontFamily;
-            vm.liststyle['text-transform']  = gl.style['text-transform']
 
             // column heading style
 
@@ -258,6 +257,7 @@
                             width: util.pct(f.vw,'vw'),
                             'max-width': util.pct(f.vw,'vw'),
                             top: '50%',
+                            'text-transform':  gl.inner['text-transform'],
                             '-webkit-transform': 'translateY('+vcenter+'%)',
                             '-ms-transform': 'translateY('+vcenter+'%)',
                             'transform': 'translateY('+vcenter+'%)'};

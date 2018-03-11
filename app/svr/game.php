@@ -30,7 +30,7 @@ function get_media_path($media, $system)
     }
     else
     {
-        return ROMSPATH.$system.'/'.$media.'s';  // E.g. .../images
+        return $config['systems'][$system]['path'].'/'.$media.'s';  // E.g. .../images
     }
 }
 
@@ -58,16 +58,15 @@ function get_media_suffix($media)
 
 function get_media_paths_full_url($filename, $system)
 {
-    global $svr_dir;
+    global $svr_dir, $config;
     static $checked_dirs = [];
 
-    $SYSTEM_PATH = ROMSPATH.$system;
-
+    $SYSTEM_URL = $config['systems'][$system]['url'];
     $url='';
     $fullpath='';
     if(substr($filename,0,2) == "./")
     {
-        $url = $SYSTEM_PATH.'/'.substr($filename,2);
+        $url = $SYSTEM_URL.'/'.substr($filename,2);
     }
     elseif (substr($filename,0,2) == "~/")
     {
@@ -75,7 +74,7 @@ function get_media_paths_full_url($filename, $system)
     }
     elseif (substr($filename,0,1) != "/")
     {
-        $url = $SYSTEM_PATH.'/'.$filename;
+        $url = $SYSTEM_URL.'/'.$filename;
     }
     else
     {
@@ -90,9 +89,9 @@ function get_media_paths_full_url($filename, $system)
         {
             $url = substr($fullpath, 27);
         }
-        else if (substr($fullpath, 0, $l=18) === '/home/pi/RetroPie/')
+        else if (substr($fullpath, 0, $l=strlen(ROMBASE)) === ROMBASE)
         {
-            $url = substr($fullpath, $l);
+            $url = substr($fullpath, $l)+'/';
             $dir = pathinfo($url, PATHINFO_DIRNAME );
             if (!isset($checked_dirs) && !file_exists($dir))
             {
@@ -111,9 +110,9 @@ function get_media_paths_full_url($filename, $system)
                 $checked_dirs[$dir] = true;
             }
         }
-        elseif (substr($fullpath, 0, $l=9) === '/home/pi/')
+        elseif (substr($fullpath, 0, $l=strlen(HOME)) === HOME)
         {
-            $url = 'home_'.substr($fullpath, $l);
+            $url = 'home_'.substr($fullpath, $l)+'/';
             $dir = pathinfo($url, PATHINFO_DIRNAME );
             if (!isset($checked_dirs) && !file_exists($dir))
             {

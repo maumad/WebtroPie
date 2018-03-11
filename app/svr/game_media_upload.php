@@ -11,7 +11,7 @@ if ($config['edit'] && $_FILES['upload'])
 
     if ($system && $media)
     {
-        chdir($SYSTEM_PATH = ROMSPATH.$system);
+        chdir($SYSTEM_PATH = $config['systems'][$system]['path']);
         
         if ($_FILES['upload']['error'] == 0)
         {

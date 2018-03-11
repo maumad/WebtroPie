@@ -18,7 +18,43 @@ if (!$config['edit'])
     $match_media = false;
 }
 
-$gamelist_file = $config['systems'][$system]['gamelist_file'];
+
+if (substr($system,0,7)=='custom-')
+{
+    $response = [];
+    chdir(ES_CONFIG."/collections");
+    $gamelist_file = $system.'.cfg';
+    $cwd = getcwd();
+    if (file_exists($gamelist_file))
+    {
+        $response['game'] = file($gamelist_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        // Each line is a game path
+        foreach ($response['game'] as $index => &$game)
+        {
+            $game = str_replace('//','/', $game);
+            //$game = str_replace(HOME,'~', $game);
+            // find which system it belongs to
+            foreach ($config['systems'] as $system_name => &$system)
+            {
+                $sp = strpos($game, $system['path']);
+                if ($sp !== FALSE)
+                {
+                    $game =(object) array(
+                        'system' => $system_name,
+                        'path' => substr($game, 1 + $sp + strlen($system['path']))
+                    );
+                    break;
+                }
+            }
+        }
+    }
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+else
+{
+    $gamelist_file = $config['systems'][$system]['gamelist_file'];
+}
 
 if(!$scan && !$match_media)
 {
@@ -37,7 +73,7 @@ if(!$scan && !$match_media)
     }
 }
 
-$SYSTEM_PATH = ROMSPATH.$system;
+$SYSTEM_PATH = $config['systems'][$system]['path'];
 
 // scan for new files in the directory specified
 function scan_dir($subdir='')

@@ -12,22 +12,22 @@
 
 function merge_arrays(&$target, &$source)
 {
-foreach ($source as $key => $value)
-{
-    if(!isset($target[$key]))
+    foreach ($source as $key => $value)
     {
-        $target[$key] = $value;
+        if(!isset($target[$key]))
+        {
+            $target[$key] = $value;
+        }
+        elseif(gettype($target[$key])=='array' &&
+                        gettype($value)=='array')
+        {
+            merge_arrays($target[$key], $value);
+        }
+        else if($key!='index')  // overwrite
+        {
+            $target[$key] = $value;
+        }
     }
-    elseif(gettype($target[$key])=='array' &&
-                    gettype($value)=='array')
-    {
-        merge_arrays($target[$key], $value);
-    }
-    else if($key!='index')  // overwrite
-    {
-        $target[$key] = $value;
-    }
-}
 }
 
 function xmlobj_to_array($xmlobj, $tier)
