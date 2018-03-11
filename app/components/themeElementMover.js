@@ -222,7 +222,7 @@
             {
                 styler.styleVideoZIndex(vm.element, vm.themeStyle);
             }
-            setZindex();
+            setZIndex();
         }
 
         // -- End of change functions
