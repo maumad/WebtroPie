@@ -657,6 +657,7 @@
                             if (!game.isDir)
                             {
                                 system.total++;
+                                config.systems[system_name].has_games = true;
                                 self.systems['auto-allgames'].gamelist.push(game);
                                 self.systems['auto-allgames'].total++;
                                 if (game.image)
@@ -838,6 +839,7 @@
                         self.gamelists_loaded++;
                     }
 
+                    ThemeService.createCarouselSystems();
                     deferred.resolve(system);
                     delete system.promise;
 

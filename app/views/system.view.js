@@ -99,13 +99,13 @@
                 createAllSystemStyles();
 
                 $scope.app.registerThemeChangedCallback(createAllSystemStyles);
-/*
+
                 if (config.app.LoadAllSystems)
                 {
                     // get other systems game lists in the background
                     GameService.getGamelist('auto-allgames');
                 }
-*/
+
             });
         }
 

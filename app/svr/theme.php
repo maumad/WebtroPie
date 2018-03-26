@@ -172,9 +172,7 @@ if (file_exists($themepath.'/theme.xml'))
 // (usable - having roms) system themes
 foreach ($config['systems'] as $system_name => $system)
 {
-    if (file_exists($system['path']) &&
-              isset($system['gamelist_file']) &&
-        file_exists($system['gamelist_file']))
+    if (file_exists($system['path']))
     {
         if (file_exists($themepath.'/'.$system['theme'].'/theme.xml'))
         {

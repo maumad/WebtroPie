@@ -162,24 +162,31 @@
 
         function createCarouselSystems()
         {
-            if(self.theme.carousel_systems)
-                return;
-
-            self.theme.carousel_systems_list = [];
-            self.theme.carousel_systems = {};
+            if(!self.theme.carousel_systems)
+            {
+                self.theme.carousel_systems = {};
+                self.theme.carousel_systems_list = [];
+            }
+            else
+            {
+                // truncate array
+                self.theme.carousel_systems_list.length = 0;
+            }
 
             // self.theme.systems is unsorted object 
             // self.theme.carousel_systems_list becomes a sorted array
             angular.forEach(config.systems, function (system, system_name)
             {
-                if (system.has_games || (system.gamelist_file && config.app.ShowEmptySystems))
+                if (system.has_games || config.app.ShowEmptySystems)
                 {
+                    // first time create
                     if (self.theme.carousel_systems[system_name] == undefined)
                     {
                         var car = {themeSystem: system.theme,
                                    system_name: system_name,
                                         system: system,
-                                         order: system.fullname};  // order by fullname
+                                         order: system.name};  // order by system name
+                                         //order: system.fullname};  // order by fullname
 
                         // Order carousel by system fullname
                         // then custom collections then auto collections
@@ -202,8 +209,8 @@
                         car.theme = self.theme.systems[car.themeSystem] || self.theme.systems.default;
 
                         self.theme.carousel_systems[system_name] = car;
-                        self.theme.carousel_systems_list.push(car);
                     }
+                    self.theme.carousel_systems_list.push(self.theme.carousel_systems[system_name]);
                 }
             });
 
@@ -216,6 +223,7 @@
                 if (a.order < b.order) return -1;
                 return 0;
             });
+
         }
 
 

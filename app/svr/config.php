@@ -80,7 +80,7 @@ function getConfig($get)
     {
         $config['env'] = array();
         $config['env']['has_gd'] = extension_loaded('gd') ? 1 : 0;
-        $config['env']['es_pid'] = exec('pgrep -xf ".*emulationstation"');
+        $config['env']['es_pid'] = exec('pgrep -xf "./emulationstation"');
         if ($local)
         {
             $config['env']['has_launch'] = file_exists("runcommand.sh") ? 1 : 0;
