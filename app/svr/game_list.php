@@ -87,7 +87,7 @@ function scan_dir($subdir='')
     // scan for files with matching extensions
     foreach( glob($path.$extensions, GLOB_BRACE) as $filename)
     {
-        $shortpath = simplify_path($filename, HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
+        $shortpath = simplify_path($filename, $SYSTEM_PATH.'/');
 
         // already in gamelist.xml?
         if (!isset($games[strtolower($shortpath)]))

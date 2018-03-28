@@ -146,15 +146,19 @@ function getConfig($get)
                     mklink full -> url
                 }
                 */
-                if (file_exists($file = $system['path']."/gamelist.xml") ||
-                    file_exists($file = ES_CONFIG.'/'.$system['name']."/gamelist.xml"))
+                if (file_exists($system['path']))
                 {
-                    $system['has_gamelist'] = true;
-                    $system['gamelist_mtime'] = filemtime($file);
-                    $system['gamelist_file'] = $file;
-                    if (filesize($file) > 40)
+                    $system['has_system'] = true;
+                    if (file_exists($file = $system['path']."/gamelist.xml") ||
+                        file_exists($file = ES_CONFIG.'/'.$system['name']."/gamelist.xml"))
                     {
-                        $system['has_games'] = true;
+                        $system['has_gamelist'] = true;
+                        $system['gamelist_mtime'] = filemtime($file);
+                        $system['gamelist_file'] = $file;
+                        if (filesize($file) > 40)
+                        {
+                            $system['has_games'] = true;
+                        }
                     }
                 }
                 $config['systems'][$system['name']] = $system;

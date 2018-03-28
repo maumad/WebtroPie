@@ -177,7 +177,7 @@
             // self.theme.carousel_systems_list becomes a sorted array
             angular.forEach(config.systems, function (system, system_name)
             {
-                if (system.has_games || config.app.ShowEmptySystems)
+                if (system.has_system && (system.has_games || config.app.ShowEmptySystems))
                 {
                     // first time create
                     if (self.theme.carousel_systems[system_name] == undefined)

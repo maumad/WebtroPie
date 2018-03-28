@@ -253,7 +253,8 @@
             {
                 angular.forEach(config.systems, function(sys)
                 {
-                    if (sys.name.substring(0,4)=='auto' ||
+                    if (!sys.has_system ||
+                         sys.name.substring(0,4)=='auto' ||
                          sys.name.substring(0,6)=='custom' ||
                          sys.name.substring(0,6)=='retropie'
                      )
