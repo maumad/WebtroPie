@@ -53,6 +53,7 @@
                     name: 'auto-allgames',
                     fullname: 'all',
                     theme: 'auto-allgames',
+                    has_system: true,
                     has_games: true
                 }
             }
@@ -62,6 +63,7 @@
                     name: 'auto-favorites',
                     fullname: 'favorites',
                     theme: 'auto-favorites',
+                    has_system: true,
                     has_games: true
                 }
             }
@@ -71,6 +73,7 @@
                     name: 'auto-lastplayed',
                     fullname: 'recent',
                     theme: 'auto-lastplayed',
+                    has_system: true,
                     has_games: true
                 }
             }
@@ -80,6 +83,7 @@
                     name: 'retropie',
                     fullname: 'RetroPie',
                     theme: 'retropie',
+                    has_system: true,
                     has_games: true
                 }
             }
@@ -95,6 +99,7 @@
                     name: 'custom-'+system,
                     fullname: system,
                     theme: 'custom-collections',
+                    has_system: true,
                     has_games: true
                 }
             });
