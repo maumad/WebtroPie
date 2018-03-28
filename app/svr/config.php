@@ -18,7 +18,7 @@ define("THEMES_LIST", 64);
 $USER_PREFERENCE_SETTINGS = array(
     'ThemeSet','Language','DateFormat',
     'ViewTransitions','ViewStyle',
-    'ShowEmptySystems','ShowEmptyDirectories',
+    'ShowEmptySystems','ShowEmptyDirectories','OrderSystemsByFullname',
     'ShowAddFields','ShowGameCounts',
     'ShowThemeSelect','ShowViewSelect',
     'LogSystemTotals','WaitForAnimations',

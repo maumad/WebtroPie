@@ -179,14 +179,13 @@
             {
                 if (system.has_system && (system.has_games || config.app.ShowEmptySystems))
                 {
+                    var car = self.theme.carousel_systems[system_name];
                     // first time create
-                    if (self.theme.carousel_systems[system_name] == undefined)
+                    if (car == undefined)
                     {
-                        var car = {themeSystem: system.theme,
-                                   system_name: system_name,
-                                        system: system,
-                                         order: system.name};  // order by system name
-                                         //order: system.fullname};  // order by fullname
+                        car = {themeSystem: system.theme,
+                                system_name: system_name,
+                                    system: system};
 
                         // Order carousel by system fullname
                         // then custom collections then auto collections
@@ -210,7 +209,9 @@
 
                         self.theme.carousel_systems[system_name] = car;
                     }
-                    self.theme.carousel_systems_list.push(self.theme.carousel_systems[system_name]);
+
+                    car.order = config.app.OrderSystemsByFullname ? system.fullname : system.name;
+                    self.theme.carousel_systems_list.push(car);
                 }
             });
 
@@ -223,7 +224,6 @@
                 if (a.order < b.order) return -1;
                 return 0;
             });
-
         }
 
 

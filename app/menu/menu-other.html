@@ -55,6 +55,17 @@
     <div class="line"></div>
 
     <div class="option">
+        {{app.config.lang.menu.OrderSystemsByFullname}}
+        <image-toggle class="checkbox right"
+                ng-model="app.config.app.OrderSystemsByFullname"
+                clicked="app.ThemeService.createCarouselSystems()"
+                on-svg="resources/checkbox_checked.svg"
+                off-svg="resources/checkbox_unchecked.svg">
+        </image-toggle>
+    </div>
+    <div class="line"></div>
+
+    <div class="option">
         {{app.config.lang.menu.ThemeEditor}}
         <image-toggle class="checkbox right"
                 ng-model="app.config.app.ThemeEditor"
