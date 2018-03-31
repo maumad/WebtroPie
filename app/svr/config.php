@@ -150,7 +150,7 @@ function getConfig($get)
                 {
                     $system['has_system'] = true;
                     if (file_exists($file = $system['path']."/gamelist.xml") ||
-                        file_exists($file = ES_CONFIG.'/'.$system['name']."/gamelist.xml"))
+                        file_exists($file = ES_CONFIG.'/gamelists/'.$system['name']."/gamelist.xml"))
                     {
                         $system['has_gamelist'] = true;
                         $system['gamelist_mtime'] = filemtime($file);
