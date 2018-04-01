@@ -129,7 +129,7 @@ function getConfig($get)
     {
         $config['systems'] = array();
 
-        if (file_exists($file = HOME.".emulationstation/es_systems.cfg") ||
+        if (file_exists($file = HOME."/.emulationstation/es_systems.cfg") ||
             file_exists($file = ETC_ES."/es_systems.cfg"))
         {
             $systems = load_file_xml_as_array($file, false, false, ['system'=>true]);
