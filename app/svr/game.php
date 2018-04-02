@@ -91,7 +91,7 @@ function get_media_paths_full_url($filename, $system)
         }
         else if (substr($fullpath, 0, $l=strlen(ROMBASE)) === ROMBASE)
         {
-            $url = substr($fullpath, $l)+'/';
+            $url = substr($fullpath, $l+1);
             $dir = pathinfo($url, PATHINFO_DIRNAME );
             if (!isset($checked_dirs) && !file_exists($dir))
             {
@@ -112,7 +112,7 @@ function get_media_paths_full_url($filename, $system)
         }
         elseif (substr($fullpath, 0, $l=strlen(HOME)) === HOME)
         {
-            $url = 'home_'.substr($fullpath, $l)+'/';
+            $url = 'home_'.substr($fullpath, $l+1);
             $dir = pathinfo($url, PATHINFO_DIRNAME );
             if (!isset($checked_dirs) && !file_exists($dir))
             {
