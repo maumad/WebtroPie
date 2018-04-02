@@ -139,7 +139,9 @@ function get_media_paths_full_url($filename, $system)
 
     if (file_exists($fullpath))
     {
-        $url .= '?'.filemtime($fullpath);
+        $url =  $dir.'/'
+                .rawurlencode(pathinfo($url, PATHINFO_BASENAME))
+                .'?'.filemtime($fullpath);
     }
 
     return array('fullpath' => $fullpath, 'url' => $url);
