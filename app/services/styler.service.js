@@ -1428,7 +1428,7 @@
                      element.color != 'ffffffff' )
                 {
                     var hsl = util.rgbToHSL(element.color);
-/*
+
                     // if greyscale color image client side
                     if(hsl.h == 0 && hsl.s == 0 && hsl.l > 0.5)  // light
                     {
@@ -1448,9 +1448,7 @@
                         }
                     }
                     // color image server side if it's a svg or if php has gd2 library enabled
-                    else
-*/
-                    if (element.fullpath &&
+                    else if (element.fullpath &&
                                (ext=='svg' ||
                                  ( config.env.has_gd && (ext=='png' || ext=='jpg' || ext=='gif'))))
                     {
