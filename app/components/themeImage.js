@@ -114,6 +114,14 @@
             }
             else
             {
+                if (vm.obj.img)
+                {
+                    vm.obj.img_src_orig = vm.obj.img_src;
+                }
+                else if(vm.obj.style)
+                {
+                    vm.obj.background_orig = vm.obj.style['background-image'];
+                }
                 // watch for theme or view change
                 $scope.$watch('vm.obj', updateImageSystemVariable);
             }
@@ -126,18 +134,10 @@
             {
                 if (vm.obj.img)
                 {
-                    if (!vm.obj.img_src_orig)
-                    {
-                        vm.obj.img_src_orig = vm.obj.img_src;
-                    }
                     vm.obj.img_src = ThemeService.variableReplace(vm.obj.img_src_orig, vm.system);
                 }
                 else if(vm.obj.style)
                 {
-                    if (!vm.obj.background_orig)
-                    {
-                        vm.obj.background_orig = vm.obj.style['background-image'];
-                    }
                     vm.obj.style['background-image'] = ThemeService.variableReplace(vm.obj.background_orig, vm.system);
                 }
             }
@@ -167,11 +167,25 @@
             {
                 if (vm.obj.img)
                 {
-                    delete vm.obj.img_src;
+                    if (!vm.game.image_url && vm.obj.fulldefault)
+                    {
+                        vm.obj.img_src = vm.obj.fulldefault;
+                    }
+                    else
+                    {
+                        delete vm.obj.img_src;
+                    }
                 }
                 else if(vm.obj.style)
                 {
-                    delete vm.obj.style['background-image'];
+                    if (!vm.game.image_url && vm.obj.fulldefault)
+                    {
+                        vm.obj.style['background-image'] = vm.obj.fulldefault;
+                    }
+                    else
+                    {
+                        delete vm.obj.style['background-image'];
+                    }
                 }
             }
         }
@@ -179,7 +193,6 @@
         // click to toggle ON or OFF
         function click($event)
         {
-            return;
             $event.stopPropagation();
             if (config.edit)
             {
@@ -191,7 +204,6 @@
 
         function updateToggleImage()
         {
-            return;
             if (vm.game && vm.game[vm.md])
             {
                 if (config.edit)
