@@ -31,6 +31,7 @@
             has_image: false,
             has_video: false,
             has_marquee: false,
+            fetched: true,
             total: 1,
             subdirs: {},
             gamelist: []

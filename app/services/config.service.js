@@ -87,10 +87,7 @@
                     has_games: true
                 }
             }
-/*
-<string name="CollectionSystemsAuto" value="all,favorites,recent" />
-<bool name="UseCustomCollectionsSystem" value="true" />
-*/
+
             if(self.es.CollectionSystemsCustom)
             self.es.CollectionSystemsCustom
             .split(',')

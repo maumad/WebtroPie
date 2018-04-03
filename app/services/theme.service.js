@@ -548,38 +548,8 @@
 
             createDefaultSystem(self.theme, theme.name);
 
-            findStaticImages();
-
             // store this fully expaned theme into the array for caching
             self.themes[theme.name] = self.theme;
-        }
-
-        // If the image path is the same as the default system image path
-        // and does not contain a variable assume that it is an unchanging image.
-        // (flag not to animate during transitions)
-        function findStaticImages()
-        {
-            angular.forEach(self.theme.systems, function (sys)
-            {
-                angular.forEach(sys.view, function (view, viewname)
-                {
-                    angular.forEach(view.image, function (image, imagename)
-                    {
-                        if (image.fullpath &&
-                            image.fullpath.indexOf('$')<0 &&
-                            self.theme.systems.default.view[viewname].image &&
-                            self.theme.systems.default.view[viewname].image[imagename] &&
-                            image.fullpath == self.theme.systems.default.view[viewname].image[imagename].fullpath)
-                        {
-                            image.static = true;
-                        }
-                        else
-                        {
-                            image.static = false;
-                        }
-                    });
-                });
-            });
         }
 
         // expand combined properties E.g. seperate view with key

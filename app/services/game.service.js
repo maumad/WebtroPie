@@ -52,19 +52,22 @@
                        buffer_index: 0,
                        scrolltop: 0,
                        gamelist: self.allgames,
-                       total: 0 },
+                       total: 0,
+                       fetched: true },
                 'auto-favorites':
                     {  game_index: 0,
                        buffer_index: 0,
                        scrolltop: 0,
                        gamelist: [],
-                       total: 0 },
+                       total: 0,
+                       fetched: true  },
                 'auto-lastplayed':
                     {  game_index: 0,
                        buffer_index: 0,
                        scrolltop: 0,
                        gamelist: [],
-                       total: 0 }
+                       total: 0,
+                       fetched: true  }
             };
 
             self.gamelists_loaded = 0; // increases as system game lists are loaded
@@ -535,311 +538,311 @@
                             // total
                             system.total = system.gamelist.length;
 
+                            system.fetched = true;
                             deferred.resolve(system);
                             delete system.promise;
                         });
 
                         return deferred.promise;
                     }
-                    else
+
+                    if (!rescan)
                     {
-                        if (!rescan)
+                        system.gamelist = response.data.game || [];
+                        system.total = 0; // start count for games (not directories)
+                        system.path =  response.data.path;
+
+                        // concat arrays without creating a new array
+                        //self.systems['auto-allgames'].gamelist.push.apply(
+                        //    self.systems['auto-allgames'].gamelist, system.gamelist);
+                    }
+
+                    system.has_image =  response.data.has_image;
+                    system.has_video =  response.data.has_video;
+                    system.has_marquee =  response.data.has_marquee;
+
+                    angular.forEach(response.data.game, function(game)
+                    {
+                        // continue if already loaded and not new
+                        if (rescan)
                         {
-                            system.gamelist = response.data.game || [];
-                            system.total = 0; // start count for games (not directories)
-                            system.path =  response.data.path;
-
-                            // concat arrays without creating a new array
-                            //self.systems['auto-allgames'].gamelist.push.apply(
-                            //    self.systems['auto-allgames'].gamelist, system.gamelist);
-                        }
-
-                        system.has_image =  response.data.has_image;
-                        system.has_video =  response.data.has_video;
-                        system.has_marquee =  response.data.has_marquee;
-
-                        angular.forEach(response.data.game, function(game)
-                        {
-                            // continue if already loaded and not new
-                            if (rescan)
-                            {
-                                if (!game.new && !match_media)
-                                {
-                                    return;
-                                }
-                                var old_game = util.searchArrayByObjectField(system.gamelist, 'path', game.path);
-
-                                if (old_game)
-                                {
-                                    if (match_media)
-                                    {
-                                        // found new image
-                                        if (game.image_found && !old_game.image)
-                                        {
-                                            old_game.image = game.image;
-                                            mdChanged('image', false, old_game);
-                                        }
-                                        // found new marquee
-                                        if (game.marquee_found && !old_game.marquee)
-                                        {
-                                            old_game.marquee = game.marquee;
-                                            mdChanged('marquee', false, old_game);
-                                        }
-                                        // found new video
-                                        if (game.video_found && !old_game.video)
-                                        {
-                                            old_game.video = game.video;
-                                            mdChanged('video', false, old_game);
-                                        }
-                                    }
-                                    return;
-                                }
-                            }
-
-                            game.sys = system_name;
-
-                            if (game.lptime)
-                            {
-                                game.lastplayed = util.timestampToDate(game.lptime);
-                            }
-
-                            if (game.size >= 0)
-                            {
-                                game.human_size = util.humanSize(game.size);
-                            }
-
-                            if (game.mtime)
-                            {
-                                game.modified = util.timestampToDate(game.mtime);
-                            }
-
-                            // extra year
-                            if (game.releasedate &&
-                                game.releasedate.substring(0,8)!= '00000000')
-                            {
-                                game.year = game.releasedate.substring(0,4);
-                            }
-                            else
-                            {
-                                game.releasedate = '';
-                                game.year = '';
-                            }
-
-                            if (!game.playcount)
-                            {
-                                game.playcount = 0;
-                            }
-                            else
-                            {
-                                game.playcount = parseInt(game.playcount);
-                            }
-
-                            if (game.rating<0)
-                            {
-                                game.rating = 0;
-                            }
-                            else if (game.rating>1)
-                            {
-                                game.rating = 1;
-                            }
-
-                            if (game.index && !game.isDir && game.size < 0)
-                            {
-                                game.missing = true;
-                            }
-
-                            // Add to list and auto lists
-                            if (rescan)
-                            {
-                                system.gamelist.push(game);
-                                self.systems['auto-allgames'].gamelist.push(game);
-                            }
-
-                            if (!game.isDir)
-                            {
-                                system.total++;
-                                config.systems[system_name].has_games = true;
-                                self.systems['auto-allgames'].gamelist.push(game);
-                                self.systems['auto-allgames'].total++;
-                                if (game.image)
-                                {
-                                    self.systems['auto-allgames'].has_image = true;
-                                }
-                                if (game.marquee)
-                                {
-                                    self.systems['auto-allgames'].has_marquee = true;
-                                }
-                                if (game.video)
-                                {
-                                    self.systems['auto-allgames'].has_video = true;
-                                }
-
-                                if (game.favorite)
-                                {
-                                    self.systems['auto-favorites'].gamelist.push(game);
-                                    self.systems['auto-favorites'].total++;
-                                    if (game.image)
-                                    {
-                                        self.systems['auto-favorites'].has_image = true;
-                                    }
-                                    if (game.marquee)
-                                    {
-                                        self.systems['auto-favorites'].has_marquee = true;
-                                    }
-                                    if (game.video)
-                                    {
-                                        self.systems['auto-favorites'].has_video = true;
-                                    }
-                                }
-                                if (game.playcount>1)
-                                {
-                                    self.systems['auto-lastplayed'].gamelist.push(game);
-                                    self.systems['auto-lastplayed'].total++;
-                                    if (game.image)
-                                    {
-                                        self.systems['auto-lastplayed'].has_image = true;
-                                    }
-                                    if (game.marquee)
-                                    {
-                                        self.systems['auto-lastplayed'].has_marquee = true;
-                                    }
-                                    if (game.video)
-                                    {
-                                        self.systems['auto-lastplayed'].has_video = true;
-                                    }
-                                }
-                            }
-
-                            // Work out subdirectories
-                            //  only relative or under roms directory
-
-                            var path = game.path;
-
-                            // strip home directory (?shouldn't be any)
-                            var sysdir = config.systems[system_name].path;
-                            if (path.substring(0,sysdir.length) == sysdir)
-                            {
-                                path = path.substring(0,sysdir.length);
-                            }
-
-                            // dont even try if its an abs path
-                            if (path.substring(0,1) == "/")
+                            if (!game.new && !match_media)
                             {
                                 return;
                             }
+                            var old_game = util.searchArrayByObjectField(system.gamelist, 'path', game.path);
 
-                            // no need to point to current directory - this breaks urls so strip
-                            if (path.substring(0,2) == "./")
+                            if (old_game)
                             {
-                                path = path.substring(2);
+                                if (match_media)
+                                {
+                                    // found new image
+                                    if (game.image_found && !old_game.image)
+                                    {
+                                        old_game.image = game.image;
+                                        mdChanged('image', false, old_game);
+                                    }
+                                    // found new marquee
+                                    if (game.marquee_found && !old_game.marquee)
+                                    {
+                                        old_game.marquee = game.marquee;
+                                        mdChanged('marquee', false, old_game);
+                                    }
+                                    // found new video
+                                    if (game.video_found && !old_game.video)
+                                    {
+                                        old_game.video = game.video;
+                                        mdChanged('video', false, old_game);
+                                    }
+                                }
+                                return;
+                            }
+                        }
+
+                        game.sys = system_name;
+
+                        if (game.lptime)
+                        {
+                            game.lastplayed = util.timestampToDate(game.lptime);
+                        }
+
+                        if (game.size >= 0)
+                        {
+                            game.human_size = util.humanSize(game.size);
+                        }
+
+                        if (game.mtime)
+                        {
+                            game.modified = util.timestampToDate(game.mtime);
+                        }
+
+                        // extra year
+                        if (game.releasedate &&
+                            game.releasedate.substring(0,8)!= '00000000')
+                        {
+                            game.year = game.releasedate.substring(0,4);
+                        }
+                        else
+                        {
+                            game.releasedate = '';
+                            game.year = '';
+                        }
+
+                        if (!game.playcount)
+                        {
+                            game.playcount = 0;
+                        }
+                        else
+                        {
+                            game.playcount = parseInt(game.playcount);
+                        }
+
+                        if (game.rating<0)
+                        {
+                            game.rating = 0;
+                        }
+                        else if (game.rating>1)
+                        {
+                            game.rating = 1;
+                        }
+
+                        if (game.index && !game.isDir && game.size < 0)
+                        {
+                            game.missing = true;
+                        }
+
+                        // Add to list and auto lists
+                        if (rescan)
+                        {
+                            system.gamelist.push(game);
+                            self.systems['auto-allgames'].gamelist.push(game);
+                        }
+
+                        if (!game.isDir)
+                        {
+                            system.total++;
+                            config.systems[system_name].has_games = true;
+                            self.systems['auto-allgames'].gamelist.push(game);
+                            self.systems['auto-allgames'].total++;
+                            if (game.image)
+                            {
+                                self.systems['auto-allgames'].has_image = true;
+                            }
+                            if (game.marquee)
+                            {
+                                self.systems['auto-allgames'].has_marquee = true;
+                            }
+                            if (game.video)
+                            {
+                                self.systems['auto-allgames'].has_video = true;
                             }
 
-                            var subdir = getSubDirectory(system, path);
+                            if (game.favorite)
+                            {
+                                self.systems['auto-favorites'].gamelist.push(game);
+                                self.systems['auto-favorites'].total++;
+                                if (game.image)
+                                {
+                                    self.systems['auto-favorites'].has_image = true;
+                                }
+                                if (game.marquee)
+                                {
+                                    self.systems['auto-favorites'].has_marquee = true;
+                                }
+                                if (game.video)
+                                {
+                                    self.systems['auto-favorites'].has_video = true;
+                                }
+                            }
+                            if (game.playcount>1)
+                            {
+                                self.systems['auto-lastplayed'].gamelist.push(game);
+                                self.systems['auto-lastplayed'].total++;
+                                if (game.image)
+                                {
+                                    self.systems['auto-lastplayed'].has_image = true;
+                                }
+                                if (game.marquee)
+                                {
+                                    self.systems['auto-lastplayed'].has_marquee = true;
+                                }
+                                if (game.video)
+                                {
+                                    self.systems['auto-lastplayed'].has_video = true;
+                                }
+                            }
+                        }
+
+                        // Work out subdirectories
+                        //  only relative or under roms directory
+
+                        var path = game.path;
+
+                        // strip home directory (?shouldn't be any)
+                        var sysdir = config.systems[system_name].path;
+                        if (path.substring(0,sysdir.length) == sysdir)
+                        {
+                            path = path.substring(0,sysdir.length);
+                        }
+
+                        // dont even try if its an abs path
+                        if (path.substring(0,1) == "/")
+                        {
+                            return;
+                        }
+
+                        // no need to point to current directory - this breaks urls so strip
+                        if (path.substring(0,2) == "./")
+                        {
+                            path = path.substring(2);
+                        }
+
+                        var subdir = getSubDirectory(system, path);
+                        if (subdir)
+                        {
+                            game.subdir = subdir;
+                            system.subdirs[subdir].games++;
+                        }
+
+                        if (!game.name)
+                        {
                             if (subdir)
                             {
-                                game.subdir = subdir;
-                                system.subdirs[subdir].games++;
+                                game.name = path.substring(subdir.length+1);
                             }
-
-                            if (!game.name)
+                            else
                             {
-                                if (subdir)
-                                {
-                                    game.name = path.substring(subdir.length+1);
-                                }
-                                else
-                                {
-                                    game.name = path;
-                                }
+                                game.name = path;
                             }
-
-                            if (game.isDir)
-                            {
-                                if (!system.subdirs[path])
-                                {
-                                    system.subdirs[path] = {
-                                            path: path,
-                                            game_index: 0,
-                                            buffer_index: 0,
-                                            scrolltop: 0,
-                                            games: 0
-                                        };
-                                }
-                                system.subdirs[path].game = game;
-                            }
-
-                        });
-
-                        // Add any directories that contained games (in the game.path)
-                        // but not in the game list file as entries themselves
-                        var dir_count = 0;
-                        angular.forEach(system.subdirs, function(dir, name)
-                        {
-                            if (!dir.game)
-                            {
-                                // create a game object
-                                dir.game = {name: name, path: dir.path, isDir: true, sys: system.name};
-                                // add it to the game list
-                                system.gamelist.push(dir.game);
-                            }
-                            dir_count++;
-                        });
-
-                        system.gamelist.sort(function (a, b)
-                        {
-                            return (a.shortpath > b.shortpath ? 1 : -1);
-                        });
-
-                        // look for sub directories
-                        var last_game = {};
-                        system.duplicates = 0;
-                        if (config.app.LogSystemTotals)
-                        {
-                            console.groupCollapsed("%s (%d)", system_name, system.total);
-                            console.log("games = %d", system.total);
-                                console.groupCollapsed("duplicates");
                         }
-                        angular.forEach(system.gamelist, function(game) {
-                            if (game.shortpath == last_game.shortpath)
-                            {
-                                game.duplicate = true;
-                                last_game.duplicate = true;
-                                if (config.app.LogSystemTotals)
-                                {
-                                    console.groupCollapsed(game.shortpath);
-                                        console.log("Index = %s", last_game.index);
-                                        console.log("Name = %s", last_game.name);
-                                        console.log("Path = %s", last_game.path);
-                                        console.log("Index = %s", game.index);
-                                        console.log("Name = %s", game.name);
-                                        console.log("Path = %s", game.path);
-                                    console.groupEnd();
-                                }
-                                system.duplicates++;
-                            }
-                            last_game = game;
-                        });
-                        if (config.app.LogSystemTotals)
+
+                        if (game.isDir)
                         {
+                            if (!system.subdirs[path])
+                            {
+                                system.subdirs[path] = {
+                                        path: path,
+                                        game_index: 0,
+                                        buffer_index: 0,
+                                        scrolltop: 0,
+                                        games: 0
+                                    };
+                            }
+                            system.subdirs[path].game = game;
+                        }
+
+                    });
+
+                    // Add any directories that contained games (in the game.path)
+                    // but not in the game list file as entries themselves
+                    var dir_count = 0;
+                    angular.forEach(system.subdirs, function(dir, name)
+                    {
+                        if (!dir.game)
+                        {
+                            // create a game object
+                            dir.game = {name: name, path: dir.path, isDir: true, sys: system.name};
+                            // add it to the game list
+                            system.gamelist.push(dir.game);
+                        }
+                        dir_count++;
+                    });
+
+                    system.gamelist.sort(function (a, b)
+                    {
+                        return (a.shortpath > b.shortpath ? 1 : -1);
+                    });
+
+                    // look for sub directories
+                    var last_game = {};
+                    system.duplicates = 0;
+                    if (config.app.LogSystemTotals)
+                    {
+                        console.groupCollapsed("%s (%d)", system_name, system.total);
+                        console.log("games = %d", system.total);
+                            console.groupCollapsed("duplicates");
+                    }
+                    angular.forEach(system.gamelist, function(game) {
+                        if (game.shortpath == last_game.shortpath)
+                        {
+                            game.duplicate = true;
+                            last_game.duplicate = true;
+                            if (config.app.LogSystemTotals)
+                            {
+                                console.groupCollapsed(game.shortpath);
+                                    console.log("Index = %s", last_game.index);
+                                    console.log("Name = %s", last_game.name);
+                                    console.log("Path = %s", last_game.path);
+                                    console.log("Index = %s", game.index);
+                                    console.log("Name = %s", game.name);
+                                    console.log("Path = %s", game.path);
                                 console.groupEnd();
-                            console.log("duplicates = %d", system.duplicates);
-                            console.log("directories = %d", dir_count);
-                            console.log("total = %d", system.gamelist.length);
+                            }
+                            system.duplicates++;
+                        }
+                        last_game = game;
+                    });
+                    if (config.app.LogSystemTotals)
+                    {
                             console.groupEnd();
-                        }
-
-                        system.gamelist.sort(function (a, b)
-                        {
-                            return (a.name > b.name ? 1 : -1);
-                        });
-                        if(system.duplicates > 0 && config.app.LogSystemTotals)
-                        {
-                            console.log("Warning: %s gamelist.xml contains %d duplicate rom paths", system_name, system.duplicates);
-                        }
-
-                        self.gamelists_loaded++;
+                        console.log("duplicates = %d", system.duplicates);
+                        console.log("directories = %d", dir_count);
+                        console.log("total = %d", system.gamelist.length);
+                        console.groupEnd();
                     }
 
+                    system.gamelist.sort(function (a, b)
+                    {
+                        return (a.name > b.name ? 1 : -1);
+                    });
+                    if(system.duplicates > 0 && config.app.LogSystemTotals)
+                    {
+                        console.log("Warning: %s gamelist.xml contains %d duplicate rom paths", system_name, system.duplicates);
+                    }
+
+                    self.gamelists_loaded++;
+
+                    system.fetched = true;
                     ThemeService.createCarouselSystems();
                     deferred.resolve(system);
                     delete system.promise;

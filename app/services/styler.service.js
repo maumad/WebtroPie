@@ -725,6 +725,7 @@
                 }
             });
             systemInfo.styled = false;
+            delete systemInfo.style;
             createTextStyle(systemInfo);
             self.systemInfo = systemInfo;
         }

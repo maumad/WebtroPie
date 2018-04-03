@@ -167,7 +167,7 @@
             {
                 if (vm.obj.img)
                 {
-                    if (!vm.game.image_url && vm.obj.fulldefault)
+                    if (vm.game && !vm.game.image_url && vm.obj.fulldefault)
                     {
                         vm.obj.img_src = vm.obj.fulldefault;
                     }
@@ -178,7 +178,7 @@
                 }
                 else if(vm.obj.style)
                 {
-                    if (!vm.game.image_url && vm.obj.fulldefault)
+                    if (vm.game && !vm.game.image_url && vm.obj.fulldefault)
                     {
                         vm.obj.style['background-image'] = vm.obj.fulldefault;
                     }
