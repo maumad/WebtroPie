@@ -404,11 +404,7 @@
                 }
                 if (rating.fullfilledPath)
                 {
-                    // make the stars gold, hopefully not annoy theme designers
-                    stars['background-image'] = 'url("svr/color_img.php?file='+ // make it gold
-                              rating.fullfilledPath.substring(4) + '&color=FFD400")';
-                    // original colour would be :-
-                    //stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
+                    stars['background-image'] = 'url("' + rating.fullfilledPath + '")';
                 }
                 styleRatingZIndex(rating, style);
             }
