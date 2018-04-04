@@ -32,9 +32,11 @@
 
     }
 
-    controller.$inject = ['$scope','$element','$timeout','$interval','util','GameService','ThemeService'];
+    controller.$inject = ['$scope','$element','$timeout','$interval',
+                            'util','GameService','ThemeService','styler'];
 
-    function controller($scope, $element, $timeout, $interval, util, GameService, ThemeService)
+    function controller($scope, $element, $timeout, $interval,
+                             util, GameService, ThemeService, styler)
     {
         var vm = this;
 
@@ -105,7 +107,7 @@
         function gameChanged(game)
         {
             vm.text = GameService.getGameMetadata(game, vm.obj);
-            vm.text = ThemeService.variableReplace(vm.text, vm.system);
+            vm.text = styler.variableReplace(vm.text, vm.system);
             if (vm.date_obj)
             {
                 vm.date_text = GameService.getGameMetadata(game, vm.date_obj);

@@ -160,6 +160,11 @@ function getConfig($get)
                             $system['has_games'] = true;
                         }
                     }
+                    else
+                    {
+                        $system['has_gamelist'] = false;
+                        $system['gamelist_file'] = $system['path']."/gamelist.xml";
+                    }
                 }
                 $config['systems'][$system['name']] = $system;
             }

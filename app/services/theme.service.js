@@ -43,7 +43,6 @@
         self.setThemeSystemView = setThemeSystemView;
         self.switchView = switchView;
         self.themeInit = themeInit;
-        self.variableReplace = variableReplace;
 
         // themes is a list of all themes (for selection and to cache)
         self.themes = {};
@@ -350,27 +349,33 @@
         {
             if (obj.feature)
             {
-                if (typeof obj.feature == 'array')
+                angular.forEach(obj.feature, function (subvalue, subkey)
                 {
-                    obj.feature
-                    .forEach(function(feature)
+                    if(typeof subvalue == 'object')
                     {
-                        angular.forEach(feature, function (subvalue, subkey)
+                        if (subvalue.supported)
                         {
-                            mergeObjects(value, subvalue, true);
-                        });
-                    });
-                    obj.feature.length = 0; // truncate array
-                    delete obj.feature; // delete array
-                }
-                else if (typeof obj.feature == 'object')
-                {
-                    angular.forEach(obj.feature, function (subvalue, subkey)
-                    {
-                        mergeObjects(obj, subvalue, true);
-                    });
-                    delete obj.feature; // delete array
-                }
+                            var supported = subvalue.supported;
+                            delete subvalue.supported;
+                            angular.forEach(subvalue, function (value, k)
+                            {
+                                if (k == 'view')
+                                {
+                                    angular.forEach(value, function (view)
+                                    {
+                                        view[supported+'_feature'] = true;
+                                        angular.forEach(view.image, function (image)
+                                        {
+                                            image[supported+'_feature'] = true;
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    mergeObjects(obj, subvalue, true);
+                });
+                delete obj.feature; // delete array
             }
             // recurse into children objects
             angular.forEach(obj, function(value, key) {
@@ -536,6 +541,15 @@
                             }
                             return 0;
                         });
+
+                        view.carouselImages = view.imageSorted
+                            .filter(function(image) {
+                                return image.name!='logo' && image.carousel_feature;
+                            });
+                        view.notCarouselImages = view.imageSorted
+                            .filter(function(image) {
+                                return image.name!='logo' && !image.carousel_feature;
+                            });
                     })
 
                     if (sys.view.system.image && sys.view.system.image.logo)
@@ -892,7 +906,7 @@
             {
                 // if styles haven't been generated for the current theme system view
                 // then do that now after theme is returned
-                styler.createViewStyles(self.system.view[view_name], keep_style);
+                styler.createViewStyles(self.system.view[view_name], keep_style, system_name);
 
                 // set self.view to the theme/system/view object
                 self.view = self.system.view[view_name];
@@ -1000,23 +1014,6 @@
             return getTheme(config.app.ThemeSet, system_name, view_name, scan);
         }
 
-        function variableReplace(str, system_name)
-        {
-            if (!str || (typeof str != 'string') || !system_name)
-                return str;
-
-            var system = config.systems[system_name];
-            if (!system)
-            {
-                console.log('no system: ' + system_name);
-                return str;
-            }
-            str = str.replace(/\$\{system.name\}/, system.name);
-            if (!str) return;
-            str = str.replace(/\$\{system.fullName\}/, system.fullname);
-            if (!str) return;
-            return str.replace(/\$\{system.theme\}/, system.theme);
-        }
     }
 
 })();

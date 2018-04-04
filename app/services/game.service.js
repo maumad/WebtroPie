@@ -478,7 +478,7 @@
                     // then replace path with game object
                     if (system_name.substring(0,7) == 'custom-')
                     {
-                        system.gamelist = response.data.game;
+                        system.gamelist = response.data.game || [];
                         // find which unique systems are in the list
                         var systems = {};
                         angular.forEach(system.gamelist, function(custom, i)
@@ -514,27 +514,30 @@
                         // all game paths replaced with full game objects
                         $q.all(system_promises)
                         .then(function() {
-                            // do any of the custom games have media
-                            angular.forEach(response.data.game, function(game, index)
+                            if (response.data.game)
                             {
-                                if (game.image)
+                                // do any of the custom games have media
+                                angular.forEach(response.data.game, function(game, index)
                                 {
-                                    system.has_image = true;
-                                }
-                                if (game.marquee)
+                                    if (game.image)
+                                    {
+                                        system.has_image = true;
+                                    }
+                                    if (game.marquee)
+                                    {
+                                        system.has_marquee = true;
+                                    }
+                                    if (game.video)
+                                    {
+                                        system.has_video = true;
+                                    }
+                                });
+                                // sort by game real name
+                                response.data.game.sort(function (a, b)
                                 {
-                                    system.has_marquee = true;
-                                }
-                                if (game.video)
-                                {
-                                    system.has_video = true;
-                                }
-                            });
-                            // sort by game real name
-                            response.data.game.sort(function (a, b)
-                            {
-                                return (a.name > b.name ? 1 : -1);
-                            });
+                                    return (a.name > b.name ? 1 : -1);
+                                });
+                            }
                             // total
                             system.total = system.gamelist.length;
 

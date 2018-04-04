@@ -71,7 +71,7 @@
         self.objectReposition = objectReposition;
         self.saveFilepath = saveFilepath;
         self.setHelpbarStyle = setHelpbarStyle;
-        self.setSystemImagesContainerStƒyle = setSystemImagesContainerStyle;
+        self.setSystemImagesContainerStyle = setSystemImagesContainerStyle;
         self.setSystemLogoStyle = setSystemLogoStyle;
 
         self.styleAlignment = styleAlignment;
@@ -89,6 +89,7 @@
         self.styleVideoMaxSize = styleVideoMaxSize;
         self.styleVideoZIndex = styleVideoZIndex;
 
+        self.variableReplace = variableReplace;
         self.xReposition = xReposition;
 
         function calcObjBounds(obj)
@@ -655,7 +656,7 @@
         }
 
         // convert theme view object attributes to styles
-        function createViewStyles(view, keep_style)
+        function createViewStyles(view, keep_style, system_name)
         {
             if (!view)
             {
@@ -684,6 +685,7 @@
             // already done ?
             if (!view.styled)
             {
+                self.replaceSystemName = system_name;
                 angular.forEach(view.text,        createTextStyle);
                 angular.forEach(view.textlist,    createTextlistStyle);
                 angular.forEach(view.datetime,    createDatetimeStyle);
@@ -691,6 +693,7 @@
                 angular.forEach(view.rating,      createRatingStyle);
                 angular.forEach(view.helpsystem,  createHelpsystemStyle);
                 angular.forEach(view.video,       createVideoStyle);
+                self.replaceSystemName = null;
                 
                 // if text or date anchored to label float label left
                 if (view.text)
@@ -771,9 +774,9 @@
             if (element[field])
             {
                 path = element[field];
-                if (self.system_name)
+                if (self.replaceSystemName)
                 {
-                    path = ThemeService.variableReplace(path, system_name);
+                    path = variableReplace(path, self.replaceSystemName);
                 }
                 if (path.substr(0,2) == './')  // strip ./
                 {
@@ -1807,6 +1810,23 @@
             }
         }
 
+        function variableReplace(str, system_name)
+        {
+            if (!str || (typeof str != 'string') || !system_name)
+                return str;
+
+            var system = config.systems[system_name];
+            if (!system)
+            {
+                console.log('no system: ' + system_name);
+                return str;
+            }
+            str = str.replace(/\$\{system.name\}/, system.name);
+            if (!str) return;
+            str = str.replace(/\$\{system.fullName\}/, system.fullname);
+            if (!str) return;
+            return str.replace(/\$\{system.theme\}/, system.theme);
+        }
     }
 
 })();

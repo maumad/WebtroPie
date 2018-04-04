@@ -126,9 +126,9 @@
         // do some of probably next screen work to smooth animations transitions
         function createAllSystemStyles()
         {
-            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(0).view.system, true);
-            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+1).view.system, true);
-            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-1).view.system, true);
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(0).view.system, true, CarouselService.getRelativeCarouselSystemName(0));
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+1).view.system, true, CarouselService.getRelativeCarouselSystemName(+1));
+            styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-1).view.system, true, CarouselService.getRelativeCarouselSystemName(-1));
             //styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(+2).view.system, true);
             //styler.createViewStyles(CarouselService.getRelativeCarouselSystemTheme(-2).view.system, true);
             //angular.forEach(ThemeService.theme.systems, function(sys) {
@@ -142,7 +142,7 @@
         {
             var system_name = CarouselService.getCurrentCarouselSystemName();
             var default_view = GameService.getDefaultGamelistViewName(system_name);
-            styler.createViewStyles(ThemeService.system.view[default_view], true);
+            styler.createViewStyles(ThemeService.system.view[default_view], true, system_name);
         }
 
         function goFavorites()

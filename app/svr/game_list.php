@@ -18,7 +18,6 @@ if (!$config['edit'])
     $match_media = false;
 }
 
-
 if (substr($system,0,7)=='custom-')
 {
     $response = [];
@@ -60,7 +59,7 @@ if(!$scan && !$match_media)
 {
     $mtime = max(filemtime('game_list.php'),
                  filemtime('game.php'),
-                 filemtime($gamelist_file));
+                 $config['systems'][$system]['has_gamelist'] ? filemtime($gamelist_file) : 0);
 
     caching_headers($gamelist_file, $mtime);
 
@@ -168,46 +167,45 @@ $response['has_image'] = false;
 $response['has_video'] = false;
 $response['has_marquee'] = false;
 
-if (isset($config['systems'][$system]['gamelist_file']))
+if ($config['systems'][$system]['has_gamelist'])
 {
-   $response = load_file_xml_as_array($config['systems'][$system]['gamelist_file'], false, false, ['game'=>true], ['game'=>1]);
+    $response = load_file_xml_as_array($config['systems'][$system]['gamelist_file'], false, false, ['game'=>true], ['game'=>1]);
 
+    if (isset($response['game']))
+    foreach ($response['game'] as $index => &$game)
+    {
+        $game['shortpath'] = simplify_path($game['path'], HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
 
-   if (isset($response['game']))
-   foreach ($response['game'] as $index => &$game)
-   {
-       $game['shortpath'] = simplify_path($game['path'], HOME.'/RetroPie/'.$SYSTEM_PATH.'/');
+        if (file_exists($game['path']))
+        {
+            $size = filesize($game['path']);
+            $game['size'] = $size;
+            $game['mtime'] = filemtime($game['path']);
+        }
+        else
+        {
+            $game['size'] = -1;
+        }
 
-       if (file_exists($game['path']))
-       {
-           $size = filesize($game['path']);
-           $game['size'] = $size;
-           $game['mtime'] = filemtime($game['path']);
-       }
-       else
-       {
-           $game['size'] = -1;
-       }
+        if (isset($game['lastplayed']))
+        {
+            $game['lptime'] = strtotime($game['lastplayed']);
+            unset($game['lastplayed']);
+        }
 
-       if (isset($game['lastplayed']))
-       {
-           $game['lptime'] = strtotime($game['lastplayed']);
-           unset($game['lastplayed']);
-       }
+        if ($scan)
+        {
+            $games[strtolower($game['shortpath'])] = 1;
+        }
 
-       if ($scan)
-       {
-           $games[strtolower($game['shortpath'])] = 1;
-       }
-
-       check_media($game, 'image',   'png');
-       check_media($game, 'marquee', 'png');
-       check_media($game, 'video',   'mp4');
-   }
+        check_media($game, 'image',   'png');
+        check_media($game, 'marquee', 'png');
+        check_media($game, 'video',   'mp4');
+    }
 }
 else
 {
-   $response = ['game'=>[]];
+    $response = ['game'=>[]];
 }
 
 if ($scan && $extensions)

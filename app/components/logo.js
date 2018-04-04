@@ -29,9 +29,9 @@
         return directive;
     }
 
-    controller.$inject = ['$scope','config','ThemeService'];
+    controller.$inject = ['$scope','config','ThemeService','styler'];
 
-    function controller($scope, config, ThemeService)
+    function controller($scope, config, ThemeService, styler)
     {
         var vm = this;
 
@@ -45,7 +45,7 @@
 
             if (theme && theme.logo)
             {
-                vm.logo = ThemeService.variableReplace(theme.logo, vm.systemName);
+                vm.logo = styler.variableReplace(theme.logo, vm.systemName);
             }
             else
             {

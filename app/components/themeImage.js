@@ -33,9 +33,9 @@
         return directive;
     }
 
-    controller.$inject = ['$scope','config','util','GameService','ThemeService'];
+    controller.$inject = ['$scope','config','util','GameService','styler'];
 
-    function controller($scope, config, util, GameService, ThemeService)
+    function controller($scope, config, util, GameService, styler)
     {
         var vm = this;
 
@@ -122,6 +122,10 @@
                 {
                     vm.obj.background_orig = vm.obj.style['background-image'];
                 }
+                else
+                {
+                    vm.obj.img_src_orig = vm.obj.img_src || vm.obj.fullpath;
+                }
                 // watch for theme or view change
                 $scope.$watch('vm.obj', updateImageSystemVariable);
             }
@@ -134,11 +138,15 @@
             {
                 if (vm.obj.img)
                 {
-                    vm.obj.img_src = ThemeService.variableReplace(vm.obj.img_src_orig, vm.system);
+                    vm.obj.img_src = styler.variableReplace(vm.obj.img_src_orig, vm.system);
                 }
                 else if(vm.obj.style)
                 {
-                    vm.obj.style['background-image'] = ThemeService.variableReplace(vm.obj.background_orig, vm.system);
+                    vm.obj.style['background-image'] = styler.variableReplace(vm.obj.background_orig, vm.system);
+                }
+                else
+                {
+                    vm.obj.img_src = styler.variableReplace(vm.obj.img_src_orig, vm.system);
                 }
             }
         }
@@ -147,7 +155,7 @@
         {
             if (vm.game && vm.md && vm.game[vm.md+'_url'])
             {
-                //var url = ThemeService.variableReplace(vm.game[vm.md+'_url'], vm.system);
+                //var url = styler.variableReplace(vm.game[vm.md+'_url'], vm.system);
                 var url = 'svr/'+vm.game[vm.md+'_url'];
                 if (vm.obj.img)
                 {
