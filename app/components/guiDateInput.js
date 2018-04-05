@@ -65,7 +65,9 @@
 
             if ($attrs.ngChange)
             {
-                $scope.$parent.$eval($attrs.ngChange)
+                $scope.$$postDigest(function() {
+                    $scope.$parent.$evalAsync($attrs.ngChange);
+                });
             }
         }
 
@@ -88,7 +90,9 @@
             {
                 if ($attrs.ngChange)
                 {
-                    $scope.$parent.$eval($attrs.ngChange)
+                    $scope.$$postDigest(function() {
+                        $scope.$parent.$evalAsync($attrs.ngChange);
+                    });
                 }
             }
 
