@@ -62,12 +62,10 @@
                      //.substring(0,15);
                      .substring(0,8)+'T000000';
             }
-            if (old_val)
+
+            if ($attrs.ngChange)
             {
-                if ($attrs.ngChange)
-                {
-                    $scope.$parent.$eval($attrs.ngChange)
-                }
+                $scope.$parent.$eval($attrs.ngChange)
             }
         }
 
