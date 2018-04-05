@@ -18,7 +18,7 @@
     <div>
         <img ng-if="vm.md!='video' && vm.gameMediaUrl()" class="click"
              title="{{app.config.lang.editor.clickPreview}}"
-             ng-style="{height: vm.thumbnail}"
+             ng-style="{'max-height': vm.thumbnail, 'max-width': '30vw'}"
              ng-src="{{vm.gameMediaUrl()}}"
              ng-click="vm.preview=!vm.preview">
         <video ng-if="vm.md=='video' && vm.gameMediaUrl()" class="click"
@@ -64,4 +64,4 @@
             </div
         ></div>
     </div>
-</div> 
+</div>
