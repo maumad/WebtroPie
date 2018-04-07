@@ -1,5 +1,5 @@
 <div class=window_size >
-    <theme-image obj="image"
+    <theme-image obj="image" system="app.CarouselService.getCurrentCarouselSystemName()"
         ng-repeat="image in app.ThemeService.view.notCarouselImages"
         theme-element-mouse-over>
     </theme-image>
@@ -9,7 +9,7 @@
          ng-style="page.systembar.dragging?app.styler.carousel.backgrounds[app.CarouselService.centerOffset($index)+app.styler.carousel.hiIndex]:{}"
          ng-class="'system_images'+app.CarouselService.centerOffset($index)+(page.loaded && page.animating?' systemtransition':'')">
         <div class="system_images_inner">
-            <theme-image obj="image"
+            <theme-image obj="image" system="app.CarouselService.getCurrentCarouselSystemName()"
                 ng-repeat="image in car.theme.view.system.carouselImages"
                 theme-element-mouse-over>
             </theme-image>

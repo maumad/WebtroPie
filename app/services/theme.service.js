@@ -484,7 +484,9 @@
                                 angular.forEach(obj, function(value, key)
                                 {
                                     if (typeof value == 'object' || typeof value == 'array')
+                                    {
                                         replaceVariablesInObject(value);
+                                    }
                                     else if (typeof value == 'string' && value)
                                     {
                                         if(value == '${'+pattern+'}')
@@ -554,7 +556,7 @@
 
                     if (sys.view.system.image && sys.view.system.image.logo)
                     {
-                        sys.logo = 'url("' + sys.view.system.image.logo.fullpath + '")';
+                        sys.logo = 'url("' + styler.variableReplace(sys.view.system.image.logo.fullpath, sys.name) + '")';
                     }
                 }
                 delete sys.theme;

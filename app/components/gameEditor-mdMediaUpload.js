@@ -96,18 +96,21 @@
 
         function mediaLoaded($event, width, height, size, mtime)
         {
-            vm.width = width;
-            vm.height = height;
-            if(vm.md=='video')
+            if ($event.type=='load')
             {
-                vm.duration = Math.floor(size,0) + ' ' + config.lang.time.seconds;
+                vm.width = width;
+                vm.height = height;
+                if(vm.md=='video')
+                {
+                    vm.duration = Math.floor(size,0) + ' ' + config.lang.time.seconds;
+                }
+                else
+                {
+                    vm.size = util.humanSize(size);
+                }
+                vm.modified = util.formatDate(mtime);
+                vm.modified_ago = util.formatDate(mtime,'ago');
             }
-            else
-            {
-                vm.size = util.humanSize(size);
-            }
-            vm.modified = util.formatDate(mtime);
-            vm.modified_ago = util.formatDate(mtime,'ago');
         }
 
         function upload(files)

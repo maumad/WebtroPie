@@ -14,6 +14,9 @@
               restrict: 'A',
               link: function (scope, elem, attrs) {
                 var fn = $parse(attrs.onLoadImage);
+                elem.on('error', function (event) {
+                    fn(scope, { $event: event });
+                });
                 elem.on('load', function (event) {
                   scope.$apply(function() {
                     var width = elem[0].width;

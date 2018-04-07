@@ -23,8 +23,8 @@
                           '<div ng-if="!vm.obj.img" ng-style="vm.obj.style"></div>'+
                           '<img ng-if="vm.obj.img && vm.obj.img_src" '+
                                'ng-src="{{vm.obj.img_src}}" '+
-                               'ng-style="vm.obj.style">'+
-                               //'[{{vm.obj.img_src}}]'+
+                               'ng-style="vm.obj.style" '+
+                               'on-load-image="vm.mediaLoaded($event, width, height, size, mtime)">'+
                       '</div>',
             controller: controller,
             controllerAs: 'vm',
@@ -40,6 +40,7 @@
         var vm = this;
 
         vm.$onInit = onInit;
+        vm.mediaLoaded = mediaLoaded;
 
         function onInit()
         {
@@ -66,7 +67,6 @@
                         }
                         else if (vm.obj.img)
                         {
-                            //img_url = vm.obj.img['content'];
                             vm.obj.img.cursor = 'pointer';
                         }
 
@@ -110,91 +110,44 @@
                 $scope.$watch('vm.obj', vm.updateImage);
 
                 // watch for current game change, update image using meta data value
-                $scope.$watch('vm.game.'+vm.md+'_url', vm.updateImage);
+                $scope.$watch('vm.game', vm.updateImage);
             }
             else
             {
-                if (vm.obj.img)
-                {
-                    vm.obj.img_src_orig = vm.obj.img_src;
-                }
-                else if(vm.obj.style)
-                {
-                    vm.obj.background_orig = vm.obj.style['background-image'];
-                }
-                else
-                {
-                    vm.obj.img_src_orig = vm.obj.img_src || vm.obj.fullpath;
-                }
+                // if it's the default theme replace system variable
+                vm.obj.img_orig = styler.variableReplace(getImageUrl(), vm.system)
+                setImageUrl(vm.obj.img_orig);
+
                 // watch for theme or view change
                 $scope.$watch('vm.obj', updateImageSystemVariable);
             }
         }
 
-        function updateImageSystemVariable()
+        function getImageUrl()
         {
-            // replace system variables
-            if (vm.system)
+            if (vm.obj.img)
             {
-                if (vm.obj.img)
-                {
-                    vm.obj.img_src = styler.variableReplace(vm.obj.img_src_orig, vm.system);
-                }
-                else if(vm.obj.style)
-                {
-                    vm.obj.style['background-image'] = styler.variableReplace(vm.obj.background_orig, vm.system);
-                }
-                else
-                {
-                    vm.obj.img_src = styler.variableReplace(vm.obj.img_src_orig, vm.system);
-                }
+                return vm.obj.img_src;
             }
-        }
-
-        function updateImage(new_val, old_val)
-        {
-            if (vm.game && vm.md && vm.game[vm.md+'_url'])
+            else if(vm.obj.style)
             {
-                //var url = styler.variableReplace(vm.game[vm.md+'_url'], vm.system);
-                var url = 'svr/'+vm.game[vm.md+'_url'];
-                if (vm.obj.img)
-                {
-                    vm.obj.img_src = url;
-                }
-                else if(vm.obj.style)
-                {
-                    vm.obj.style['background-image'] = 'url("'+url+'")';
-                }
-
-                if (vm.game[vm.md+'_width'] && vm.game[vm.md+'_height'])
-                {
-                    vm.title = vm.game[vm.md+'_width'] +' x ' + vm.game[vm.md+'_height'];
-                }
+                return vm.obj.style['background-image'];
             }
             else
             {
-                if (vm.obj.img)
-                {
-                    if (vm.game && !vm.game.image_url && vm.obj.fulldefault)
-                    {
-                        vm.obj.img_src = vm.obj.fulldefault;
-                    }
-                    else
-                    {
-                        delete vm.obj.img_src;
-                    }
-                }
-                else if(vm.obj.style)
-                {
-                    if (vm.game && !vm.game.image_url && vm.obj.fulldefault)
-                    {
-                        vm.obj.style['background-image'] = vm.obj.fulldefault;
-                    }
-                    else
-                    {
-                        delete vm.obj.style['background-image'];
-                    }
-                }
+                return vm.obj.img_src || vm.obj.fullpath;
+            }
+        }
+
+        function clearImageUrl()
+        {
+            if (vm.obj.img)
+            {
+                delete vm.obj.img_src;
+            }
+            else if(vm.obj.style)
+            {
+                delete vm.obj.style['background-image'];
             }
         }
 
@@ -210,6 +163,66 @@
             }
         }
 
+        function mediaLoaded($event, width, height, size, mtime)
+        {
+            if ($event.type=='error') // either error or load
+            {
+                if (vm.obj.fulldefault)
+                {
+                    setImageUrl(styler.variableReplace(vm.obj.fulldefault, vm.system));
+                }
+                else
+                {
+                    console.log('Theme '+vm.obj.name+' image: failed to load image '+ getImageUrl());
+                    clearImageUrl();
+                }
+            }
+        }
+
+        function setImageUrl(url)
+        {
+            if (vm.obj.img)
+            {
+                vm.obj.img_src = url;
+            }
+            else if(vm.obj.style)
+            {
+                vm.obj.style['background-image'] = url;
+            }
+        }
+
+        function updateImage(new_val, old_val)
+        {
+            if (vm.game && vm.md && vm.game[vm.md+'_url'])
+            {
+                if (vm.game[vm.md+'_width'] && vm.game[vm.md+'_height'])
+                {
+                    vm.title = vm.game[vm.md+'_width'] +' x ' + vm.game[vm.md+'_height'];
+                }
+                setImageUrl('svr/'+vm.game[vm.md+'_url']);
+            }
+            else
+            {
+                if (vm.game && !vm.game.image_url && vm.obj.fulldefault)
+                {
+                    setImageUrl(styler.variableReplace(vm.obj.fulldefault, vm.system));
+                }
+                else
+                {
+                    clearImageUrl();
+                }
+            }
+        }
+
+        function updateImageSystemVariable()
+        {
+            // replace system variables
+            if (vm.system)
+            {
+                setImageUrl(styler.variableReplace(vm.obj.img_orig, vm.system));
+            }
+        }
+
         function updateToggleImage()
         {
             if (vm.game && vm.game[vm.md])
@@ -218,14 +231,7 @@
                 {
                     vm.title = 'Click to turn '+config.lang.md_label[vm.md]+' OFF';
                 }
-                if (vm.obj.img)
-                {
-                    vm.obj.img_src = vm.obj.img_url_on;
-                }
-                else if(vm.obj.style)
-                {
-                    vm.obj.style['background-image'] = vm.obj.img_url_on;
-                }
+                setImageUrl(vm.obj.img_url_on);
             }
             else
             {
@@ -233,15 +239,7 @@
                 {
                     vm.title = 'Click to turn '+config.lang.md_label[vm.md]+' ON';
                 }
-
-                if (vm.obj.img)
-                {
-                    vm.obj.img_src = vm.obj.img_url_off;
-                }
-                else if(vm.obj.style)
-                {
-                    vm.obj.style['background-image'] = vm.obj.img_url_off;
-                }
+                setImageUrl(vm.obj.img_url_off);
             }
         }
     }

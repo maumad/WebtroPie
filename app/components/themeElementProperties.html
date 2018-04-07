@@ -75,10 +75,10 @@
                        ng-change="vm.changePathColorTile()" class="w60">
             </td>
         </tr>
-        <tr ng-if="(vm.element.tag=='image' || vm.element.tag=='video') &&  (vm.element.name=='md_image' || vm.element.name=='md_marquee' || vm.element.name=='md_video')">
+        <tr ng-if="(vm.element.tag=='image' || vm.element.tag=='video')">
             <td>default</td>
             <td>
-                <input disabled ng-model="vm.element.default" class="w60">
+                <input ng-model="vm.element.default" class="w60">
                 <span ng-if="vm.element.tag=='image'">*</span>
             </td>
         </tr>

@@ -759,14 +759,14 @@
                 return str;
         }
 
-        // translate path relative to file or include file
-        // then simplify
         function saveFilepath(object, field, path)
         {
             object[field+'_filepath'] = path;
             object['full'+field] = fullpath(object, field);
         }
 
+        // translate path relative to file/include file
+        // then simplify
         function fullpath(element, field)
         {
             var path;
@@ -1419,6 +1419,7 @@
 
                 // path relative to it's source file to fullpath
                 element.fullpath = fullpath(element, 'path');
+                element.fulldefault = fullpath(element, 'default');
 
                 // methods to tint image
                 // greyscale tint can be done cheaply on the client
@@ -1812,7 +1813,7 @@
 
         function variableReplace(str, system_name)
         {
-            if (!str || (typeof str != 'string') || !system_name)
+            if (!str || (typeof str != 'string') || !system_name || system_name == 'default')
                 return str;
 
             var system = config.systems[system_name];

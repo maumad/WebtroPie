@@ -35,7 +35,7 @@
                     )
                 {
                     var obj;
-                    if($scope.vm.obj)
+                    if($scope.vm && $scope.vm.obj)
                     {
                         obj = $scope.vm.obj;
                     }
