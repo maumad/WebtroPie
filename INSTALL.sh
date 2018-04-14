@@ -31,13 +31,11 @@ if [ $apache == "y" ]; then
         fi
         cp "$WebtroPie/redirect.html" /var/www/html/index.html
     fi
-    echo
-    echo "Installing..."
-    echo
-    sudo apt-get install apache2 php5 libapache2-mod-php5 php5-gd -y
-else
-    sudo apt-get install php5 php5-gd -y
 fi
+echo
+echo "Installing..."
+echo
+sudo apt-get install php7.0-gd php7.0-xml -y
 
 #  fix permissions ?
 sudo chown -R pi:www-data app
@@ -67,7 +65,7 @@ sed 's/\(eval \$command\).*tty ./\1 \&/gi' \
 chmod 755 $SVR/runcommand.sh
 
 # create a php.ini with bigger upload limits
-sed -f - /etc/php5/apache2/php.ini > $WebtroPie/php.ini << SED_SCRIPT
+sed -f - /etc/php/7.0/apache2/php.ini > $WebtroPie/php.ini << SED_SCRIPT
   s|^;*\s*\(upload_max_filesize\s*=\).*$|\1 128M|gi
   s|^;*\s*\(post_max_size\s*=\).*$|\1 128M|gi
   s|^;*\s*\(memory_limit\s*=\).*$|\1 128M|gi
@@ -86,12 +84,12 @@ if [ $apache == "y" ]; then
     sudo ln -sf "$WebtroPie/app" /var/www/html/app
 
     # Make a backup php.ini (once)
-    if [ ! -s /etc/php5/apache2/php.ini.orig ] ; then
-        sudo cp /etc/php5/apache2/php.ini /etc/php5/apache2/php.ini.orig
+    if [ ! -s /etc/php/7.0/apache2/php.ini.orig ] ; then
+        sudo cp /etc/php/7.0/apache2/php.ini /etc/php/7.0/apache2/php.ini.orig
     fi
 
     # copy altered php.ini
-    sudo cp "$WebtroPie/php.ini" /etc/php5/apache2/php.ini
+    sudo cp "$WebtroPie/php.ini" /etc/php/7.0/apache2/php.ini
 
     # Make a backup envvars (once)
     if [ ! -s /etc/apache2/envvars.orig ] ; then
