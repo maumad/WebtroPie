@@ -18,41 +18,27 @@
             restrict: 'E',
             replace: true,
             scope: true,
-            template: '<button class="systemlogo click"'+
-                         ' ng-style="{\'background-image\': vm.logo}">'+
-                          '{{vm.logo ? "" : vm.name}}'+
+            template: '<button class="systemlogo click">'+
+                          '<theme-text obj="vm.logoText" system="vm.system"'+
+                             'ng-if="!vm.logo || !vm.logo.img_src" '+
+                          '></theme-text>'+
+                          '<theme-image class="systemlogo click" '+
+                             'ng-if="vm.logo && vm.logo.img_src" '+
+                             'obj="vm.logo" system="vm.system">'+
+                          '</theme-image>'+
                       '</button>',
             controller: controller,
             controllerAs: 'vm',
-            bindToController: { systemName: '=' }
+            bindToController: { system: '=', logo: '=', logoText: '=' }
         }
         return directive;
     }
 
-    controller.$inject = ['$scope','config','ThemeService','styler'];
+    //controller.$inject = [];
 
-    function controller($scope, config, ThemeService, styler)
+    function controller()
     {
         var vm = this;
-
-        $scope.$watch(function() { return ThemeService.theme; }, update)
-
-        function update()
-        {
-            var themeSystem = ThemeService.theme.carousel_systems[vm.systemName].themeSystem;
-            var theme = ThemeService.getSystemTheme(themeSystem);
-            var system = config.systems[vm.systemName];
-
-            if (theme && theme.logo)
-            {
-                vm.logo = styler.variableReplace(theme.logo, vm.systemName);
-            }
-            else
-            {
-                delete vm.logo;
-            }
-            vm.name = system.fullname || vm.systemName;
-        }
     }
 
 })();

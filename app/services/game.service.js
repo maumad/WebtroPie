@@ -123,7 +123,9 @@
 
         function getDefaultGamelistViewName(system_name)
         {
-            if (config.app.ViewStyle)            // user chosen view
+            var system = ThemeService.getSystemTheme(system_name);
+
+            if (config.app.ViewStyle && system.view[config.app.ViewStyle])  // user chosen view
             {
                 return config.app.ViewStyle;
             }
@@ -133,7 +135,6 @@
                 {
                     // theme has video view and either gamelist has a video or
                     // theme flag showSnapshotNoVideo is true
-                    var system = ThemeService.getSystemTheme(system_name);
                     if (system.view &&
                         system.view.video
                          && (self.systems[system_name].has_video ||
@@ -846,7 +847,6 @@
                     self.gamelists_loaded++;
 
                     system.fetched = true;
-                    ThemeService.createCarouselSystems();
                     deferred.resolve(system);
                     delete system.promise;
 

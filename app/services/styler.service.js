@@ -44,6 +44,14 @@
                 fontSize: 0.04,
                 lineSpacing: 1,
                 zIndex: 50
+            },
+            logoText: {
+                name: 'logoText',
+                color: '#222',
+                alignment: 'center',
+                fontSize: 0.05,
+                forceUppercase: false,
+                fontFamily: 'ohc_regular'
             }
         };
 
@@ -51,9 +59,11 @@
 
         self.calcObjBounds = calcObjBounds;
         self.changeCarousel = changeCarousel;
+        self.clearSystem = clearSystem;
         self.createCarouselStyle = createCarouselStyle;
         self.createCarsouselClasses = createCarsouselClasses;
         self.createImageStyle = createImageStyle;
+        self.createLogoTextStyle = createLogoTextStyle;
         self.createTextStyle = createTextStyle;
         self.createRatingStyle = createRatingStyle;
         self.createVideoStyle = createVideoStyle;
@@ -71,10 +81,15 @@
         self.objectReposition = objectReposition;
         self.saveFilepath = saveFilepath;
         self.setHelpbarStyle = setHelpbarStyle;
+        self.setSystem = setSystem;
         self.setSystemImagesContainerStyle = setSystemImagesContainerStyle;
         self.setSystemLogoStyle = setSystemLogoStyle;
 
         self.styleAlignment = styleAlignment;
+        self.styleBackgroundColor = styleBackgroundColor;
+        self.styleColor = styleColor;
+        self.styleForceUppercase = styleForceUppercase;
+        self.styleFontFamily = styleFontFamily;
         self.styleFontSize = styleFontSize;
         self.styleImagePathColorTile = styleImagePathColorTile;
         self.styleImageMaxSize = styleImageMaxSize;
@@ -128,10 +143,20 @@
             });
         }
 
+        function clearSystem()
+        {
+            self.replaceSystemName = null;
+        }
+
         function createCarouselStyle(carousel)
         {
             // alredy done?
-            if (!carousel || (typeof carousel) != 'object' || carousel.style)
+            if (!carousel || (typeof carousel) != 'object')
+            {
+                carousel = {};
+            }
+            // alredy done?
+            if (carousel.style)
             {
                 createCarsouselClasses(carousel);
                 return;
@@ -276,7 +301,7 @@
 
                 var temp_cell = angular.copy(cell);
                 setSystemLogoStyle(temp_cell, 0);  // 0 is the resting position (i.e. not dragged)
-                createClass('logo'+index, temp_cell)
+                createClass('logo'+index, temp_cell);
 
                 carousel.logos.push(cell);
             }
@@ -355,7 +380,7 @@
             }
             image.style = {position: 'absolute'};
 
-            if (stylePos(image, image.style))
+            if (stylePos(image, image.style) || image.name == 'logo')
             {
                 delete image.transformRotation;
                 delete image.transformOrigin;
@@ -417,12 +442,11 @@
         // convert theme text attributes to style
         function createTextStyle(text)
         {
-            text.tag = 'text';
             if (!text || (typeof text) != 'object' || text.style)
             {
                 return;
             }
-
+            text.tag = 'text';
             text.style = {};
             text.inner = {};
 
@@ -471,19 +495,7 @@
                                      ? text.fontSize + 0.01  // padding 
                                      : 0.045};
             }
-/*
-            else if (text.size)
-            {
 
-                text.size = denormalize('size',text.size);
-
-                // don't allow gamelist off screen, I'm looking at you 'clean-look' theme
-                if (text.name == 'gamelist' && text.pos.x + text.size.w > 0.995)
-                {
-                    text.size.w = 0.995 - text.pos.x;
-                }
-            }
-*/
             styleSize(text, text.style);
             text.inner.width = text.style.width;
 
@@ -504,15 +516,6 @@
                 {
                     text.style['max-width'] = text.style.width;
                 }
-                /*
-                if (text.size.h)
-                {
-                    text.style.height = util.pct(text.size.h,'vh');
-                }
-                */
-/* zzz
-                text.inner.width = text.style.width;
-*/
             }
 
             if (text.name == 'md_description')
@@ -529,7 +532,6 @@
 
             text.style.height = util.pct(height,'vh');
 
-
             text.rows = Math.floor(height / text.fontSize) || 1;
             if (text.multiline && text.lineSpacing)
             {
@@ -539,39 +541,34 @@
                 }
             }
 
-
-            if (text.color)
-            {
-                text.inner['color'] = util.hex2rgba(text.color);
-            }
-
-            if (text.backgroundColor)
-            {
-                text.style['background-color'] = util.hex2rgba(text.backgroundColor);
-            }
-
+            styleColor(text, text.inner);
+            styleBackgroundColor(text, text.style);
             styleAlignment(text, text.inner);
-
-            if (text.fontFamily)
-            {
-                text.inner['font-family'] = text.fontFamily;
-                if (!text.multiline)
-                {
-                    var vcenter = self.fonts[text.fontFamily].vcenter || -50;
-                    text.inner['top'] = '50%';
-                    text.inner['-webkit-transform'] = 'translateY('+vcenter+'%)';
-                    text.inner['-ms-transform'] = 'translateY('+vcenter+'%)';
-                    text.inner['transform'] = 'translateY('+vcenter+'%)';
-                }
-            }
-
-            if (parseInt(text.forceUppercase))
-            {
-                text.inner['text-transform'] = 'uppercase';
-            }
-
+            styleFontFamily(text, text.inner);
+            styleForceUppercase(text, text.inner);
             styleTextZIndex(text, text.style);
+        }
 
+        function createLogoTextStyle(logoText)
+        {
+            ['color','forceUppercase','fontSize','alignment','fontFamily']
+            .forEach(function(key) {
+                if (!logoText[key])
+                {
+                    logoText[key] = self.defaultCarousel.logoText[key];
+                }
+            });
+            logoText.styled = false;
+            logoText.style = {};
+            logoText.inner = {};
+            styleForceUppercase(logoText, logoText.inner);
+            styleFontSize(logoText, logoText.inner);
+            styleFontFamily(logoText, logoText.inner);
+            styleColor(logoText, logoText.inner);
+            styleLogoAlignment(logoText, logoText.style);
+
+            logoText.styled = true;
+            self.logoText = logoText;
         }
 
         function createTextlistStyle(textlist)
@@ -656,36 +653,55 @@
         }
 
         // convert theme view object attributes to styles
-        function createViewStyles(view, keep_style, system_name)
+        function createViewStyles(view, keep_style, system_name, default_system)
         {
             if (!view)
             {
                 return;
             }
-
             // system carousel update
             if (view.name == 'system' && !keep_style)
             {
                 if (!view.carousel)
                 {
-                    view.carousel = self.defaultCarousel;
+                    view.carousel = angular.copy(self.defaultCarousel);
                 }
                 createCarouselStyle(view.carousel.systemcarousel);
                 if (!view.text)
                 {
-                     view.text = {};
+                    view.text = {};
                 }
-                if (!view.text.systemInfo)
+
+                if (!view.text.systemInfo && default_system.text.systemInfo)
                 {
-                     view.text.systemInfo = self.defaultCarousel.systemInfo;
+                    view.text.systemInfo = angular.copy(default_system.text.systemInfo);
                 }
-                createSystemInfoStyle(view.text.systemInfo)
+                else if (!view.text.systemInfo)
+                {
+                    self.defaultCarousel.systemInfo.size.w = 1;
+                    view.text.systemInfo = angular.copy(self.defaultCarousel.systemInfo);
+                }
+                if (!view.text.systemInfo.size)
+                {
+                    view.text.systemInfo.size = self.defaultCarousel.systemInfo.size;
+                }
+
+                if (!view.text.logoText && default_system.text.logoText)
+                {
+                    view.text.logoText = angular.copy(default_system.text.logoText);
+                }
+                else if (!view.text.logoText)
+                {
+                    view.text.logoText = angular.copy(self.defaultCarousel.logoText);
+                }
+                createSystemInfoStyle(view.text.systemInfo);
+                createLogoTextStyle(view.text.logoText);
             }
 
             // already done ?
             if (!view.styled)
             {
-                self.replaceSystemName = system_name;
+                setSystem(system_name);
                 angular.forEach(view.text,        createTextStyle);
                 angular.forEach(view.textlist,    createTextlistStyle);
                 angular.forEach(view.datetime,    createDatetimeStyle);
@@ -693,7 +709,7 @@
                 angular.forEach(view.rating,      createRatingStyle);
                 angular.forEach(view.helpsystem,  createHelpsystemStyle);
                 angular.forEach(view.video,       createVideoStyle);
-                self.replaceSystemName = null;
+                clearSystem();
                 
                 // if text or date anchored to label float label left
                 if (view.text)
@@ -918,6 +934,30 @@
             //$window.resizeTo($window.innerWidth * ( 1 + width ), $window.innerHeight);
             $window.resizeTo(self.orig_width * ( 1 + width ), self.orig_height);
 */
+        }
+
+        function joinTransform(element, style)
+        {
+            delete style.transform;
+            delete style['-ms-transform'];
+            delete style['-webkit-transform'];
+
+            if (element.transformOrigin)
+            {
+                style.transform = element.transformOrigin;
+                if (element.transformRotation)
+                {
+                    style.transform += ' ' +element.transformRotation;
+                }
+            }
+            else if (element.transformRotation)
+            {
+                style.transform = element.transformRotation;
+            }
+            else {
+                return;
+            }
+            style['-ms-transform'] = style['-webkit-transform'] = style.transform;
         }
 
         // dynamically create audio element and its source,
@@ -1190,6 +1230,10 @@
             self.helpTextColorBorder.border = '1px solid #'+self.helpTextColor.substring(0,6);
         }
 
+        function setSystem(system_name)
+        {
+            self.replaceSystemName = system_name;
+        }
 
         // for animating system images when carousel changes
         function setSystemImagesContainerStyle(cell, pct)
@@ -1370,6 +1414,50 @@
             {
                 style['text-align'] = element.alignment;
             }
+            else
+            {
+                delete style['text-align'];
+            }
+        }
+
+        function styleBackgroundColor(element, style)
+        {
+            if (element.backgroundColor)
+            {
+                style['background-color'] = util.hex2rgba(element.backgroundColor);
+            }
+            else
+            {
+                delete style['background-color'];
+            }
+        }
+
+        function styleColor(element, style)
+        {
+            if (element.color)
+            {
+                style['color'] = util.hex2rgba(element.color);
+            }
+            else
+            {
+                delete style['color'];
+            }
+        }
+
+        function styleFontFamily(element, style)
+        {
+            if (element.fontFamily)
+            {
+                style['font-family'] = element.fontFamily;
+                if (!element.multiline)
+                {
+                    var vcenter = (self.fonts[element.fontFamily] && self.fonts[element.fontFamily].vcenter) || -50;
+                    style['top'] = '50%';
+                    style['-webkit-transform'] = 'translateY('+vcenter+'%)';
+                    style['-ms-transform'] = 'translateY('+vcenter+'%)';
+                    style['transform'] = 'translateY('+vcenter+'%)';
+                }
+            }
         }
 
         function styleFontSize(element, style)
@@ -1381,7 +1469,38 @@
             else
             {
                 //delete style['font-size'];
-                style['font-size'] = '3.5vh';
+                style['font-size'] = '5vh';
+            }
+        }
+
+        function styleForceUppercase(element, style)
+        {
+            if (parseInt(element.forceUppercase))
+            {
+                style['text-transform'] = 'uppercase';
+            }
+            else
+            {
+                delete style['text-transform'];
+            }
+        }
+
+        function styleLogoAlignment(element, style)
+        {
+            if (element.alignment == 'left')
+            {
+                style.left = 0;
+                delete style.transform;
+            }
+            else if (element.alignment == 'right')
+            {
+                style.right = 0;
+                delete style.transform;
+            }
+            else
+            {
+                style.left = '50%';
+                style.transform = 'translateX(-50%)';
             }
         }
 
@@ -1486,6 +1605,18 @@
                     }
                     style.width = '100vw';
                     style.height = '100vh';
+                }
+
+                // carousel logo
+                else if (element.name=='logo' && !element.pos)
+                {
+                    delete style.display;
+                    style['max-width'] = '100%';
+                    style['max-height'] = '100%';
+                    style.top = '50%';
+                    style.left = '50%';
+                    style.transform = 'translate(-50%,-50%)';
+                    element.img = true;
                 }
                 // img tag
                 else
@@ -1649,7 +1780,7 @@
         {
             if (element.zIndex)
             {
-                style['z-index'] = parseInt(element.zIndex)+1;
+                style['z-index'] = parseInt(element.zIndex);
             }
             else if (element.name && element.name.substring(0,3)=='md_')
             {
@@ -1683,29 +1814,6 @@
             joinTransform(element, style);
         }
 
-        function joinTransform(element, style)
-        {
-            delete style.transform;
-            delete style['-ms-transform'];
-            delete style['-webkit-transform'];
-
-            if (element.transformOrigin)
-            {
-                style.transform = element.transformOrigin;
-                if (element.transformRotation)
-                {
-                    style.transform += ' ' +element.transformRotation;
-                }
-            }
-            else if (element.transformRotation)
-            {
-                style.transform = element.transformRotation;
-            }
-            else {
-                return;
-            }
-            style['-ms-transform'] = style['-webkit-transform'] = style.transform;
-        }
 
         function styleSize(element, style)
         {
@@ -1719,9 +1827,9 @@
                 element.size = denormalize('size', element.size);
 
                 if ((element.tag == 'textlist' || element.tag == 'text') &&
-                     element.pos && element.pos.x + element.size.w > 0.995)
+                     element.pos && element.pos.x + element.size.w > 1)
                 {
-                    element.size.w = 0.995 - element.pos.x;
+                    element.size.w = 1 - element.pos.x;
                 }
 
                 if(element.size.w)
@@ -1739,7 +1847,7 @@
         {
             if (element.zIndex) // && parseInt(text.zIndex)>=0)
             {
-                style['z-index'] = parseInt(element.zIndex)+1;
+                style['z-index'] = parseInt(element.zIndex);
             }
             else if (element.name && element.name.substring(0,3)=='md_')
             {
@@ -1777,7 +1885,7 @@
             }
             else if (element.zIndex)
             {
-                style['z-index'] = parseInt(element.zIndex)+1;
+                style['z-index'] = parseInt(element.zIndex);
             }
             else if (element.name && element.name.substring(0,3)=='md_')
             {
@@ -1819,7 +1927,6 @@
             var system = config.systems[system_name];
             if (!system)
             {
-                console.log('no system: ' + system_name);
                 return str;
             }
             str = str.replace(/\$\{system.name\}/, system.name);

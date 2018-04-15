@@ -44,7 +44,14 @@
 
         function onInit()
         {
-            $scope.$watch('vm.game', gameChanged);
+            if (vm.obj && vm.obj.name.substring(0,3)=='md_')
+            {
+                $scope.$watch('vm.game', gameChanged);
+            }
+            else if (vm.obj && vm.obj.name == 'logoText')
+            {
+                vm.text = vm.system;
+            }
             $scope.$watch('vm.obj', themeChanged);
             autoScrollCheck();
         }
@@ -64,9 +71,11 @@
 
         function autoScrollCheck()
         {
-          if (vm.obj.multiline)
-          util.waitForRender($scope)
-                .then(afterRender);
+            if (vm.obj && vm.obj.multiline)
+            {
+                util.waitForRender($scope)
+                    .then(afterRender);
+            }
         }
 
         function autoScrollStart()
@@ -117,7 +126,7 @@
 
         function themeChanged()
         {
-            if (vm.obj.name && vm.obj.name.substring(0,7)=="md_lbl_")
+            if (vm.obj && vm.obj.name && vm.obj.name.substring(0,7)=="md_lbl_")
             {
                 vm.md = vm.obj.name.substring(7);
                 if (vm.md != 'rating')
@@ -125,7 +134,7 @@
                     var obj;
                     delete vm.text_obj;
                     delete vm.date_obj;
-                    if (ThemeService.view.datetime)
+                    if (ThemeService.view && ThemeService.view.datetime)
                     {
                         obj = ThemeService.view.datetime['md_'+vm.md];
                         if (obj && obj.style && obj.anchor_label)  // no position
@@ -133,7 +142,7 @@
                             vm.date_obj = obj;
                         }
                     }
-                    if (!obj)
+                    if (!obj && ThemeService.view)
                     {
                         obj = ThemeService.view.text['md_'+vm.md];
                         if (obj && obj.style && obj.anchor_label)  // no position

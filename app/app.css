@@ -242,6 +242,10 @@ input, select, textarea {
 }
  
 .systemlogo {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+
     color: #555;
     background-size: contain;
     background-repeat: no-repeat;

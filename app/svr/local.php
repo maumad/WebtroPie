@@ -4,6 +4,10 @@ function getLocal()
 {
     global $_SERVER;
 
+    if (!isset($_SERVER['REMOTE_ADDR']))
+    {
+        return true;
+    }
     $client = ip2long($_SERVER['REMOTE_ADDR']);
 
     return (($client >= ip2long('192.168.0.0') && $client <= ip2long('192.168.255.255')) ||

@@ -1,5 +1,12 @@
 <?php
 require_once("config.php");
 
-echo json_encode(getConfig($_GET['get']));
+if (isset($_GET['get']))
+{
+   echo json_encode(getConfig($_GET['get']));
+}
+else
+{
+   echo json_encode(getConfig(255));
+}
 ?>

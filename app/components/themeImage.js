@@ -115,8 +115,7 @@
             else
             {
                 // if it's the default theme replace system variable
-                vm.obj.img_orig = styler.variableReplace(getImageUrl(), vm.system)
-                setImageUrl(vm.obj.img_orig);
+                updateImageSystemVariable();
 
                 // watch for theme or view change
                 $scope.$watch('vm.obj', updateImageSystemVariable);
@@ -219,7 +218,7 @@
             // replace system variables
             if (vm.system)
             {
-                setImageUrl(styler.variableReplace(vm.obj.img_orig, vm.system));
+                setImageUrl(styler.variableReplace(getImageUrl(), vm.system));
             }
         }
 

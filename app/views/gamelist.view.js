@@ -89,6 +89,11 @@
             })
             .then(function(theme_output)
             {
+                CarouselService.createCarouselSystems(ThemeService.theme);
+
+                var default_view = GameService.getDefaultGamelistViewName(page.system);
+                ThemeService.setSystem(page.system, default_view);
+
                 CarouselService.setCarouselSystemIndexByName(page.system);
 
                 if (config.app.WaitForAnimations &&

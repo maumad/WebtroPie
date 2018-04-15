@@ -3,7 +3,7 @@
         ng-repeat="image in app.ThemeService.view.notCarouselImages"
         theme-element-mouse-over>
     </theme-image>
-    <div ng-repeat="car in app.ThemeService.theme.carousel_systems_list"
+    <div ng-repeat="car in app.CarouselService.systems"
          id="sys-imgs-{{car.system_name}}"
          ng-if="page.systembar.dragging || app.CarouselService.centerOffset($index)==0 || (page.loaded && app.CarouselService.centerOffset($index) >= -1 && app.CarouselService.centerOffset($index) <= 1)"
          ng-style="page.systembar.dragging?app.styler.carousel.backgrounds[app.CarouselService.centerOffset($index)+app.styler.carousel.hiIndex]:{}"
@@ -17,10 +17,10 @@
     </div>
     <!-- preload next/prev images -->
     <div ng-if="app.ThemeService.theme">
-        <theme-image obj="image" style="opacity: 0"
+        <theme-image obj="image" style="opacity: 0" system="app.CarouselService.getRelativeCarouselSystemName(+1)"
             ng-repeat="image in app.CarouselService.getRelativeCarouselSystemTheme(+1).view.system.notCarouselImages">
         </theme-image>
-        <theme-image obj="image" style="opacity: 0"
+        <theme-image obj="image" style="opacity: 0" system="app.CarouselService.getRelativeCarouselSystemName(-1)"
             ng-repeat="image in app.CarouselService.getRelativeCarouselSystemTheme(-1).view.system.notCarouselImages">
         </theme-image>
     </div>
@@ -37,7 +37,7 @@
         class="systemcarousel systemtransition"
         theme-element-mouse-over>
         <div ng-style="app.styler.carousel.div_inner">
-            <div ng-repeat="car in app.ThemeService.theme.carousel_systems_list"
+            <div ng-repeat="car in app.CarouselService.systems"
                 id="sys-{{car.system_name}}"
                 ng-if="app.CarouselService.centerOffset($index) > app.styler.carousel.loIndex &&
                         app.CarouselService.centerOffset($index) <= app.styler.carousel.hiIndex"
@@ -46,8 +46,9 @@
                 ng-class="'logo'+app.CarouselService.centerOffset($index)+(!page.systembar.dragging?' systemtransition':'')"
                ><logo id="logo{{app.CarouselService.centerOffset($index)}}"
                     class="click"
-                    system-name="car.system_name"
-                    fullname="app.config.systems[sysname].fullname"
+                    system="car.system_name"
+                    logo="car.theme.view.system.image.logo"
+                    logo-text="car.theme.view.system.text.logoText"
                     ng-keydown="page.keyPress($event)"
                     ng-mousedown="page.mouseDown($event, car.system_name)"
                     ng-mousemove="page.mouseMove($event)"

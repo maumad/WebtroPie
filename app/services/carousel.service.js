@@ -17,11 +17,15 @@
 
         // Variables :-
 
-        // index pointing to the system in self.theme.carousel_systems_list array
+        // index pointing to the system in self.systems array
         self.system_index = 0; // the first index in the array (alphabetically sorted)
+        self.system = {};  // object of all systems where key is system name
+        self.systems = [];  // array of all systems
+        self.mid_index = 0; // floor(self.systems.length / 2)
 
         // public functions
         self.centerOffset = centerOffset;
+        self.createCarouselSystems = createCarouselSystems;
         self.getCarouselSystemName = getCarouselSystemName;
         self.getCarouselSystemTheme = getCarouselSystemTheme;
         self.getCurrentCarouselSystemName = getCurrentCarouselSystemName;
@@ -37,24 +41,108 @@
         self.setCarouselSystemIndexByName = setCarouselSystemIndexByName;
         self.wrapIndex = wrapIndex;
 
+
         function centerOffset(index)
         {
-            return wrapIndex(index + ThemeService.theme.mid_index - self.system_index)-ThemeService.theme.mid_index;
+            return wrapIndex(index + self.mid_index - self.system_index)-self.mid_index;
+        }
+
+        function createCarouselSystems(theme)
+        {
+            self.systems.length = 0;
+            // create array of systems that we have (inc custom collections)
+            // that the theme supports, then sort in carousel rules order (auto at end)
+            angular.forEach(config.systems, function (system, system_name)
+            {
+                var car = self.system[system_name];
+                // first time create
+                if (car == undefined)
+                {
+                    car = {system_theme_name: system.theme,
+                           system_name: system_name,
+                                system: system};
+                    self.system[system_name] = car;
+                }
+
+                if (system.has_system && (system.has_games || config.app.ShowEmptySystems))
+                {
+                    // Order carousel by system fullname
+                    // then custom collections then auto collections
+                    car.order = config.app.OrderSystemsByFullname ? system.fullname : system.name;
+                    car.system_theme_name = system.theme;
+                    if (system.name.substring(0, 7) == 'custom-')
+                    {
+                        car.order = 'zzz' + car.order;
+
+                        var custom = system.name.substring(7);
+                        // If theme has system matching collection name then use that
+                        if (theme.systems[custom])
+                        {
+                            car.system_theme_name = custom;
+                        }
+                        else if (theme.systems['custom-collections'])
+                        {
+                            car.system_theme_name = 'custom-collections';
+                        }
+                    }
+                    else if (system.name.substring(0, 5) == 'auto-')
+                    {
+                        car.order = 'zzzz' + car.order;
+                    }
+                    car.theme = theme.systems[car.system_theme_name] || theme.systems.default;
+
+                    styler.setSystem(system_name);
+                    if (car.theme.view.system.image &&
+                        car.theme.view.system.image.logo)
+                    {
+                        styler.createImageStyle(car.theme.view.system.image.logo);
+                    }
+                    if (!car.theme.view.system.text)
+                    {
+                        car.theme.view.system.text = {};
+                    }
+                    if (!car.theme.view.system.text.logoText)
+                    {
+                        car.theme.view.system.text.logoText = theme.systems.default.view.system.text.logoText;
+                    }
+                    if (car.theme.view.system.text && car.theme.view.system.text.logoText)
+                    {
+                        styler.createLogoTextStyle(car.theme.view.system.text.logoText);
+                    }
+                    else
+                    {
+                        console.log(system_name, 'no logoText');
+                    }
+
+                    self.systems.push(car);
+                }
+            });
+            styler.clearSystem();
+
+            self.mid_index = Math.floor(self.systems.length / 2);
+
+            // sort systems array by name
+            self.systems.sort(function (a, b)
+            {
+                if (a.order > b.order) return 1;
+                if (a.order < b.order) return -1;
+                return 0;
+            });
         }
 
         function getCarouselSystemName(system_index)
         {
-            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)].system_name;
+            return self.systems[wrapIndex(system_index)].system_name;
         }
 
         function getCarouselSystemThemeName(system_index)
         {
-            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)].themeSystem;
+            return self.systems[wrapIndex(system_index)].system_theme_name;
         }
 
         function getCarouselSystemTheme(system_index)
         {
-            return ThemeService.theme.carousel_systems_list[wrapIndex(system_index)].theme;
+            return self.systems[wrapIndex(system_index)].theme;
         }
 
         // return E.g previous or next system name
@@ -141,16 +229,20 @@
 
         function setCarouselSystemIndexByName(system_name)
         {
-            self.system_index = ThemeService.theme.carousel_systems_list.findIndex(function(car) {
+            self.system_index = self.systems.findIndex(function(car) {
                 return car.system_name == system_name;
             });
+            if (self.system_index<0)
+            {
+                self.system_index = 0;
+            }
         }
 
         // ensure index is always between 0 and array.length
         function wrapIndex(index)
         {
-            return (index + ThemeService.theme.carousel_systems_list.length)
-                % ThemeService.theme.carousel_systems_list.length;
+            return (index + self.systems.length)
+                % self.systems.length;
         }
     }
 

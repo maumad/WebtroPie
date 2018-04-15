@@ -78,14 +78,18 @@
             })
             .then(function(data)
             {
-                ThemeService.setSystem(ThemeService.system_name, 'system');
+                CarouselService.createCarouselSystems(ThemeService.theme);
+
+                var system_name = CarouselService.getCurrentCarouselSystemName();
+
+                ThemeService.setSystem(system_name, 'system');
                 ThemeService.playSound('bgsound');
 
                 page.loaded = true;
 
                 // get the current system gamelist
                 // (to show games total and get list ahead of navigation)
-                return GameService.getGamelist(CarouselService.getCurrentCarouselSystemName())
+                return GameService.getGamelist(system_name);
             })
             .then(function()
             {

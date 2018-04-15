@@ -37,7 +37,7 @@
         {{app.config.lang.menu.ShowEmptySystems}}
         <image-toggle class="checkbox right"
                 ng-model="app.config.app.ShowEmptySystems"
-                clicked="app.ThemeService.createCarouselSystems()"
+                clicked="app.CarouselService.createCarouselSystems()"
                 on-svg="resources/checkbox_checked.svg"
                 off-svg="resources/checkbox_unchecked.svg">
         </image-toggle>
@@ -58,7 +58,7 @@
         {{app.config.lang.menu.OrderSystemsByFullname}}
         <image-toggle class="checkbox right"
                 ng-model="app.config.app.OrderSystemsByFullname"
-                clicked="app.ThemeService.createCarouselSystems()"
+                clicked="app.CarouselService.createCarouselSystems()"
                 on-svg="resources/checkbox_checked.svg"
                 off-svg="resources/checkbox_unchecked.svg">
         </image-toggle>

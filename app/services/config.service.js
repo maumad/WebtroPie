@@ -51,7 +51,7 @@
             {
                 self.systems['auto-allgames'] = {
                     name: 'auto-allgames',
-                    fullname: 'all',
+                    fullname: 'All',
                     theme: 'auto-allgames',
                     has_system: true,
                     has_games: true
@@ -61,7 +61,7 @@
             {
                 self.systems['auto-favorites'] = {
                     name: 'auto-favorites',
-                    fullname: 'favorites',
+                    fullname: 'Favorites',
                     theme: 'auto-favorites',
                     has_system: true,
                     has_games: true
@@ -71,7 +71,7 @@
             {
                 self.systems['auto-lastplayed'] = {
                     name: 'auto-lastplayed',
-                    fullname: 'recent',
+                    fullname: 'Recent',
                     theme: 'auto-lastplayed',
                     has_system: true,
                     has_games: true

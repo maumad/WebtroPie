@@ -139,6 +139,7 @@
                 {
                     config.save('ThemeSet', config.app.ThemeSet, 'string', config.APP);
                 }
+                CarouselService.createCarouselSystems(ThemeService.theme);
 
                 // choose best view
                 GameService.checkSystemTheme(ThemeService.system.name, true);

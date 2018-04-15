@@ -26,7 +26,6 @@
         // self.system = self.theme.systems[self.system_name];
         
         self.correctThemeErrors = correctThemeErrors;
-        self.createCarouselSystems = createCarouselSystems;
         self.createDefaultSystem = createDefaultSystem;
         self.decodeTheme = decodeTheme;
         self.expandMerged = expandMerged;
@@ -159,70 +158,28 @@
             });
         }
 
-        function createCarouselSystems()
+        function deleteImageFromView(view, image)
         {
-            if(!self.theme.carousel_systems)
+            delete view.image[image.name].fullpath;
+            if (view.image[image.name].style)
             {
-                self.theme.carousel_systems = {};
-                self.theme.carousel_systems_list = [];
+                delete view.image[image.name].style['background-image'];
             }
-            else
+            var i = view.carouselImages.indexOf(image);
+            if (i>=0)
             {
-                // truncate array
-                self.theme.carousel_systems_list.length = 0;
+                view.carouselImages.splice(i,1);
             }
-
-            // self.theme.systems is unsorted object 
-            // self.theme.carousel_systems_list becomes a sorted array
-            angular.forEach(config.systems, function (system, system_name)
+            i = view.notCarouselImages.indexOf(image);
+            if (i>=0)
             {
-                if (system.has_system && (system.has_games || config.app.ShowEmptySystems))
-                {
-                    var car = self.theme.carousel_systems[system_name];
-                    // first time create
-                    if (car == undefined)
-                    {
-                        car = {themeSystem: system.theme,
-                                system_name: system_name,
-                                    system: system};
-
-                        // Order carousel by system fullname
-                        // then custom collections then auto collections
-                        if (system.name.substring(0, 7) == 'custom-')
-                        {
-                            car.order = 'zzz' + car.order;
-                            car.themeSystem = system.name;
-                            var custom = system.name.substring(7);
-                            // If theme has system matching collection name then use that
-                            if (self.theme.systems[custom])
-                            {
-                                car.themeSystem = custom;
-                            }
-                        }
-                        if (system.name.substring(0, 5) == 'auto-')
-                        {
-                            car.order = 'zzzz' + car.order;
-                        }
-
-                        car.theme = self.theme.systems[car.themeSystem] || self.theme.systems.default;
-
-                        self.theme.carousel_systems[system_name] = car;
-                    }
-
-                    car.order = config.app.OrderSystemsByFullname ? system.fullname : system.name;
-                    self.theme.carousel_systems_list.push(car);
-                }
-            });
-
-            self.theme.mid_index = Math.floor(self.theme.carousel_systems_list.length / 2);
-
-            // sort systems array by name
-            self.theme.carousel_systems_list.sort(function (a, b)
+                view.notCarouselImages.splice(i,1);
+            }
+            i = view.imageSorted.indexOf(image);
+            if (i>=0)
             {
-                if (a.order > b.order) return 1;
-                if (a.order < b.order) return -1;
-                return 0;
-            });
+                view.imageSorted.splice(i,1);
+            }
         }
 
 
@@ -252,20 +209,14 @@
                         {
                             angular.forEach(view.image, function (image, imagename)
                             {
-                                if (image.name && image.name == 'logo')
+                                if (!image.name ||
+                                    ( image.name == 'logo' ||
+                                      image.name.substring(0, 3) == "md_" ||
+                                      (theme.systems.default.view[v].image[imagename] &&
+                                        image.fullpath != theme.systems.default.view[v].image[imagename].fullpath)
+                                    ) )
                                 {
-                                    return;
-                                }
-                                if ((!image.name || image.name.substring(0, 3) != "md_") &&
-                                    // compare both themes image paths :-
-                                    theme.systems.default.view[v].image[imagename] &&
-                                    image.fullpath != theme.systems.default.view[v].image[imagename].fullpath)
-                                {
-                                    delete theme.systems.default.view[v].image[imagename].fullpath;
-                                    if (theme.systems.default.view[v].image[imagename].style)
-                                    {
-                                        delete theme.systems.default.view[v].image[imagename].style['background-image'];
-                                    }
+                                    deleteImageFromView(theme.systems.default.view[v], theme.systems.default.view[v].image[imagename]);
                                 }
                             });
                             angular.forEach(view.text, function (text, textname)
@@ -322,6 +273,23 @@
                         theme.systems.default.view.system.text.systemInfo = sys.view.system.text.systemInfo;
                     }
                 });
+            }
+            // if default systems has no carousel then reference an existing carousel
+            if (!theme.systems.default.view.system.text.logoText)
+            {
+                angular.forEach(theme.systems, function (sys)
+                {
+                    if (sys.view.system.text &&
+                        sys.view.system.text.logoText &&
+                        !theme.systems.default.view.system.text.logoText)
+                    {
+                        theme.systems.default.view.system.text.logoText = sys.view.system.text.logoText;
+                    }
+                });
+                if (!theme.systems.default.view.system.text.logoText)
+                {
+                    theme.systems.default.view.system.text.logoText = styler.defaultCarousel.logoText;
+                }
             }
             // if any systems has no carousel reference an default carousel
             if (theme.systems.default.view.system.carousel)
@@ -419,8 +387,6 @@
                 // split combined objects (where key contains a comma)
                 expandMerged(inc);
             });
-
-            createCarouselSystems();
 
             // expand system theme, merge included files, then convert images
             angular.forEach(self.theme.systems, function (sys)
@@ -552,12 +518,7 @@
                             .filter(function(image) {
                                 return image.name!='logo' && !image.carousel_feature;
                             });
-                    })
-
-                    if (sys.view.system.image && sys.view.system.image.logo)
-                    {
-                        sys.logo = 'url("' + styler.variableReplace(sys.view.system.image.logo.fullpath, sys.name) + '")';
-                    }
+                    });
                 }
                 delete sys.theme;
             });
@@ -633,7 +594,10 @@
         // use default theme
         function getSystemTheme(system_name)
         {
-            var system
+            var system;
+
+            if (!self.theme)
+                return;
 
             if (config.systems)
             {
@@ -697,14 +661,10 @@
                 {
                     decodeTheme(response.data);
 
-                    if (!system_name)
+                    if (system_name)
                     {
-                        // first system
-                        system_name = self.theme.carousel_systems_list[0].system_name;
+                       setThemeSystemView(self.theme, system_name, view_name);
                     }
-
-                    setThemeSystemView(self.theme, system_name, view_name);
-
                     deferred.resolve(self.theme);
                     delete self.theme_promise;
                 }
@@ -734,13 +694,6 @@
                         .then(function onSuccess(response)
                         {
                             decodeTheme(response.data);
-                            if (!system_name)
-                            {
-                                // first system
-                                system_name = self.theme.carousel_systems_list[0].system_name;
-                            }
-
-                            setThemeSystemView(self.theme, system_name, view_name);
 
                             deferred.resolve(self.theme);
                             delete self.theme_promise;
@@ -908,7 +861,7 @@
             {
                 // if styles haven't been generated for the current theme system view
                 // then do that now after theme is returned
-                styler.createViewStyles(self.system.view[view_name], keep_style, system_name);
+                styler.createViewStyles(self.system.view[view_name], keep_style, system_name, self.theme.systems.default.view.system);
 
                 // set self.view to the theme/system/view object
                 self.view = self.system.view[view_name];
