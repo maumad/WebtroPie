@@ -518,6 +518,11 @@
                             .filter(function(image) {
                                 return image.name!='logo' && !image.carousel_feature;
                             });
+                        if (!view.carouselImages.length)
+                        {
+                            view.carouselImages = view.notCarouselImages;
+                            view.notCarouselImages = [];
+                        }
                     });
                 }
                 delete sys.theme;
