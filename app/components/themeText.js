@@ -50,7 +50,10 @@
             }
             else if (vm.obj && vm.obj.name == 'logoText')
             {
-                vm.text = vm.system;
+                if (!ThemeService.view.image.logo.img_src)
+                {
+                    vm.text = vm.system;
+                }
             }
             $scope.$watch('vm.obj', themeChanged);
             autoScrollCheck();
