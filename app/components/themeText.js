@@ -50,7 +50,9 @@
             }
             else if (vm.obj && vm.obj.name == 'logoText')
             {
-                if (!ThemeService.view.image.logo.img_src)
+                if (ThemeService.view.name == 'system' ||
+                    !ThemeService.view.image.logo ||
+                    !ThemeService.view.image.logo.img_src)
                 {
                     vm.text = vm.system;
                 }
